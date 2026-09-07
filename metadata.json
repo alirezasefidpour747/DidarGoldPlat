@@ -1,0 +1,6 @@
+{
+  "name": "Didar Gold",
+  "description": "سامانه مدیریت زنجیره تأمین و عملیات صنعت طلا و جواهر دیدار - پنل عملیاتی ادمین، هسته هویت K01 و پذیرش و استحقاق‌های تجاری K02",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

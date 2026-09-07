@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-vazir: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@layer base {
+  :root {
+    --font-vazirmatn: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-arabic: 'IBM Plex Sans Arabic', 'Vazirmatn', sans-serif;
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  html,
+  body {
+    font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #111115;
+    color: #EDEDED;
+    min-height: 100vh;
+    letter-spacing: normal;
+  }
+
+  /* Ensure inputs, buttons and forms inherit Vazirmatn */
+  input,
+  button,
+  select,
+  textarea,
+  optgroup {
+    font-family: inherit;
+  }
+
+  [dir="rtl"] {
+    font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  [lang="ar"] {
+    font-family: 'IBM Plex Sans Arabic', 'Vazirmatn', sans-serif;
+  }
+
+  [dir="ltr"]:not([lang="fa"]):not([lang="ar"]) {
+    font-family: 'Inter', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+/* Custom gold gradients & accents */
+.gold-glow {
+  box-shadow: 0 0 25px -5px rgba(200, 169, 81, 0.15);
+}
+
+.gold-border-glow {
+  border-color: rgba(200, 169, 81, 0.4);
+  box-shadow: 0 0 15px -3px rgba(200, 169, 81, 0.2);
+}
+

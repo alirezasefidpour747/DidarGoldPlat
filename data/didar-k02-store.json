@@ -1,0 +1,768 @@
+{
+  "applications": [
+    {
+      "id": "app-k02-001",
+      "applicationNumber": "APP-2026-0101",
+      "targetType": "organization",
+      "targetId": "org-ret-parnia-004",
+      "targetName": "طلا و جواهری پرنیا (سعادت‌آباد)",
+      "targetTypeLabel": "فروشگاه خرده‌فروشی طلا",
+      "applicantPhone": "021-22089410",
+      "province": "تهران",
+      "city": "تهران",
+      "currentTier": "tier_2_business",
+      "requestedTier": "tier_2_business",
+      "status": "approved",
+      "submissionDate": "2026-08-20T10:00:00.000Z",
+      "assignedReviewerId": "party-admin-001",
+      "assignedReviewerName": "علیرضا سفیدپور",
+      "riskScore": 12,
+      "reviewNotes": "پروانه کسب اتحادیه طلا و جواهر تهران استعلام شد. ویترین فروشگاه در سعادت‌آباد تایید شد.",
+      "checklist": [
+        {
+          "stepKey": "basic_identity",
+          "labelFa": "اطلاعات هویتی و ثبت شرکت/فروشگاه",
+          "labelEn": "Basic Identity",
+          "completed": true,
+          "completedAt": "2026-08-20T11:00:00.000Z",
+          "completedBy": "علیرضا سفیدپور",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "phone_verified",
+          "labelFa": "راستی‌آزمایی خط تلفن ثابت و همراه",
+          "labelEn": "Phone Verified",
+          "completed": true,
+          "completedAt": "2026-08-20T11:30:00.000Z",
+          "completedBy": "علیرضا سفیدپور",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "guild_license",
+          "labelFa": "استعلام پروانه کسب از اتحادیه طلا",
+          "labelEn": "Guild License Verification",
+          "completed": true,
+          "completedAt": "2026-08-21T09:15:00.000Z",
+          "completedBy": "علیرضا سفیدپور",
+          "notes": "شماره جواز کسب GL-TH-49201 تایید شد",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "store_inspection",
+          "labelFa": "ارزیابی فیزیکی فروشگاه و گاوصندوق",
+          "labelEn": "Store Inspection",
+          "completed": true,
+          "completedAt": "2026-08-21T14:00:00.000Z",
+          "completedBy": "محمدرضا شفیعی",
+          "notes": "بازدید حضوری انجام شد؛ امنیت گاوصندوق مطلوب است",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "expert_call",
+          "labelFa": "تماس کارشناسی با مدیر واحد صنفی",
+          "labelEn": "Expert Call",
+          "completed": true,
+          "completedAt": "2026-08-21T16:00:00.000Z",
+          "completedBy": "علیرضا سفیدپور",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "agreement_accepted",
+          "labelFa": "امضای تعهدنامه و قوانین تجاری دیدار",
+          "labelEn": "Agreement Acceptance",
+          "completed": true,
+          "completedAt": "2026-08-22T08:30:00.000Z",
+          "completedBy": "حسین میرزایی",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "financial_guarantee",
+          "labelFa": "تودیع وثیقه و اعتبارسنجی تراز مالی",
+          "labelEn": "Financial Guarantee",
+          "completed": false,
+          "requiredForTier": "tier_3_commercial"
+        }
+      ],
+      "verificationCalls": [
+        {
+          "calledAt": "2026-08-21T16:00:00.000Z",
+          "callerId": "party-admin-001",
+          "callerName": "علیرضا سفیدپور",
+          "contactNumber": "09124445566",
+          "result": "successful",
+          "notes": "مکالمه با آقای میرزایی؛ هماهنگی‌های سقف خرید و شیوه تسویه اعتباری انجام شد."
+        }
+      ],
+      "commercialEntitlements": {
+        "targetId": "org-ret-parnia-004",
+        "targetType": "organization",
+        "targetName": "طلا و جواهری پرنیا (سعادت‌آباد)",
+        "tier": "tier_2_business",
+        "dailyGoldLimitGrams": 500,
+        "creditAllowanceGrams": 100,
+        "canAccessWholesaleMarket": true,
+        "canPlaceCustomOrders": false,
+        "canAccessConsignment": false,
+        "dealerMarginDiscountPercent": 2.5,
+        "isCommercialLocked": false,
+        "lastTierUpgradedAt": "2026-08-22T09:00:00.000Z"
+      },
+      "updatedAt": "2026-08-22T09:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "app-k02-002",
+      "applicationNumber": "APP-2026-0102",
+      "targetType": "organization",
+      "targetId": "org-mfg-espadana-002",
+      "targetName": "صنایع زرین‌سازان اسپادانا (اصفهان)",
+      "targetTypeLabel": "کارگاه تولیدی و صنعتی طلا",
+      "applicantPhone": "031-32219400",
+      "province": "اصفهان",
+      "city": "اصفهان",
+      "currentTier": "tier_3_commercial",
+      "requestedTier": "tier_3_commercial",
+      "status": "approved",
+      "submissionDate": "2026-08-15T08:00:00.000Z",
+      "assignedReviewerId": "party-admin-001",
+      "assignedReviewerName": "علیرضا سفیدپور",
+      "riskScore": 16,
+      "reviewNotes": "پروانه بهره‌برداری وزارت صمت و ری‌گیری استاندارد تایید شد. وثیقه شمش طلا تودیع شد.",
+      "checklist": [
+        {
+          "stepKey": "basic_identity",
+          "labelFa": "اطلاعات هویتی و ثبت شرکت/فروشگاه",
+          "labelEn": "Basic Identity",
+          "completed": true,
+          "completedAt": "2026-08-15T09:00:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "phone_verified",
+          "labelFa": "راستی‌آزمایی خط تلفن ثابت و همراه",
+          "labelEn": "Phone Verified",
+          "completed": true,
+          "completedAt": "2026-08-15T09:30:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "guild_license",
+          "labelFa": "استعلام پروانه کسب از اتحادیه طلا",
+          "labelEn": "Guild License Verification",
+          "completed": true,
+          "completedAt": "2026-08-16T10:00:00.000Z",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "store_inspection",
+          "labelFa": "ارزیابی فیزیکی فروشگاه و کارگاه",
+          "labelEn": "Store/Workshop Inspection",
+          "completed": true,
+          "completedAt": "2026-08-17T11:00:00.000Z",
+          "completedBy": "محمدرضا شفیعی",
+          "notes": "بازدید از خط نورد و تولید النگو در اصفهان انجام شد",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "expert_call",
+          "labelFa": "تماس کارشناسی با مدیر واحد صنفی",
+          "labelEn": "Expert Call",
+          "completed": true,
+          "completedAt": "2026-08-17T14:00:00.000Z",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "agreement_accepted",
+          "labelFa": "امضای تعهدنامه و قوانین تجاری دیدار",
+          "labelEn": "Agreement Acceptance",
+          "completed": true,
+          "completedAt": "2026-08-18T09:00:00.000Z",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "financial_guarantee",
+          "labelFa": "تودیع وثیقه و اعتبارسنجی تراز مالی",
+          "labelEn": "Financial Guarantee",
+          "completed": true,
+          "completedAt": "2026-08-19T10:00:00.000Z",
+          "completedBy": "علیرضا سفیدپور",
+          "notes": "ضمانت‌نامه بانکی و تاییدیه ری‌گیری دریافت شد",
+          "requiredForTier": "tier_3_commercial"
+        }
+      ],
+      "verificationCalls": [
+        {
+          "calledAt": "2026-08-17T14:00:00.000Z",
+          "callerId": "party-admin-001",
+          "callerName": "علیرضا سفیدپور",
+          "contactNumber": "031-32219400",
+          "result": "successful",
+          "notes": "تایید ظرفیت ساخت ماهانه ۴۵ کیلوگرم طلا با عیار ۷۵۰."
+        }
+      ],
+      "commercialEntitlements": {
+        "targetId": "org-mfg-espadana-002",
+        "targetType": "organization",
+        "targetName": "صنایع زرین‌سازان اسپادانا (اصفهان)",
+        "tier": "tier_3_commercial",
+        "dailyGoldLimitGrams": 5000,
+        "creditAllowanceGrams": 1200,
+        "canAccessWholesaleMarket": true,
+        "canPlaceCustomOrders": true,
+        "canAccessConsignment": true,
+        "dealerMarginDiscountPercent": 4,
+        "isCommercialLocked": false,
+        "lastTierUpgradedAt": "2026-08-19T12:00:00.000Z"
+      },
+      "updatedAt": "2026-08-19T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "app-k02-003",
+      "applicationNumber": "APP-2026-0103",
+      "targetType": "organization",
+      "targetId": "org-who-pars-003",
+      "targetName": "بنکداری طلا و جواهر پارس زرین",
+      "targetTypeLabel": "توزیع‌کننده عمده بازار طلا",
+      "applicantPhone": "021-55621890",
+      "province": "تهران",
+      "city": "تهران",
+      "currentTier": "tier_2_business",
+      "requestedTier": "tier_3_commercial",
+      "status": "in_review",
+      "submissionDate": "2026-09-02T11:20:00.000Z",
+      "assignedReviewerId": "party-admin-001",
+      "assignedReviewerName": "علیرضا سفیدپور",
+      "riskScore": 24,
+      "reviewNotes": "درخواست افزایش سقف اعتبار معوق به ۲۰۰۰ گرم طلا به منظور بنکداری راسته طلافروشان.",
+      "checklist": [
+        {
+          "stepKey": "basic_identity",
+          "labelFa": "اطلاعات هویتی و ثبت شرکت/فروشگاه",
+          "labelEn": "Basic Identity",
+          "completed": true,
+          "completedAt": "2026-09-02T12:00:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "phone_verified",
+          "labelFa": "راستی‌آزمایی خط تلفن ثابت و همراه",
+          "labelEn": "Phone Verified",
+          "completed": true,
+          "completedAt": "2026-09-02T12:10:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "guild_license",
+          "labelFa": "استعلام پروانه کسب از اتحادیه طلا",
+          "labelEn": "Guild License Verification",
+          "completed": true,
+          "completedAt": "2026-09-03T09:00:00.000Z",
+          "notes": "پروانه بنکداری تایید گردید",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "store_inspection",
+          "labelFa": "ارزیابی فیزیکی فروشگاه و گاوصندوق",
+          "labelEn": "Store Inspection",
+          "completed": true,
+          "completedAt": "2026-09-04T11:00:00.000Z",
+          "notes": "خزانه مرکزی بازار بزرگ تهران ارزیابی شد",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "expert_call",
+          "labelFa": "تماس کارشناسی با مدیر واحد صنفی",
+          "labelEn": "Expert Call",
+          "completed": true,
+          "completedAt": "2026-09-05T10:30:00.000Z",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "agreement_accepted",
+          "labelFa": "امضای تعهدنامه و قوانین تجاری دیدار",
+          "labelEn": "Agreement Acceptance",
+          "completed": true,
+          "completedAt": "2026-09-05T15:00:00.000Z",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "financial_guarantee",
+          "labelFa": "تودیع وثیقه و اعتبارسنجی تراز مالی",
+          "labelEn": "Financial Guarantee",
+          "completed": false,
+          "notes": "منتظر ارائه چک ضمانت بنکداری یا سفته الکترونیک معتبر",
+          "requiredForTier": "tier_3_commercial"
+        }
+      ],
+      "verificationCalls": [
+        {
+          "calledAt": "2026-09-05T10:30:00.000Z",
+          "callerId": "party-admin-001",
+          "callerName": "علیرضا سفیدپور",
+          "contactNumber": "021-55621890",
+          "result": "successful",
+          "notes": "مذاکره درباره تامین تضمین بانکی برای سقف ۲ کیلوگرم طلای امانی."
+        }
+      ],
+      "commercialEntitlements": {
+        "targetId": "org-who-pars-003",
+        "targetType": "organization",
+        "targetName": "بنکداری طلا و جواهر پارس زرین",
+        "tier": "tier_2_business",
+        "dailyGoldLimitGrams": 1000,
+        "creditAllowanceGrams": 300,
+        "canAccessWholesaleMarket": true,
+        "canPlaceCustomOrders": true,
+        "canAccessConsignment": false,
+        "dealerMarginDiscountPercent": 3,
+        "isCommercialLocked": false,
+        "lastTierUpgradedAt": "2026-08-25T10:00:00.000Z"
+      },
+      "updatedAt": "2026-09-05T15:00:00.000Z",
+      "version": 2
+    },
+    {
+      "id": "app-k02-004",
+      "applicationNumber": "APP-2026-0104",
+      "targetType": "organization",
+      "targetId": "org-pending-zarinkoub",
+      "targetName": "گالری طلای زرین‌کوب بازار بزرگ",
+      "targetTypeLabel": "فروشگاه طلا و سکه",
+      "applicantPhone": "09123334455",
+      "province": "تهران",
+      "city": "تهران",
+      "currentTier": "tier_1_identity",
+      "requestedTier": "tier_2_business",
+      "status": "expert_assigned",
+      "submissionDate": "2026-09-06T09:15:00.000Z",
+      "assignedReviewerId": "party-agent-002",
+      "assignedReviewerName": "محمدرضا شفیعی (عامل میدانی)",
+      "riskScore": 32,
+      "reviewNotes": "مدارک جواز کسب و کد پستی بارگذاری شده است. پرونده جهت بازدید حضوری از مغازه به عامل میدانی ارجاع گردید.",
+      "checklist": [
+        {
+          "stepKey": "basic_identity",
+          "labelFa": "اطلاعات هویتی و ثبت شرکت/فروشگاه",
+          "labelEn": "Basic Identity",
+          "completed": true,
+          "completedAt": "2026-09-06T10:00:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "phone_verified",
+          "labelFa": "راستی‌آزمایی خط تلفن ثابت و همراه",
+          "labelEn": "Phone Verified",
+          "completed": true,
+          "completedAt": "2026-09-06T10:15:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "guild_license",
+          "labelFa": "استعلام پروانه کسب از اتحادیه طلا",
+          "labelEn": "Guild License Verification",
+          "completed": true,
+          "completedAt": "2026-09-06T14:00:00.000Z",
+          "notes": "جواز کسب شماره ۷۱۸۲۳ استعلام اولیه شد",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "store_inspection",
+          "labelFa": "ارزیابی فیزیکی فروشگاه و گاوصندوق",
+          "labelEn": "Store Inspection",
+          "completed": false,
+          "notes": "هماهنگی بازدید برای روز سه‌شنبه انجام خواهد شد",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "expert_call",
+          "labelFa": "تماس کارشناسی با مدیر واحد صنفی",
+          "labelEn": "Expert Call",
+          "completed": false,
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "agreement_accepted",
+          "labelFa": "امضای تعهدنامه و قوانین تجاری دیدار",
+          "labelEn": "Agreement Acceptance",
+          "completed": false,
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "financial_guarantee",
+          "labelFa": "تودیع وثیقه و اعتبارسنجی تراز مالی",
+          "labelEn": "Financial Guarantee",
+          "completed": false,
+          "requiredForTier": "tier_3_commercial"
+        }
+      ],
+      "verificationCalls": [],
+      "commercialEntitlements": {
+        "targetId": "org-pending-zarinkoub",
+        "targetType": "organization",
+        "targetName": "گالری طلای زرین‌کوب بازار بزرگ",
+        "tier": "tier_1_identity",
+        "dailyGoldLimitGrams": 50,
+        "creditAllowanceGrams": 0,
+        "canAccessWholesaleMarket": false,
+        "canPlaceCustomOrders": false,
+        "canAccessConsignment": false,
+        "dealerMarginDiscountPercent": 0,
+        "isCommercialLocked": false
+      },
+      "updatedAt": "2026-09-06T14:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "app-k02-005",
+      "applicationNumber": "APP-2026-0105",
+      "targetType": "party",
+      "targetId": "party-owner-afshar",
+      "targetName": "سعید افشار (طلافروشی ماه زرین اصفهان)",
+      "targetTypeLabel": "صاحب فروشگاه طلا",
+      "applicantPhone": "09135556677",
+      "province": "اصفهان",
+      "city": "اصفهان",
+      "currentTier": "tier_0_guest",
+      "requestedTier": "tier_2_business",
+      "status": "needs_amendment",
+      "submissionDate": "2026-09-05T14:30:00.000Z",
+      "assignedReviewerId": "party-admin-001",
+      "assignedReviewerName": "علیرضا سفیدپور",
+      "riskScore": 48,
+      "amendmentNotes": "تصویر پروانه کسب بارگذاری‌شده دارای انقضای تاریخ اعتبار است. لطفاً تمدیدیه اتحادیه طلا و جواهر اصفهان و گواهی مالیات بر ارزش افزوده بارگذاری شود.",
+      "checklist": [
+        {
+          "stepKey": "basic_identity",
+          "labelFa": "اطلاعات هویتی و ثبت شرکت/فروشگاه",
+          "labelEn": "Basic Identity",
+          "completed": true,
+          "completedAt": "2026-09-05T15:00:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "phone_verified",
+          "labelFa": "راستی‌آزمایی خط تلفن ثابت و همراه",
+          "labelEn": "Phone Verified",
+          "completed": true,
+          "completedAt": "2026-09-05T15:15:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "guild_license",
+          "labelFa": "استعلام پروانه کسب از اتحادیه طلا",
+          "labelEn": "Guild License Verification",
+          "completed": false,
+          "notes": "اعتبار جواز منقضی بود؛ درخواست اصلاح ثبت شد",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "store_inspection",
+          "labelFa": "ارزیابی فیزیکی فروشگاه و گاوصندوق",
+          "labelEn": "Store Inspection",
+          "completed": false,
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "expert_call",
+          "labelFa": "تماس کارشناسی با مدیر واحد صنفی",
+          "labelEn": "Expert Call",
+          "completed": true,
+          "completedAt": "2026-09-06T11:00:00.000Z",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "agreement_accepted",
+          "labelFa": "امضای تعهدنامه و قوانین تجاری دیدار",
+          "labelEn": "Agreement Acceptance",
+          "completed": false,
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "financial_guarantee",
+          "labelFa": "تودیع وثیقه و اعتبارسنجی تراز مالی",
+          "labelEn": "Financial Guarantee",
+          "completed": false,
+          "requiredForTier": "tier_3_commercial"
+        }
+      ],
+      "verificationCalls": [
+        {
+          "calledAt": "2026-09-06T11:00:00.000Z",
+          "callerId": "party-admin-001",
+          "callerName": "علیرضا سفیدپور",
+          "contactNumber": "09135556677",
+          "result": "needs_followup",
+          "notes": "با آقای افشار تماس گرفته شد؛ اعلام نمودند تمدیدیه پروانه صادر شده و تا فردا آپلود می‌نمایند."
+        }
+      ],
+      "commercialEntitlements": {
+        "targetId": "party-owner-afshar",
+        "targetType": "party",
+        "targetName": "سعید افشار",
+        "tier": "tier_0_guest",
+        "dailyGoldLimitGrams": 0,
+        "creditAllowanceGrams": 0,
+        "canAccessWholesaleMarket": false,
+        "canPlaceCustomOrders": false,
+        "canAccessConsignment": false,
+        "dealerMarginDiscountPercent": 0,
+        "isCommercialLocked": false
+      },
+      "updatedAt": "2026-09-06T11:30:00.000Z",
+      "version": 2
+    },
+    {
+      "id": "app-k02-006",
+      "applicationNumber": "APP-2026-0106",
+      "targetType": "party",
+      "targetId": "party-agent-naderi",
+      "targetName": "آرش نادری (نماینده بازاریابی و فروش)",
+      "targetTypeLabel": "عامل میدانی و ارزیاب",
+      "applicantPhone": "09127778899",
+      "province": "فارس",
+      "city": "شیراز",
+      "currentTier": "tier_1_identity",
+      "requestedTier": "tier_2_business",
+      "status": "in_review",
+      "submissionDate": "2026-09-07T08:00:00.000Z",
+      "assignedReviewerId": "party-admin-001",
+      "assignedReviewerName": "علیرضا سفیدپور",
+      "riskScore": 21,
+      "reviewNotes": "متقاضی عاملیت فروش و توزیع طلا در بازار وکیل شیراز. سوابق عدم سوءپیشینه و وثیقه ملکی ارزیابی شد.",
+      "checklist": [
+        {
+          "stepKey": "basic_identity",
+          "labelFa": "اطلاعات هویتی و ثبت شرکت/فروشگاه",
+          "labelEn": "Basic Identity",
+          "completed": true,
+          "completedAt": "2026-09-07T08:30:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "phone_verified",
+          "labelFa": "راستی‌آزمایی خط تلفن ثابت و همراه",
+          "labelEn": "Phone Verified",
+          "completed": true,
+          "completedAt": "2026-09-07T08:45:00.000Z",
+          "requiredForTier": "tier_1_identity"
+        },
+        {
+          "stepKey": "guild_license",
+          "labelFa": "استعلام پروانه کسب از اتحادیه طلا",
+          "labelEn": "Guild License Verification",
+          "completed": true,
+          "completedAt": "2026-09-07T10:00:00.000Z",
+          "notes": "سوابق فعالیت در بازار شیراز تایید شد",
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "store_inspection",
+          "labelFa": "ارزیابی فیزیکی فروشگاه و دفتر",
+          "labelEn": "Store/Office Inspection",
+          "completed": false,
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "expert_call",
+          "labelFa": "تماس کارشناسی با مدیر واحد صنفی",
+          "labelEn": "Expert Call",
+          "completed": false,
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "agreement_accepted",
+          "labelFa": "امضای تعهدنامه و قوانین تجاری دیدار",
+          "labelEn": "Agreement Acceptance",
+          "completed": false,
+          "requiredForTier": "tier_2_business"
+        },
+        {
+          "stepKey": "financial_guarantee",
+          "labelFa": "تودیع وثیقه و اعتبارسنجی تراز مالی",
+          "labelEn": "Financial Guarantee",
+          "completed": false,
+          "requiredForTier": "tier_3_commercial"
+        }
+      ],
+      "verificationCalls": [],
+      "commercialEntitlements": {
+        "targetId": "party-agent-naderi",
+        "targetType": "party",
+        "targetName": "آرش نادری",
+        "tier": "tier_1_identity",
+        "dailyGoldLimitGrams": 50,
+        "creditAllowanceGrams": 0,
+        "canAccessWholesaleMarket": false,
+        "canPlaceCustomOrders": false,
+        "canAccessConsignment": false,
+        "dealerMarginDiscountPercent": 1,
+        "isCommercialLocked": false
+      },
+      "updatedAt": "2026-09-07T10:00:00.000Z",
+      "version": 1
+    }
+  ],
+  "entitlements": {
+    "org-ret-parnia-004": {
+      "targetId": "org-ret-parnia-004",
+      "targetType": "organization",
+      "targetName": "طلا و جواهری پرنیا (سعادت‌آباد)",
+      "tier": "tier_2_business",
+      "dailyGoldLimitGrams": 500,
+      "creditAllowanceGrams": 100,
+      "canAccessWholesaleMarket": true,
+      "canPlaceCustomOrders": false,
+      "canAccessConsignment": false,
+      "dealerMarginDiscountPercent": 2.5,
+      "isCommercialLocked": false,
+      "lastTierUpgradedAt": "2026-08-22T09:00:00.000Z"
+    },
+    "org-mfg-espadana-002": {
+      "targetId": "org-mfg-espadana-002",
+      "targetType": "organization",
+      "targetName": "صنایع زرین‌سازان اسپادانا (اصفهان)",
+      "tier": "tier_3_commercial",
+      "dailyGoldLimitGrams": 5000,
+      "creditAllowanceGrams": 1200,
+      "canAccessWholesaleMarket": true,
+      "canPlaceCustomOrders": true,
+      "canAccessConsignment": true,
+      "dealerMarginDiscountPercent": 4,
+      "isCommercialLocked": false,
+      "lastTierUpgradedAt": "2026-08-19T12:00:00.000Z"
+    },
+    "org-who-pars-003": {
+      "targetId": "org-who-pars-003",
+      "targetType": "organization",
+      "targetName": "بنکداری طلا و جواهر پارس زرین",
+      "tier": "tier_2_business",
+      "dailyGoldLimitGrams": 1000,
+      "creditAllowanceGrams": 300,
+      "canAccessWholesaleMarket": true,
+      "canPlaceCustomOrders": true,
+      "canAccessConsignment": false,
+      "dealerMarginDiscountPercent": 3,
+      "isCommercialLocked": false,
+      "lastTierUpgradedAt": "2026-08-25T10:00:00.000Z"
+    },
+    "org-pending-zarinkoub": {
+      "targetId": "org-pending-zarinkoub",
+      "targetType": "organization",
+      "targetName": "گالری طلای زرین‌کوب بازار بزرگ",
+      "tier": "tier_1_identity",
+      "dailyGoldLimitGrams": 50,
+      "creditAllowanceGrams": 0,
+      "canAccessWholesaleMarket": false,
+      "canPlaceCustomOrders": false,
+      "canAccessConsignment": false,
+      "dealerMarginDiscountPercent": 0,
+      "isCommercialLocked": false
+    },
+    "party-owner-afshar": {
+      "targetId": "party-owner-afshar",
+      "targetType": "party",
+      "targetName": "سعید افشار",
+      "tier": "tier_0_guest",
+      "dailyGoldLimitGrams": 0,
+      "creditAllowanceGrams": 0,
+      "canAccessWholesaleMarket": false,
+      "canPlaceCustomOrders": false,
+      "canAccessConsignment": false,
+      "dealerMarginDiscountPercent": 0,
+      "isCommercialLocked": false
+    },
+    "party-agent-naderi": {
+      "targetId": "party-agent-naderi",
+      "targetType": "party",
+      "targetName": "آرش نادری",
+      "tier": "tier_1_identity",
+      "dailyGoldLimitGrams": 50,
+      "creditAllowanceGrams": 0,
+      "canAccessWholesaleMarket": false,
+      "canPlaceCustomOrders": false,
+      "canAccessConsignment": false,
+      "dealerMarginDiscountPercent": 1,
+      "isCommercialLocked": false
+    }
+  },
+  "tierStats": {
+    "tier0Count": 1,
+    "tier1Count": 2,
+    "tier2Count": 2,
+    "tier3Count": 1,
+    "pendingReviewCount": 3,
+    "needsAmendmentCount": 1,
+    "approvedThisMonth": 2,
+    "totalApplications": 6
+  },
+  "tierConfigs": {
+    "tier_0_guest": {
+      "tier": "tier_0_guest",
+      "titleFa": "سطح ۰: کاربر مهمان (مشاهده پایه)",
+      "titleEn": "Tier 0: Guest / Public Explorer",
+      "badgeColor": "#7E7E8F",
+      "descriptionFa": "دسترسی محدود به مشاهده کاتالوگ عمومی کالاها؛ بدون دسترسی به مظنه زنده، خرید و تسویه.",
+      "maxDailyGoldGrams": 0,
+      "maxCreditAllowanceGrams": 0,
+      "requiresGuildLicense": false,
+      "requiresFinancialClearance": false,
+      "allowedFeatures": [
+        "مشاهده کاتالوگ عمومی بدون قیمت",
+        "ثبت درخواست پرونده پذیرش"
+      ]
+    },
+    "tier_1_identity": {
+      "tier": "tier_1_identity",
+      "titleFa": "سطح ۱: احراز هویت فردی",
+      "titleEn": "Tier 1: Identity Verified",
+      "badgeColor": "#3E9B4F",
+      "descriptionFa": "شماره تلفن و کدملی تطبیق‌داده‌شده؛ امکان خرید نقدی خرد تا ۵۰ گرم طلا با دسترسی به مظنه زنده.",
+      "maxDailyGoldGrams": 50,
+      "maxCreditAllowanceGrams": 0,
+      "requiresGuildLicense": false,
+      "requiresFinancialClearance": false,
+      "allowedFeatures": [
+        "مشاهده نرخ مظنه و شمش زنده",
+        "خرید نقدی تا ۵۰ گرم طلا",
+        "کیف پول انفرادی طلا"
+      ]
+    },
+    "tier_2_business": {
+      "tier": "tier_2_business",
+      "titleFa": "سطح ۲: واحد صنفی معتبر (طلافروشی / بنکدار)",
+      "titleEn": "Tier 2: Verified Guild Business",
+      "badgeColor": "#C8A951",
+      "descriptionFa": "پروانه کسب معتبر از اتحادیه صنف طلا و جواهر احراز شده؛ دسترسی به تالار بنکداری و خرید اعتباری.",
+      "maxDailyGoldGrams": 500,
+      "maxCreditAllowanceGrams": 100,
+      "requiresGuildLicense": true,
+      "requiresFinancialClearance": false,
+      "allowedFeatures": [
+        "دسترسی به معاملات عمده و بنکداری",
+        "سفارش خرید تا ۵۰۰ گرم طلا در روز",
+        "اعتبار تسویه دفتری ۱۰۰ گرم طلای ۱۸ عیار",
+        "کارمزد تخفیفی همکار طلا",
+        "دسترسی به فهرست اجرت‌های ویژه سازندگان"
+      ]
+    },
+    "tier_3_commercial": {
+      "tier": "tier_3_commercial",
+      "titleFa": "سطح ۳: شریک تجاری ارشد / کارگاه منتخب",
+      "titleEn": "Tier 3: Commercial Partner & Manufacturer",
+      "badgeColor": "#E5C365",
+      "descriptionFa": "احراز کامل تضامین مالی و پروانه تولید صنعتی؛ سفارش نامحدود تا ۵۰۰۰ گرم، خط اعتباری K16 و سفارش ساخت مستقیم.",
+      "maxDailyGoldGrams": 5000,
+      "maxCreditAllowanceGrams": 1200,
+      "requiresGuildLicense": true,
+      "requiresFinancialClearance": true,
+      "allowedFeatures": [
+        "سفارش عمده تا ۵,۰۰۰ گرم در روز",
+        "خط اعتباری امانی ۱۲۰۰ گرم طلا در K16",
+        "سفارش مستقیم ساخت به کارگاه‌های تولیدی",
+        "دسترسی به تخصیص مستقیم شمش و آبشده",
+        "تخفیف حداکثری کارمزد سازندگان"
+      ]
+    }
+  }
+}
