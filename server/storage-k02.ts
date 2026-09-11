@@ -23,7 +23,7 @@ const K02_DATA_FILE = path.join(DATA_DIR, 'didar-k02-store.json');
 let cachedK02Data: K02DataPayload | null = null;
 let isSavingK02 = false;
 
-export const DEFAULT_TIER_CONFIGS: Record<TrustTier, TrustTierConfig> = {
+export const DEFAULT_TIER_CONFIGS: Record<string, TrustTierConfig> = {
   tier_0_guest: {
     tier: 'tier_0_guest',
     titleFa: 'سطح ۰: کاربر مهمان (مشاهده پایه)',
@@ -700,7 +700,7 @@ export async function makeOnboardingDecision(
       actorId: 'party-admin-001',
       actorName,
       action: 'status_change',
-      targetType: app.targetType,
+      targetType: (app.targetType === 'organization' ? 'organization' : 'party') as any,
       targetId: app.targetId,
       targetName: app.targetName,
       description: `تایید پرونده پذیرش ${app.applicationNumber} و ارتقای سطح اعتماد به «${tierCfg.titleFa}» با سقف خرید ${app.commercialEntitlements.dailyGoldLimitGrams} گرم و اعتبار ${app.commercialEntitlements.creditAllowanceGrams} گرم طلا`,
@@ -775,7 +775,7 @@ export async function updateCommercialEntitlements(
     actorId: 'party-admin-001',
     actorName,
     action: 'update',
-    targetType: ent.targetType,
+    targetType: (ent.targetType === 'organization' ? 'organization' : 'party') as any,
     targetId: ent.targetId,
     targetName: ent.targetName,
     description: `به‌روزرسانی حدود تجاری طلا: سقف خرید ${ent.dailyGoldLimitGrams}g، اعتبار ${ent.creditAllowanceGrams}g، وضعیت قفل: ${ent.isCommercialLocked ? 'مسدود' : 'فعال'}`,

@@ -10,6 +10,13 @@ import { createServer as createViteServer } from 'vite';
 import { k01Router } from './server/routes/k01.js';
 import { k02Router } from './server/routes/k02.js';
 import { k03Router } from './server/routes/k03.js';
+import { k04Router } from './server/routes/k04.js';
+import { k05Router } from './server/routes/k05.js';
+import { k06Router } from './server/routes/k06.js';
+import { k07Router } from './server/routes/k07.js';
+import { k08Router } from './server/routes/k08.js';
+import { k09Router } from './server/routes/k09.js';
+import { k10Router } from './server/routes/k10.js';
 import { checkSupabaseHealth } from './server/lib/supabase.js';
 import dotenv from 'dotenv';
 
@@ -38,7 +45,7 @@ async function startServer() {
       status: 'ok',
       service: 'didar-gold-kernel',
       version: '1.0.0',
-      activeDomains: ['K01', 'K02', 'K03'],
+      activeDomains: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10'],
       supabase: supabaseHealth,
       timestamp: new Date().toISOString()
     });
@@ -48,6 +55,13 @@ async function startServer() {
   app.use('/api/admin/kernel/k01', k01Router);
   app.use('/api/admin/kernel/k02', k02Router);
   app.use('/api/admin/kernel/k03', k03Router);
+  app.use('/api/admin/kernel/k04', k04Router);
+  app.use('/api/admin/kernel/k05', k05Router);
+  app.use('/api/admin/kernel/k06', k06Router);
+  app.use('/api/admin/kernel/k07', k07Router);
+  app.use('/api/admin/kernel/k08', k08Router);
+  app.use('/api/admin/kernel/k09', k09Router);
+  app.use('/api/admin/kernel/k10', k10Router);
 
   // Vite middleware setup
   if (process.env.NODE_ENV !== 'production') {

@@ -57,7 +57,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Approvals, Exceptions & Audit',
     titleAr: 'الموافقات والاستثناءات والتدقيق',
     titleFr: 'Approbations, Exceptions et Audit',
-    status: 'queued',
+    status: 'active',
     descriptionFa: 'تفکیک وظایف، زنجیره تصویب تصمیم‌های مالی و اعتباری، ثبت ردپای تغییرناپذیر',
     descriptionEn: 'Four-eyes approval gates, commercial exception workflows, and immutable audit logs'
   },
@@ -68,7 +68,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Products, Catalog & Supply Offers',
     titleAr: 'المنتجات والكتالوج وعروض التوريد',
     titleFr: 'Produits, Catalogue et Offres de Fourniture',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'تعریف مدل کالا، تنوع ساخت، گالری روایی و ثبت پیشنهادهای ظرفیت تولید توسط سازندگان',
     descriptionEn: 'SKU catalog models, design variants, narrative visual assets, and supplier capacity offers'
   },
@@ -79,7 +79,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Unique Item IDs, Passports & Provenance',
     titleAr: 'المعرف الفريد وجواز السفر الرقمي والأصالة',
     titleFr: 'Identifiants Uniques, Passeports et Traçabilité',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'شناسنامه دیجیتال هر قطعه فیزیکی طلا، وزن و عیار سنجش‌شده، شواهد QC و زنجیره مالکیت',
     descriptionEn: 'Individual piece UID, physical-digital passport, metallurgical assay, and provenance chain'
   },
@@ -90,7 +90,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Supplier Partnership Lifecycle',
     titleAr: 'دورة حياة شراكة الموردين',
     titleFr: 'Cycle de Vie du Partenariat Fournisseur',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'توافق‌های همکاری، قرارداد امانی و قطعی، تضمین‌های کیفی و شاخص‌های عملکرد سازنده',
     descriptionEn: 'Manufacturer and wholesaler contracts, consignment policies, and vendor performance'
   },
@@ -101,7 +101,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Supply Intake & Acceptance',
     titleAr: 'استلام وقبول التوريد',
     titleFr: 'Réception et Acceptation des Fournitures',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'کنترل فیزیکی محموله، سنجش عیار و وزن قطعات، قرنطینه و پذیرش رسمی در موجودی',
     descriptionEn: 'Consignment physical receipt, assay tolerance verification, quarantine, and inventory acceptance'
   },
@@ -112,18 +112,18 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Inventory, Locations, Custody & Bags',
     titleAr: 'المخزون والمواقع والعهدة وحقائب الوكلاء',
     titleFr: 'Inventaire, Emplacements, Garde et Sacs Agents',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'ردگیری مکان فیزیکی، خزانه مرکزی، امانت‌داری، کیف عاملان میدانی و انتقال مکان',
     descriptionEn: 'Multi-location vault tracking, physical custody, agent field bags, and transfer logs'
   },
   {
-    id: 'K010',
+    id: 'K10',
     code: 'K10',
     titleFa: 'سفارش، تخصیص و ایفای سفارش',
     titleEn: 'Orders, Allocation & Fulfillment',
     titleAr: 'الطلبات والتخصيص والتنفيذ',
     titleFr: 'Commandes, Allocation et Exécution',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'سفارش مستقیم خرده‌فروش، سفارش با عامل، تخصیص از انبار و کیف، اثبات تحویل POD',
     descriptionEn: 'Direct and assisted ordering, stock reservation, mixed fulfillment, and proof of delivery'
   },

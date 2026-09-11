@@ -58,9 +58,9 @@ export const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading = false, ac
           {/* Domain Readiness Indicator */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1E1E26] border border-[#2C2C38] text-xs text-[#B5B5C2]">
             <Layers className="w-3.5 h-3.5 text-[#C8A951]" />
-            <span>K01: <strong className="text-[#3DD68C]">{t.statusActive}</strong></span>
+            <span>K01-K09: <strong className="text-[#3DD68C]">فعال و متصل</strong></span>
             <span className="text-[#555562]">|</span>
-            <span>K02-K20: <span className="text-[#9E9EA8]">در صف پیاده‌سازی</span></span>
+            <span>K10-K20: <span className="text-[#9E9EA8]">در صف پیاده‌سازی</span></span>
           </div>
 
           {/* Language Switcher */}

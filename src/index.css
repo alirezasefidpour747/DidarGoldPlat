@@ -55,3 +55,33 @@
   box-shadow: 0 0 15px -3px rgba(200, 169, 81, 0.2);
 }
 
+/* Explicitly visible custom horizontal scrollbar for domains navigation */
+.custom-horizontal-scrollbar {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #4A4A60 #1A1A24;
+}
+
+.custom-horizontal-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.custom-horizontal-scrollbar::-webkit-scrollbar-track {
+  background: #14141C;
+  border-radius: 9999px;
+  margin: 0 4px;
+}
+
+.custom-horizontal-scrollbar::-webkit-scrollbar-thumb {
+  background: #3A3A4C;
+  border-radius: 9999px;
+  border: 1px solid #232330;
+  transition: background-color 0.2s ease;
+}
+
+.custom-horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #C8A951;
+}
+
+

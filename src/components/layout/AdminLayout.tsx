@@ -50,6 +50,27 @@ import {
   MfaPolicyRule
 } from '../../types/k03.js';
 
+// K04 Components
+import { K04Dashboard } from '../k04/K04Dashboard.js';
+
+// K05 Components
+import { K05Dashboard } from '../k05/K05Dashboard.js';
+
+// K06 Components
+import { K06Dashboard } from '../k06/K06Dashboard.js';
+
+// K07 Components
+import { K07Dashboard } from '../k07/K07Dashboard.js';
+
+// K08 Components
+import { K08Dashboard } from '../k08/K08Dashboard.js';
+
+// K09 Components
+import { K09Dashboard } from '../k09/K09Dashboard.js';
+
+// K10 Components
+import { K10Dashboard } from '../k10/K10Dashboard.js';
+
 import {
   Users,
   Building2,
@@ -67,7 +88,16 @@ type K01Tab = 'overview' | 'persons' | 'organizations' | 'memberships' | 'docume
 export const AdminLayout: React.FC = () => {
   const { t } = useI18n();
 
-  const [selectedDomain, setSelectedDomain] = useState<string>('K01');
+  const [selectedDomain, setSelectedDomain] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '').toUpperCase();
+      const allowed = ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09'];
+      if (allowed.includes(hash)) return hash;
+      const saved = localStorage.getItem('didar_selected_domain');
+      if (saved && allowed.includes(saved)) return saved;
+    }
+    return 'K07';
+  });
   const [activeTab, setActiveTab] = useState<K01Tab>('overview');
 
   // Server Data
@@ -125,6 +155,18 @@ export const AdminLayout: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').toUpperCase();
+      const allowed = ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09'];
+      if (allowed.includes(hash)) {
+        setSelectedDomain(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Handlers for Person
   const handleSavePerson = async (payload: Partial<Party>) => {
@@ -365,12 +407,18 @@ export const AdminLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#111115] text-[#EDEDED] flex flex-col font-sans selection:bg-[#C8A951] selection:text-[#141416]">
       {/* Platform Fixed Header */}
-      <Header activeDomainCount={3} />
+      <Header activeDomainCount={4} />
 
       {/* 20 Kernel Domains Navigation */}
       <DomainNavigation
         selectedDomain={selectedDomain}
-        onSelectDomain={(id) => setSelectedDomain(id)}
+        onSelectDomain={(id) => {
+          setSelectedDomain(id);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('didar_selected_domain', id);
+            window.location.hash = id;
+          }
+        }}
       />
 
       {/* Notification Toast */}
@@ -387,7 +435,28 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main Workspace Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
-        {selectedDomain === 'K03' ? (
+        {selectedDomain === 'K10' ? (
+          /* Domain K10 View: Orders, Allocation & Fulfillment */
+          <K10Dashboard />
+        ) : selectedDomain === 'K09' ? (
+          /* Domain K09 View: Inventory, Multi-Vault Locations, Custody & Bags */
+          <K09Dashboard />
+        ) : selectedDomain === 'K08' ? (
+          /* Domain K08 View: Supply Intake, Verification, Assay & Receipts */
+          <K08Dashboard />
+        ) : selectedDomain === 'K07' ? (
+          /* Domain K07 View: Supplier Partnerships, Consignment & Collateral */
+          <K07Dashboard />
+        ) : selectedDomain === 'K06' ? (
+          /* Domain K06 View: Unique Item IDs, Passports & Provenance */
+          <K06Dashboard />
+        ) : selectedDomain === 'K05' ? (
+          /* Domain K05 View: Products, Catalog & Supply Offers */
+          <K05Dashboard />
+        ) : selectedDomain === 'K04' ? (
+          /* Domain K04 View: Approvals, Exceptions & Immutable Audit */
+          <K04Dashboard />
+        ) : selectedDomain === 'K03' ? (
           /* Domain K03 View */
           k03Data ? (
             <K03Dashboard
