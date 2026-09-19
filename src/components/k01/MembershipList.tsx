@@ -5,26 +5,35 @@
 import React, { useState, useMemo } from 'react';
 import { Membership, EntityStatus } from '../../types/k01.js';
 import { useI18n } from '../../lib/i18n.js';
-import { Search, Link2, PlusCircle, CheckCircle, Clock, AlertTriangle, Archive, Edit3, ShieldAlert, Shield, Check } from 'lucide-react';
+import { Search, Link2, PlusCircle, CheckCircle, Clock, AlertTriangle, Archive, Edit3, ShieldAlert, Shield, Check, ShieldCheck } from 'lucide-react';
+import { MembershipRolesModal } from './MembershipRolesModal.js';
 
 interface MembershipListProps {
   memberships: Membership[];
   onEditMembership: (membership: Membership) => void;
   onStatusChange: (membership: Membership) => void;
   onOpenCreate: () => void;
+  onRefreshData?: () => void;
 }
 
 export const MembershipList: React.FC<MembershipListProps> = ({
   memberships,
   onEditMembership,
   onStatusChange,
-  onOpenCreate
+  onOpenCreate,
+  onRefreshData
 }) => {
   const { t } = useI18n();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [rbacModalMembership, setRbacModalMembership] = useState<Membership | null>(null);
+
+  // Distinct roles present across existing memberships
+  const distinctRoles = useMemo(() => {
+    return Array.from(new Set(memberships.map(m => m.roleKey).filter(Boolean)));
+  }, [memberships]);
 
   const filtered = useMemo(() => {
     return memberships.filter((m) => {
@@ -95,13 +104,12 @@ export const MembershipList: React.FC<MembershipListProps> = ({
             onChange={(e) => setSelectedRole(e.target.value)}
             className="bg-[#121217] border border-[#2C2C3C] text-xs text-[#CECED8] px-3 py-2.5 rounded-xl outline-none focus:border-[#C8A951]"
           >
-            <option value="all">تمام نقش‌ها</option>
-            <option value="owner">صاحب امتیاز (Owner)</option>
-            <option value="partner">شریک تجاری (Partner)</option>
-            <option value="agent">عامل رسمی (Agent)</option>
-            <option value="sales_staff">مسئول فروش (Sales Staff)</option>
-            <option value="accountant">مسئول حسابداری (Accountant)</option>
-            <option value="compliance_officer">مسئول انطباق (Compliance)</option>
+            <option value="all">تمام نقش‌ها ({memberships.length})</option>
+            {distinctRoles.map(rKey => (
+              <option key={rKey} value={rKey}>
+                {rKey}
+              </option>
+            ))}
           </select>
 
           <select
@@ -192,6 +200,14 @@ export const MembershipList: React.FC<MembershipListProps> = ({
                     <td className="py-3.5 px-4">
                       <div className="flex items-center justify-center gap-1.5">
                         <button
+                          onClick={() => setRbacModalMembership(m)}
+                          className="p-1.5 rounded-lg bg-[#C8A951]/15 hover:bg-[#C8A951]/25 text-[#C8A951] border border-[#C8A951]/30 transition-colors cursor-pointer"
+                          title="مدیریت نقش‌های عملیاتی RBAC"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
                           onClick={() => onEditMembership(m)}
                           className="p-1.5 rounded-lg bg-[#22222E] hover:bg-[#2C2C3C] text-[#EDEDED] border border-[#333346] transition-colors cursor-pointer"
                           title={t.edit}
@@ -215,6 +231,14 @@ export const MembershipList: React.FC<MembershipListProps> = ({
           </table>
         </div>
       </div>
+
+      {/* RBAC Role Management Modal */}
+      <MembershipRolesModal
+        isOpen={Boolean(rbacModalMembership)}
+        onClose={() => setRbacModalMembership(null)}
+        membership={rbacModalMembership}
+        onRefreshParent={onRefreshData}
+      />
     </div>
   );
 };

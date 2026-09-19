@@ -134,7 +134,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Retailer Lifecycle & Commercial Access',
     titleAr: 'دورة حياة تاجر التجزئة والوصول التجاري',
     titleFr: 'Cycle de Vie Détaillant et Accès Commercial',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'مدیریت رتبه تجاری، قلمرو فروشگاهی، شرایط سبد مجاز و سوابق خرید خرده‌فروشان',
     descriptionEn: 'Retail tier governance, localized territory entitlement, and commercial privilege management'
   },
@@ -145,7 +145,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Agents, Territories & Field Operations',
     titleAr: 'الوكلاء والمناطق والعمليات الميدانية',
     titleFr: 'Agents, Territoires et Opérations de Terrain',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'تخصیص قلمرو جغرافیایی، برنامه ویزیت، گالری سیار و اقدام به نیابت از خرده‌فروش',
     descriptionEn: 'Territory dispatching, visit scheduling, mobile showcases, and act-as proxy transactions'
   },
@@ -156,7 +156,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Gold Rates, Pricing & Invoices',
     titleAr: 'أسعار الذهب والتسعير والشروط والفواتير',
     titleFr: 'Cours de l\'Or, Tarification et Facturation',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'نرخ مرجع زنده بر اساس عیار، اجرت ساخت خرید و فروش، صورتحساب‌های رسمی و پیش‌فاکتور',
     descriptionEn: 'Spot pricing reference, manufacturing fee matrices, dynamic quote snapshots, and invoices'
   },
@@ -167,7 +167,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Credit & Exposure',
     titleAr: 'الائتمان والمخاطر والتعرض المالي',
     titleFr: 'Crédit et Exposition au Risque',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'سقف اعتبار ریالی و طلایی، تضامین سپرده‌شده، ریسک باز و فرآیند تصویب استثنا',
     descriptionEn: 'Dual-currency exposure caps, collateral tracking, credit tiering, and limit overrides'
   },
@@ -178,7 +178,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Financial Obligations & Dual Subledgers',
     titleAr: 'الالتزامات المالية ودفاتر الأستاذ المزدوجة',
     titleFr: 'Obligations Financières et Double Grand Livre',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'ثبت جداگانه مانده گرمی (طلا با عیار مشخص) و مانده پولی، تراز دفترها و طلب/بدهی طرف‌ها',
     descriptionEn: 'Linked gold-weight (grams at purity) and fiat currency subledgers with explicit balances'
   },
@@ -189,8 +189,8 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Settlement & Zarrin Reconciliation',
     titleAr: 'التسوية والمطابقة مع زرين',
     titleFr: 'Règlement et Rapprochement Zarrin',
-    status: 'planned',
-    descriptionFa: 'تسویه مالی و طلایی، تهاتر مطالبات، اتصال به نرم‌افزار حسابداری زرین و تطبیق مغایرت‌ها',
+    status: 'active',
+    descriptionFa: 'تسویه مالی و طلایی، تهاتر مطالبات، اتصال به وب‌سرویس جامع زرین و صف تطبیق اسناد بدون تکرار',
     descriptionEn: 'Settlement netting and execution, paired with Zarrin ERP reconciliation subdomains',
     subdivisions: [
       { code: 'K16A', titleFa: 'اجرای تسویه و تهاتر', titleEn: 'Settlement Execution & Netting' },
@@ -204,7 +204,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Consumer Ownership Claims & Warranty',
     titleAr: 'مطالبات ملكية المستهلك والضمان',
     titleFr: 'Revendications de Propriété Consommateur et Garantie',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'استعلام UID، ثبت مالکیت توسط خریدار نهایی، فعال‌سازی کارت ضمانت اصالت',
     descriptionEn: 'Consumer UID provenance scan, digital ownership registration, and warranty activation'
   },

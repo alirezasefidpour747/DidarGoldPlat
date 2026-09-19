@@ -5,6 +5,7 @@
 
 import { Router, Request, Response } from 'express';
 import { k10Storage } from '../storage-k10.js';
+import { k16Storage } from '../storage-k16.js';
 
 export const k10Router = Router();
 
@@ -91,6 +92,34 @@ k10Router.post('/orders/:id/dispatch', (req: Request, res: Response) => {
 k10Router.post('/orders/:id/verify-pod', (req: Request, res: Response) => {
   try {
     const order = k10Storage.verifyPod(req.params.id, req.body);
+
+    // K16 Zarrin automatic voucher generation with Idempotency Key (T02, T18)
+    try {
+      k16Storage.queueVoucherDocument({
+        idempotencyKey: `IDEMP-${order.orderCode}-DELIVERED`,
+        eventType: 'order_delivery_pod',
+        eventTypeFa: `ثبت سند فروش تحویل سفارش ${order.orderCode}`,
+        sourceDomain: 'K10',
+        referenceId: order.orderCode,
+        retailerOrgId: order.retailerOrgId,
+        retailerName: order.retailerNameFa,
+        items: order.items.map((it) => ({
+          uid: it.allocatedItemUids?.[0] || `UID-AUTO-${it.skuCode}`,
+          zarrinItemCode: `ZRN-GLD-${it.skuCode}`,
+          title: it.titleFa,
+          weightGrams: it.actualAllocatedWeightGrams || it.targetWeightGrams,
+          unitPriceRials: (it.unitEstimatedPriceToman || 0) * 10,
+          wageRials: (it.makingWageValue || 0) * 10,
+          totalRials: (it.totalEstimatedPriceToman || 0) * 10
+        })),
+        totalGoldWeightGrams: order.totalActualAllocatedWeightGrams || order.totalEstimatedWeightGrams,
+        totalAmountRials: (order.grandTotalToman || 0) * 10,
+        autoDispatch: true
+      });
+    } catch (zErr) {
+      console.error('K16 Zarrin auto-voucher notice:', zErr);
+    }
+
     res.json({ success: true, data: order });
   } catch (error: any) {
     res.status(400).json({ success: false, error: error.message });

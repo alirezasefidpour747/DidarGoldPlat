@@ -14,7 +14,7 @@ import {
   addDocument,
   saveStore
 } from '../storage.js';
-import { checkSupabaseHealth, syncSnapshotToSupabase } from '../lib/supabase.js';
+import { checkDatabaseHealth, createIndependentBackup } from '../lib/database.js';
 
 export const k01Router = Router();
 
@@ -262,25 +262,25 @@ k01Router.get('/export', (req: Request, res: Response) => {
   }
 });
 
-// GET /api/admin/kernel/k01/supabase/health
-k01Router.get('/supabase/health', async (req: Request, res: Response) => {
+// GET /api/admin/kernel/k01/database/health (and legacy alias /supabase/health)
+k01Router.get(['/database/health', '/supabase/health'], async (req: Request, res: Response) => {
   try {
-    const health = await checkSupabaseHealth();
+    const health = await checkDatabaseHealth();
     return res.json({ success: true, data: health });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'خطای بررسی سلامت Supabase';
-    return res.status(500).json({ error: { code: 'SUPABASE_HEALTH_ERROR', message } });
+    const message = err instanceof Error ? err.message : 'خطای بررسی سلامت پایگاه‌داده مستقل';
+    return res.status(500).json({ error: { code: 'DATABASE_HEALTH_ERROR', message } });
   }
 });
 
-// POST /api/admin/kernel/k01/supabase/sync
-k01Router.post('/supabase/sync', async (req: Request, res: Response) => {
+// POST /api/admin/kernel/k01/database/backup (and legacy alias /supabase/sync)
+k01Router.post(['/database/backup', '/supabase/sync'], async (req: Request, res: Response) => {
   try {
     const store = loadStore();
-    const result = await syncSnapshotToSupabase(store);
+    const result = await createIndependentBackup(store);
     return res.json(result);
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'خطای پشتیبان‌گیری ابری';
+    const message = err instanceof Error ? err.message : 'خطای پشتیبان‌گیری مستقل در سرور';
     return res.status(500).json({ success: false, message });
   }
 });

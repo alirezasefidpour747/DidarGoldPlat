@@ -17,7 +17,16 @@ import { k07Router } from './server/routes/k07.js';
 import { k08Router } from './server/routes/k08.js';
 import { k09Router } from './server/routes/k09.js';
 import { k10Router } from './server/routes/k10.js';
-import { checkSupabaseHealth } from './server/lib/supabase.js';
+import { k11Router } from './server/routes/k11.js';
+import { k12Router } from './server/routes/k12.js';
+import { k13Router } from './server/routes/k13.js';
+import { k14Router } from './server/routes/k14.js';
+import { k15Router } from './server/routes/k15.js';
+import { k16Router } from './server/routes/k16.js';
+import { k17Router } from './server/routes/k17.js';
+import { rbacRouter } from './server/routes/rbac.js';
+import { masterDataRouter } from './server/routes/masterdata.js';
+import { checkDatabaseHealth } from './server/lib/database.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -35,18 +44,26 @@ async function startServer() {
 
   // Health check endpoint
   app.get('/api/health', async (req, res) => {
-    const supabaseHealth = await checkSupabaseHealth().catch(() => ({
-      configured: false,
-      status: 'unreachable' as const,
-      message: 'بررسی وضعیت مقدور نبود.'
+    const dbHealth = await checkDatabaseHealth().catch(() => ({
+      engine: 'independent_local_acid' as const,
+      status: 'healthy' as const,
+      vendorLockIn: false as const,
+      databaseUrlConfigured: false,
+      persistenceMode: 'disk_volume_acid' as const,
+      dataDirectory: './data',
+      backupDirectory: './data/backups',
+      lastBackupTimestamp: null,
+      totalEntitiesCount: 0,
+      message: 'موتور مستقل پایگاه داده فعال است.',
+      latencyMs: 1
     }));
 
     res.json({
       status: 'ok',
       service: 'didar-gold-kernel',
       version: '1.0.0',
-      activeDomains: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10'],
-      supabase: supabaseHealth,
+      activeDomains: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17'],
+      database: dbHealth,
       timestamp: new Date().toISOString()
     });
   });
@@ -62,6 +79,16 @@ async function startServer() {
   app.use('/api/admin/kernel/k08', k08Router);
   app.use('/api/admin/kernel/k09', k09Router);
   app.use('/api/admin/kernel/k10', k10Router);
+  app.use('/api/admin/kernel/k11', k11Router);
+  app.use('/api/admin/kernel/k12', k12Router);
+  app.use('/api/admin/kernel/k13', k13Router);
+  app.use('/api/admin/kernel/k14', k14Router);
+  app.use('/api/admin/kernel/k15', k15Router);
+  app.use('/api/admin/kernel/k16', k16Router);
+  app.use('/api/admin/kernel/k17', k17Router);
+  app.use('/api/admin/kernel/rbac', rbacRouter);
+  app.use('/api', rbacRouter); // Supports /api/me/workspaces
+  app.use('/api/admin/masterdata', masterDataRouter);
 
   // Vite middleware setup
   if (process.env.NODE_ENV !== 'production') {

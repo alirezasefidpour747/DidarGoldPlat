@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   ShieldCheck,
@@ -48,16 +48,22 @@ export const ApplicationDetailDrawer: React.FC<ApplicationDetailDrawerProps> = (
   onLogVerificationCall,
   onMakeDecision
 }) => {
-  if (!application) return null;
-
   const [activeTab, setActiveTab] = useState<'checklist' | 'calls' | 'decision'>('checklist');
   const [callerName, setCallerName] = useState('کارشناس بررسی اعتبار دیدار');
   const [calledNumber, setCalledNumber] = useState('۰۲۱-۸۸۴۵۰۱۲۳');
   const [callNotes, setCallNotes] = useState('');
   const [callOutcome, setCallOutcome] = useState<'VERIFIED' | 'UNREACHABLE' | 'SUSPICIOUS'>('VERIFIED');
   const [decisionNotes, setDecisionNotes] = useState('');
-  const [selectedGrantedTier, setSelectedGrantedTier] = useState<TrustTier>(application.targetTier);
+  const [selectedGrantedTier, setSelectedGrantedTier] = useState<TrustTier>(application?.targetTier || 'tier_1_identity');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (application?.targetTier) {
+      setSelectedGrantedTier(application.targetTier);
+    }
+  }, [application?.id, application?.targetTier]);
+
+  if (!application) return null;
 
   const handleStepToggle = async (stepKey: ChecklistStepKey, currentCompleted: boolean) => {
     try {

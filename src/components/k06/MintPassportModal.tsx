@@ -333,24 +333,24 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto" dir="rtl">
+      <div className="relative w-full max-w-3xl bg-[#161622] rounded-2xl shadow-2xl border border-[#28283C] overflow-hidden my-8 text-white">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#151520] border-b border-[#28283C]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-              <Award className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-[#C8A951]/15 text-[#E5C365] border border-[#C8A951]/30 flex items-center justify-center">
+              <Award className="w-5 h-5 text-[#E5C365]" />
             </div>
             <div>
-              <h3 className="text-base font-bold">صدور گذرنامه دیجیتال قطعه طلا (Mint Passport)</h3>
-              <p className="text-xs text-amber-100">
+              <h3 className="text-base font-bold text-white">صدور گذرنامه دیجیتال قطعه طلا (Mint Passport)</h3>
+              <p className="text-xs text-[#A0A0B5]">
                 پلاک‌گذاری قطعه فیزیکی، ثبت وزن دقیق ترازو و زنجیره اصالت دیدار
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            className="p-1.5 text-[#A0A0B5] hover:text-white hover:bg-[#222234] rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -359,20 +359,20 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 max-h-[78vh] overflow-y-auto space-y-6">
           {error && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 bg-[#2A1517] border border-[#E5484D]/40 rounded-xl text-xs text-[#FF8B8B] flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-[#FF6B6B]" />
               <span>{error}</span>
             </div>
           )}
 
           {/* انتخاب ماهیت قطعه (مصنوعات ساخته‌شده vs طلای آبشده) */}
-          <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-200/80 space-y-2">
+          <div className="p-4 bg-[#191926] rounded-xl border border-[#28283C] space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-amber-600" />
+              <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-[#C8A951]" />
                 ماهیت و نوع قطعه جهت تعیین الزامات اعتبارسنجی:
               </span>
-              <span className="text-[11px] font-mono font-semibold text-amber-800">
+              <span className="text-[11px] font-mono font-semibold text-[#E5C365]">
                 {itemNature === 'melted_gold' ? 'حالت: طلای آبشده' : 'حالت: مصنوعات طلا'}
               </span>
             </div>
@@ -383,26 +383,26 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                 onClick={() => setItemNature('manufactured_jewelry')}
                 className={`p-3 rounded-xl border text-right transition-all flex items-start gap-2.5 ${
                   itemNature === 'manufactured_jewelry'
-                    ? 'bg-white border-amber-500 shadow-sm ring-2 ring-amber-400/20'
-                    : 'bg-white/60 border-slate-200 hover:bg-white text-slate-600'
+                    ? 'bg-[#161622] border-[#C8A951] shadow-sm ring-1 ring-[#C8A951]/40'
+                    : 'bg-[#191926] border-[#28283C] hover:bg-[#222234] text-[#A0A0B5]'
                 }`}
               >
                 <div
                   className={`w-4 h-4 rounded-full mt-0.5 border flex items-center justify-center shrink-0 ${
                     itemNature === 'manufactured_jewelry'
-                      ? 'border-amber-600 bg-amber-600 text-white'
-                      : 'border-slate-300'
+                      ? 'border-[#C8A951] bg-[#C8A951] text-[#141416]'
+                      : 'border-[#3D3D54]'
                   }`}
                 >
                   {itemNature === 'manufactured_jewelry' && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#141416]" />
                   )}
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">
+                  <div className="text-xs font-bold text-white">
                     مصنوعات ساخته‌شده طلا (النگو، انگشتر، دستبند و...)
                   </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
+                  <div className="text-[11px] text-[#A0A0B5] mt-0.5">
                     بخش ۳ (ری‌گیری و انگ) و بخش ۴ (QC) اختیاری است و الزامی ندارد.
                   </div>
                 </div>
@@ -413,29 +413,29 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                 onClick={() => setItemNature('melted_gold')}
                 className={`p-3 rounded-xl border text-right transition-all flex items-start gap-2.5 ${
                   itemNature === 'melted_gold'
-                    ? 'bg-amber-100/60 border-amber-600 shadow-sm ring-2 ring-amber-500/20'
-                    : 'bg-white/60 border-slate-200 hover:bg-white text-slate-600'
+                    ? 'bg-[#161622] border-[#C8A951] shadow-sm ring-1 ring-[#C8A951]/40'
+                    : 'bg-[#191926] border-[#28283C] hover:bg-[#222234] text-[#A0A0B5]'
                 }`}
               >
                 <div
                   className={`w-4 h-4 rounded-full mt-0.5 border flex items-center justify-center shrink-0 ${
                     itemNature === 'melted_gold'
-                      ? 'border-amber-600 bg-amber-600 text-white'
-                      : 'border-slate-300'
+                      ? 'border-[#C8A951] bg-[#C8A951] text-[#141416]'
+                      : 'border-[#3D3D54]'
                   }`}
                 >
                   {itemNature === 'melted_gold' && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#141416]" />
                   )}
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
                     <span>طلای آبشده و شمش کارگاهی</span>
-                    <span className="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.2 rounded font-mono font-bold">
+                    <span className="text-[10px] bg-[#E5484D]/15 text-[#FF6B6B] border border-[#E5484D]/30 px-1.5 py-0.2 rounded font-mono font-bold">
                       الزام ری‌گیری
                     </span>
                   </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
+                  <div className="text-[11px] text-[#A0A0B5] mt-0.5">
                     بخش ۳ (مشخصات ری‌گیری، پاکت، انگ و عیار) کاملاً اجباری می‌شود.
                   </div>
                 </div>
@@ -445,20 +445,20 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
           {/* ۱. کاتالوگ و مدل مرجع */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5 border-b pb-2">
-              <FileText className="w-4 h-4 text-amber-600" />
+            <h4 className="text-xs font-bold text-white flex items-center gap-1.5 border-b border-[#28283C] pb-2">
+              <FileText className="w-4 h-4 text-[#C8A951]" />
               ۱. انتخاب مدل کالا از کاتالوگ (K05)
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  مدل پایه کاتالوگ <span className="text-rose-500">*</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  مدل پایه کاتالوگ <span className="text-[#FF6B6B]">*</span>
                 </label>
                 <select
                   value={selectedProductId}
                   onChange={(e) => handleProductChange(e.target.value)}
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 >
                   {products.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -469,13 +469,13 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  تنوع / سایز ساخته‌شده <span className="text-rose-500">*</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  تنوع / سایز ساخته‌شده <span className="text-[#FF6B6B]">*</span>
                 </label>
                 <select
                   value={selectedVariantId}
                   onChange={(e) => handleVariantChange(e.target.value)}
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 >
                   {selectedProduct?.variants.map((v) => {
                     const minW =
@@ -499,15 +499,15 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
           {/* ۲. وزن دقیق و ترازوی کالیبره */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5 border-b pb-2">
-              <Scale className="w-4 h-4 text-blue-600" />
+            <h4 className="text-xs font-bold text-white flex items-center gap-1.5 border-b border-[#28283C] pb-2">
+              <Scale className="w-4 h-4 text-blue-400" />
               ۲. وزن‌سنجی فیزیکی با ترازوی دقیق تحلیلی
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  وزن واقعی قطعه روی ترازو (دقت ۰.۰۰۱ گرم) <span className="text-rose-500">*</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  وزن واقعی قطعه روی ترازو (دقت ۰.۰۰۱ گرم) <span className="text-[#FF6B6B]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -516,9 +516,9 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                     value={actualScaleWeightGrams}
                     onChange={(e) => setActualScaleWeightGrams(parseFloat(e.target.value) || 0)}
                     required
-                    className="w-full text-sm font-mono font-bold px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full text-sm font-mono font-bold px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                   />
-                  <span className="absolute left-3 top-2 text-xs text-slate-400">گرم</span>
+                  <span className="absolute left-3 top-2 text-xs text-[#828299]">گرم</span>
                 </div>
                 {selectedVariant && (() => {
                   const minW =
@@ -534,29 +534,29 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                     ((actualScaleWeightGrams || 0) - (selectedVariant.targetWeightGrams || 0)).toFixed(3)
                   );
                   return (
-                    <div className="mt-2 p-2.5 rounded-xl bg-slate-100/80 border border-slate-200/90 text-[11px] space-y-1">
+                    <div className="mt-2 p-2.5 rounded-xl bg-[#191926] border border-[#28283C] text-[11px] space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-600">رنج استاندارد این SKU در کاتالوگ:</span>
-                        <span className="font-mono font-bold text-amber-700">
+                        <span className="text-[#A0A0B5]">رنج استاندارد این SKU در کاتالوگ:</span>
+                        <span className="font-mono font-bold text-[#E5C365]">
                           {minW.toFixed(2)} الی {maxW.toFixed(2)} گرم
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-slate-500">
+                      <div className="flex items-center justify-between text-[#828299]">
                         <span>میانگین اسمی رنج:</span>
                         <span className="font-mono">
                           {selectedVariant.targetWeightGrams}g (دلتای توزین: {delta >= 0 ? `+${delta}` : delta}g)
                         </span>
                       </div>
-                      <div className="pt-1 border-t border-slate-200">
+                      <div className="pt-1 border-t border-[#28283C]">
                         {actualScaleWeightGrams > 0 &&
                           (inRange ? (
-                            <span className="inline-flex items-center gap-1 font-semibold text-emerald-700">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                            <span className="inline-flex items-center gap-1 font-semibold text-[#3DD68C]">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#3DD68C]" />
                               وزن قطعه فیزیکی درون رنج وزنی مجاز SKU است.
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 font-semibold text-amber-800">
-                              <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                            <span className="inline-flex items-center gap-1 font-semibold text-[#F5A623]">
+                              <AlertTriangle className="w-3.5 h-3.5 text-[#F5A623]" />
                               وزن قطعه فیزیکی خارج از رنج کاتالوگ ({minW.toFixed(2)} تا {maxW.toFixed(2)} گرم) است.
                             </span>
                           ))}
@@ -567,14 +567,14 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
                   مشخصات ترازوی تحلیلی و کالیبراسیون
                 </label>
                 <input
                   type="text"
                   value={scaleModel}
                   onChange={(e) => setScaleModel(e.target.value)}
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 />
               </div>
             </div>
@@ -582,18 +582,18 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
           {/* ۳. مشخصات ری‌گیری و انگ رسمی (صرفاً برای آبشده اجباری، برای سایر اختیاری) */}
           <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between border-b pb-2 gap-2">
-              <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <div className="flex flex-wrap items-center justify-between border-b border-[#28283C] pb-2 gap-2">
+              <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 ۳. مشخصات ری‌گیری و انگ رسمی (Assay & Hallmark)
               </h4>
               {itemNature === 'melted_gold' ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#E5484D]/15 text-[#FF6B6B] border border-[#E5484D]/30">
                   <AlertTriangle className="w-3 h-3" />
                   اجباری برای طلای آبشده
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                   <CheckCircle2 className="w-3 h-3" />
                   اختیاری برای مصنوعات ساخته‌شده
                 </span>
@@ -602,15 +602,15 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
             {/* راهنمای شرطی */}
             {itemNature === 'melted_gold' ? (
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2">
-                <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="p-3 bg-[#C8A951]/10 border border-[#C8A951]/30 rounded-xl text-xs text-[#E5C365] flex items-start gap-2">
+                <Info className="w-4 h-4 text-[#C8A951] shrink-0 mt-0.5" />
                 <span>
                   <strong>الزام قانونی ری‌گیری آبشده:</strong> با توجه به انتخاب طلای آبشده، ثبت نام آزمایشگاه ری‌گیری، شماره پاکت، کد انگ رسمی و عیار قطعی الزامی است.
                 </span>
               </div>
             ) : (
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 flex items-start gap-2">
-                <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+              <div className="p-2.5 bg-[#191926] border border-[#28283C] rounded-xl text-xs text-[#A0A0B5] flex items-start gap-2">
+                <Info className="w-4 h-4 text-[#828299] shrink-0 mt-0.5" />
                 <span>
                   برای مصنوعات کار ساخته (النگو، انگشتر، زنجیر و...) نیازی به اجباری بودن اطلاعات ری‌گیری نیست و فیلدها اختیاری می‌باشند.
                 </span>
@@ -619,12 +619,12 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
                   آزمایشگاه ری‌گیری{' '}
                   {itemNature === 'melted_gold' ? (
-                    <span className="text-rose-500 font-bold">* الزامی</span>
+                    <span className="text-[#FF6B6B] font-bold">* الزامی</span>
                   ) : (
-                    <span className="text-slate-400">(اختیاری)</span>
+                    <span className="text-[#828299]">(اختیاری)</span>
                   )}
                 </label>
                 <input
@@ -632,17 +632,17 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                   value={assayLabName}
                   onChange={(e) => setAssayLabName(e.target.value)}
                   placeholder={itemNature === 'melted_gold' ? 'مثال: آزمایشگاه ری‌گیری زرفام تهران' : 'اختیاری - عیار استاندارد سازنده'}
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
                   کد پاکت ری‌گیری{' '}
                   {itemNature === 'melted_gold' ? (
-                    <span className="text-rose-500 font-bold">* الزامی</span>
+                    <span className="text-[#FF6B6B] font-bold">* الزامی</span>
                   ) : (
-                    <span className="text-slate-400">(اختیاری)</span>
+                    <span className="text-[#828299]">(اختیاری)</span>
                   )}
                 </label>
                 <input
@@ -650,17 +650,17 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                   value={assayPacketCode}
                   onChange={(e) => setAssayPacketCode(e.target.value)}
                   placeholder={itemNature === 'melted_gold' ? 'مثال: ZRF-84210' : 'اختیاری'}
-                  className="w-full text-xs font-mono px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full text-xs font-mono px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
                   کد انگ رسمی (Hallmark){' '}
                   {itemNature === 'melted_gold' ? (
-                    <span className="text-rose-500 font-bold">* الزامی</span>
+                    <span className="text-[#FF6B6B] font-bold">* الزامی</span>
                   ) : (
-                    <span className="text-slate-400">(اختیاری)</span>
+                    <span className="text-[#828299]">(اختیاری)</span>
                   )}
                 </label>
                 <input
@@ -668,17 +668,17 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                   value={hallmarkCode}
                   onChange={(e) => setHallmarkCode(e.target.value)}
                   placeholder={itemNature === 'melted_gold' ? 'مثال: T750-ZRF94' : 'اختیاری (مثال: T750)'}
-                  className="w-full text-xs font-mono font-bold px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full text-xs font-mono font-bold px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
                   عیار قطعی سنجش‌شده (Fineness){' '}
                   {itemNature === 'melted_gold' ? (
-                    <span className="text-rose-500 font-bold">* الزامی</span>
+                    <span className="text-[#FF6B6B] font-bold">* الزامی</span>
                   ) : (
-                    <span className="text-slate-400">(اختیاری - پیش‌فرض ۷۵۰)</span>
+                    <span className="text-[#828299]">(اختیاری - پیش‌فرض ۷۵۰)</span>
                   )}
                 </label>
                 <div className="relative">
@@ -688,20 +688,20 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                     value={certifiedFineness}
                     onChange={(e) => setCertifiedFineness(e.target.value)}
                     placeholder="750.4"
-                    className="w-full text-sm font-mono font-bold px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full text-sm font-mono font-bold px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                   />
-                  <span className="absolute left-3 top-2 text-xs text-slate-400">/ ۱۰۰۰</span>
+                  <span className="absolute left-3 top-2 text-xs text-[#828299]">/ ۱۰۰۰</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  روش آزمایش عیارسنجی <span className="text-slate-400">(اختیاری)</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  روش آزمایش عیارسنجی <span className="text-[#828299]">(اختیاری)</span>
                 </label>
                 <select
                   value={assayMethod}
                   onChange={(e) => setAssayMethod(e.target.value as any)}
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 >
                   <option value="both">کوپلاسیون رسمی + آنالیز XRF</option>
                   <option value="cupellation_fire_assay">کوپلاسیون خالص (Fire Assay)</option>
@@ -710,15 +710,15 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  کارشناس ری‌گیر / ثبت‌کننده <span className="text-slate-400">(اختیاری)</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  کارشناس ری‌گیر / ثبت‌کننده <span className="text-[#828299]">(اختیاری)</span>
                 </label>
                 <input
                   type="text"
                   value={inspectorName}
                   onChange={(e) => setInspectorName(e.target.value)}
                   placeholder="اختیاری"
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 />
               </div>
             </div>
@@ -726,33 +726,33 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
           {/* ۴. بازرسی کنترل کیفیت و ثبت شواهد (همه فیلدها اختیاری است) */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2">
-              <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <Camera className="w-4 h-4 text-purple-600" />
+            <div className="flex items-center justify-between border-b border-[#28283C] pb-2">
+              <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Camera className="w-4 h-4 text-purple-400" />
                 ۴. بازرسی کنترل کیفیت و ثبت شواهد تصویری (QC & Macro Evidence)
               </h4>
-              <span className="text-[11px] font-medium text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-medium text-purple-400 bg-purple-500/15 border border-purple-500/30 px-2 py-0.5 rounded-full">
                 همه فیلدها اختیاری است
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  بازرس QC <span className="text-slate-400">(اختیاری)</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  بازرس QC <span className="text-[#828299]">(اختیاری)</span>
                 </label>
                 <input
                   type="text"
                   value={qcInspectorName}
                   onChange={(e) => setQcInspectorName(e.target.value)}
                   placeholder="اختیاری"
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  امتیاز کیفی (از ۱۰۰) <span className="text-slate-400">(اختیاری)</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  امتیاز کیفی (از ۱۰۰) <span className="text-[#828299]">(اختیاری)</span>
                 </label>
                 <input
                   type="number"
@@ -761,47 +761,47 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                   value={qcScore}
                   onChange={(e) => setQcScore(e.target.value)}
                   placeholder="99.2"
-                  className="w-full text-xs font-mono font-bold px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"
+                  className="w-full text-xs font-mono font-bold px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  کیفیت پرداخت و سطح <span className="text-slate-400">(اختیاری)</span>
+                <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                  کیفیت پرداخت و سطح <span className="text-[#828299]">(اختیاری)</span>
                 </label>
                 <input
                   type="text"
                   value={surfaceFinishGradeFa}
                   onChange={(e) => setSurfaceFinishGradeFa(e.target.value)}
                   placeholder="سوپرپولیش آینه‌ای ممتاز"
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"
+                  className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
-                توضیحات و یادداشت فنی QC <span className="text-slate-400">(اختیاری)</span>
+              <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                توضیحات و یادداشت فنی QC <span className="text-[#828299]">(اختیاری)</span>
               </label>
               <textarea
                 rows={2}
                 value={qcNotes}
                 onChange={(e) => setQcNotes(e.target.value)}
                 placeholder="یادداشت‌های بازرس کنترل کیفی (اختیاری)"
-                className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg"
+                className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white"
               />
             </div>
 
             {/* گالری تصاویر ماکرو - چند عکس */}
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+            <div className="p-4 bg-[#191926] rounded-xl border border-[#28283C] space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-purple-600" />
-                  <span className="text-xs font-bold text-slate-800">
+                  <ImageIcon className="w-4 h-4 text-purple-400" />
+                  <span className="text-xs font-bold text-white">
                     آلبوم تصاویر ماکرو از انگ، بافت و سطوح ({macroPhotos.length} عکس ثبت‌شده)
                   </span>
                 </div>
-                <span className="text-[11px] text-slate-500 font-medium">
+                <span className="text-[11px] text-[#A0A0B5] font-medium">
                   ثبت چند عکس با بزرگ‌نمایی‌های مختلف مجاز است
                 </span>
               </div>
@@ -812,13 +812,13 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                   {macroPhotos.map((photo, idx) => (
                     <div
                       key={photo.id || idx}
-                      className="p-2.5 bg-white rounded-lg border border-slate-200 flex items-center justify-between gap-3 shadow-2xs"
+                      className="p-2.5 bg-[#161622] rounded-lg border border-[#28283C] flex items-center justify-between gap-3 shadow-sm"
                     >
                       <div className="flex items-center gap-2.5 overflow-hidden">
                         <img
                           src={photo.url}
                           alt={photo.titleFa}
-                          className="w-12 h-12 rounded-lg object-cover border border-slate-200 shrink-0 bg-slate-100"
+                          className="w-12 h-12 rounded-lg object-cover border border-[#28283C] shrink-0 bg-black"
                           referrerPolicy="no-referrer"
                           onError={(e) => {
                             (e.currentTarget as HTMLImageElement).src =
@@ -826,13 +826,13 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                           }}
                         />
                         <div className="min-w-0">
-                          <div className="text-xs font-bold text-slate-900 truncate">
+                          <div className="text-xs font-bold text-white truncate">
                             {photo.titleFa}
                           </div>
-                          <div className="text-[11px] text-slate-500 truncate">
+                          <div className="text-[11px] text-[#A0A0B5] truncate">
                             {photo.captureArea}
                           </div>
-                          <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 text-[10px] font-mono font-bold">
+                          <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-400 border border-purple-500/30 text-[10px] font-mono font-bold">
                             {photo.magnification}
                           </span>
                         </div>
@@ -841,7 +841,7 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleRemoveMacroPhoto(photo.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors shrink-0"
+                        className="p-1.5 text-[#828299] hover:text-[#FF6B6B] hover:bg-[#2A1517] rounded-lg transition-colors shrink-0"
                         title="حذف تصویر"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -850,14 +850,14 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                   ))}
                 </div>
               ) : (
-                <div className="p-4 text-center text-slate-400 text-xs bg-white/70 rounded-lg border border-dashed border-slate-300">
+                <div className="p-4 text-center text-[#828299] text-xs bg-[#161622] rounded-lg border border-dashed border-[#28283C]">
                   هنوز هیچ تصویر ماکرویی اضافه نشده است (ثبت تصویر اختیاری است).
                 </div>
               )}
 
               {/* فرم افزودن عکس ماکرو جدید */}
-              <div className="pt-2 border-t border-slate-200/80 space-y-2">
-                <span className="text-[11px] font-bold text-slate-700 block">
+              <div className="pt-2 border-t border-[#28283C] space-y-2">
+                <span className="text-[11px] font-bold text-[#EDEDED] block">
                   افزودن عکس ماکرو جدید:
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
@@ -867,7 +867,7 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                       value={newMacroUrl}
                       onChange={(e) => setNewMacroUrl(e.target.value)}
                       placeholder="آدرس تصویر (URL: https://...)"
-                      className="w-full text-xs font-mono px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      className="w-full text-xs font-mono px-3 py-1.5 bg-[#161622] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                     />
                   </div>
                   <div>
@@ -876,14 +876,14 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                       value={newMacroTitle}
                       onChange={(e) => setNewMacroTitle(e.target.value)}
                       placeholder="عنوان (مثال: انگ ری‌گیری)"
-                      className="w-full text-xs px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      className="w-full text-xs px-3 py-1.5 bg-[#161622] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                     />
                   </div>
                   <div>
                     <select
                       value={newMacroMag}
                       onChange={(e) => setNewMacroMag(e.target.value)}
-                      className="w-full text-xs px-2 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none"
+                      className="w-full text-xs px-2 py-1.5 bg-[#161622] border border-[#28283C] rounded-lg text-white focus:outline-none"
                     >
                       <option value="50X Micro">بزرگ‌نمایی 50X میکروسکوپی</option>
                       <option value="40X Optical">بزرگ‌نمایی 40X اپتیکال</option>
@@ -895,36 +895,36 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                   {/* نمونه‌های آماده برای تست سریع کاربر */}
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
-                    <span className="flex items-center gap-1 text-slate-600 font-semibold">
-                      <Sparkles className="w-3 h-3 text-amber-500" />
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-[#A0A0B5]">
+                    <span className="flex items-center gap-1 text-[#E5C365] font-semibold">
+                      <Sparkles className="w-3 h-3 text-[#C8A951]" />
                       درج نمونه سریع:
                     </span>
                     <button
                       type="button"
                       onClick={() => handleQuickAddSampleMacro('assay')}
-                      className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 transition-colors"
+                      className="px-2 py-0.5 bg-[#161622] hover:bg-[#222234] border border-[#28283C] rounded text-[#EDEDED] transition-colors"
                     >
                       + انگ ری‌گیری (50X)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleQuickAddSampleMacro('weld')}
-                      className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 transition-colors"
+                      className="px-2 py-0.5 bg-[#161622] hover:bg-[#222234] border border-[#28283C] rounded text-[#EDEDED] transition-colors"
                     >
                       + اتصال قفل (30X)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleQuickAddSampleMacro('surface')}
-                      className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 transition-colors"
+                      className="px-2 py-0.5 bg-[#161622] hover:bg-[#222234] border border-[#28283C] rounded text-[#EDEDED] transition-colors"
                     >
                       + پرداخت سطحی (40X)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleQuickAddSampleMacro('ingot')}
-                      className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 transition-colors"
+                      className="px-2 py-0.5 bg-[#161622] hover:bg-[#222234] border border-[#28283C] rounded text-[#EDEDED] transition-colors"
                     >
                       + شمش آبشده (20X)
                     </button>
@@ -934,7 +934,7 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                     type="button"
                     onClick={handleAddMacroPhoto}
                     disabled={!newMacroUrl.trim()}
-                    className="px-3 py-1 text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-40 flex items-center gap-1 shadow-2xs"
+                    className="px-3 py-1 text-xs font-semibold bg-[#C8A951] hover:bg-[#D9B961] text-[#141416] rounded-lg transition-colors disabled:opacity-40 flex items-center gap-1 font-bold shadow-sm"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     افزودن تصویر به آلبوم
@@ -945,14 +945,14 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-            <div className="text-[11px] text-slate-500">
+          <div className="flex items-center justify-between pt-4 border-t border-[#28283C]">
+            <div className="text-[11px] text-[#A0A0B5]">
               {itemNature === 'melted_gold' ? (
-                <span className="text-amber-800 font-semibold">
+                <span className="text-[#E5C365] font-semibold">
                   در حالت طلای آبشده، درج ری‌گیری و کد انگ الزامی است.
                 </span>
               ) : (
-                <span className="text-emerald-700 font-semibold">
+                <span className="text-[#3DD68C] font-semibold">
                   در حالت مصنوعات طلا، کلیه فیلدهای ری‌گیری و QC اختیاری است.
                 </span>
               )}
@@ -962,14 +962,14 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 text-xs font-semibold text-[#EDEDED] bg-[#191926] border border-[#28283C] rounded-lg hover:bg-[#222234] transition-colors"
               >
                 انصراف
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-lg transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
+                className="px-6 py-2 text-xs font-bold text-[#141416] bg-[#C8A951] hover:bg-[#D9B961] rounded-lg transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
               >
                 {loading ? (
                   <span>در حال صدور...</span>

@@ -71,6 +71,31 @@ import { K09Dashboard } from '../k09/K09Dashboard.js';
 // K10 Components
 import { K10Dashboard } from '../k10/K10Dashboard.js';
 
+// K11 Components
+import { K11Dashboard } from '../k11/K11Dashboard.js';
+
+// K12 Components
+import { K12Dashboard } from '../k12/K12Dashboard.js';
+
+// K13 Components
+import { K13Dashboard } from '../k13/K13Dashboard.js';
+
+// K14 Components
+import { K14Dashboard } from '../k14/K14Dashboard.js';
+
+// K15 Components
+import { K15Dashboard } from '../k15/K15Dashboard.js';
+
+// K16 Components
+import { K16Dashboard } from '../k16/K16Dashboard.js';
+
+// K17 Components
+import { K17Dashboard } from '../k17/K17Dashboard.js';
+
+// Master Data Management Component
+import { MasterDataDashboard } from '../masterData/MasterDataDashboard.js';
+import { RolesCatalogViewer } from '../k01/RolesCatalogViewer.js';
+
 import {
   Users,
   Building2,
@@ -80,10 +105,11 @@ import {
   LayoutDashboard,
   RefreshCw,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  ShieldCheck
 } from 'lucide-react';
 
-type K01Tab = 'overview' | 'persons' | 'organizations' | 'memberships' | 'documents' | 'audit';
+type K01Tab = 'overview' | 'persons' | 'organizations' | 'memberships' | 'roles_catalog' | 'documents' | 'audit';
 
 export const AdminLayout: React.FC = () => {
   const { t } = useI18n();
@@ -91,14 +117,26 @@ export const AdminLayout: React.FC = () => {
   const [selectedDomain, setSelectedDomain] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace('#', '').toUpperCase();
-      const allowed = ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09'];
+      const allowed = ['MDM', 'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16'];
       if (allowed.includes(hash)) return hash;
       const saved = localStorage.getItem('didar_selected_domain');
       if (saved && allowed.includes(saved)) return saved;
     }
-    return 'K07';
+    return 'K15';
   });
   const [activeTab, setActiveTab] = useState<K01Tab>('overview');
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').toUpperCase();
+      const allowed = ['MDM', 'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16'];
+      if (allowed.includes(hash)) {
+        setSelectedDomain(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Server Data
   const [data, setData] = useState<K01DataPayload | null>(null);
@@ -159,7 +197,7 @@ export const AdminLayout: React.FC = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '').toUpperCase();
-      const allowed = ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09'];
+      const allowed = ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'MDM'];
       if (allowed.includes(hash)) {
         setSelectedDomain(hash);
       }
@@ -407,7 +445,17 @@ export const AdminLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#111115] text-[#EDEDED] flex flex-col font-sans selection:bg-[#C8A951] selection:text-[#141416]">
       {/* Platform Fixed Header */}
-      <Header activeDomainCount={4} />
+      <Header
+        activeDomainCount={11}
+        currentDomain={selectedDomain}
+        onNavigateDomain={(id) => {
+          setSelectedDomain(id);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('didar_selected_domain', id);
+            window.location.hash = id;
+          }
+        }}
+      />
 
       {/* 20 Kernel Domains Navigation */}
       <DomainNavigation
@@ -435,7 +483,31 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main Workspace Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
-        {selectedDomain === 'K10' ? (
+        {selectedDomain === 'MDM' ? (
+          /* Master Data Management Domain */
+          <MasterDataDashboard onBackToDomain={(dom) => setSelectedDomain(dom)} />
+        ) : selectedDomain === 'K17' ? (
+          /* Domain K17 View: Consumer Ownership Claims, Digital Provenance & Warranty */
+          <K17Dashboard />
+        ) : selectedDomain === 'K16' ? (
+          /* Domain K16 View: Settlement & Zarrin Reconciliation */
+          <K16Dashboard />
+        ) : selectedDomain === 'K15' ? (
+          /* Domain K15 View: Financial Obligations & Dual Subledgers */
+          <K15Dashboard />
+        ) : selectedDomain === 'K14' ? (
+          /* Domain K14 View: Credit & Exposure Governance */
+          <K14Dashboard />
+        ) : selectedDomain === 'K13' ? (
+          /* Domain K13 View: Gold Rates, Pricing, Terms & Invoicing */
+          <K13Dashboard />
+        ) : selectedDomain === 'K12' ? (
+          /* Domain K12 View: Agents, Territories & Field Operations */
+          <K12Dashboard />
+        ) : selectedDomain === 'K11' ? (
+          /* Domain K11 View: Retailer Lifecycle & Commercial Access */
+          <K11Dashboard />
+        ) : selectedDomain === 'K10' ? (
           /* Domain K10 View: Orders, Allocation & Fulfillment */
           <K10Dashboard />
         ) : selectedDomain === 'K09' ? (
@@ -485,6 +557,7 @@ export const AdminLayout: React.FC = () => {
               k02Data={k02Data}
               persons={data?.persons || []}
               organizations={data?.organizations || []}
+              memberships={data?.memberships || []}
               onRefresh={loadK02Data}
               onCreateApplication={handleCreateK02Application}
               onUpdateChecklistStep={handleUpdateK02ChecklistStep}
@@ -509,6 +582,7 @@ export const AdminLayout: React.FC = () => {
                   { id: 'persons', label: t.persons, icon: Users, count: data?.persons.length },
                   { id: 'organizations', label: t.organizations, icon: Building2, count: data?.organizations.length },
                   { id: 'memberships', label: t.memberships, icon: Link2, count: data?.memberships.length },
+                  { id: 'roles_catalog', label: 'کاتالوگ ۷۰ نقش RBAC', icon: ShieldCheck, count: 70 },
                   { id: 'documents', label: t.documents, icon: FileCheck2, count: data?.documents.length },
                   { id: 'audit', label: t.auditTrail, icon: History, count: data?.auditLogs.length }
                 ].map((tab) => {
@@ -634,7 +708,12 @@ export const AdminLayout: React.FC = () => {
                       });
                     }}
                     onOpenCreate={() => handleOpenCreateMembership()}
+                    onRefreshData={loadData}
                   />
+                )}
+
+                {activeTab === 'roles_catalog' && (
+                  <RolesCatalogViewer />
                 )}
 
                 {activeTab === 'documents' && (

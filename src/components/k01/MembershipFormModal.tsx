@@ -4,8 +4,24 @@
 
 import React, { useState, useEffect } from 'react';
 import { Membership, Party, Organization, MembershipAuthority, MembershipRoleKey, EntityStatus } from '../../types/k01.js';
+import { RoleDefinition, RoleCategory } from '../../types/rbac.js';
+import { api } from '../../lib/api.js';
 import { useI18n } from '../../lib/i18n.js';
-import { X, AlertCircle, Check, Link2, Shield } from 'lucide-react';
+import { X, AlertCircle, Check, Link2, Shield, ShieldCheck, Sparkles, Filter } from 'lucide-react';
+
+const CATEGORY_LABELS_FA: Record<RoleCategory, string> = {
+  individual: 'اعضای فردی و عمومی (U)',
+  retailer: 'ویترین و خرده‌فروشی طلا (B)',
+  supplier: 'تأمین‌کنندگان و تولیدکنندگان (S)',
+  agent: 'نمایندگان و شبکه سیار (A)',
+  operations: 'مدیریت عملیات دیدار (O)',
+  warehouse: 'خزانه و انبارداری فیزیکی (W)',
+  finance: 'مالی، حسابداری و ریسک (F)',
+  service: 'مراکز خدمات و کارگاه‌ها (C)',
+  content: 'مدیریت محتوا و ویترین آنلاین (M)',
+  communications: 'پشتیبانی و ارتباطات (P)',
+  governance: 'حاکمیت، ممیزی و بازرسی (G)'
+};
 
 interface MembershipFormModalProps {
   isOpen: boolean;
@@ -32,15 +48,32 @@ export const MembershipFormModal: React.FC<MembershipFormModalProps> = ({
 
   const [partyId, setPartyId] = useState('');
   const [organizationId, setOrganizationId] = useState('');
-  const [roleKey, setRoleKey] = useState<MembershipRoleKey>('partner');
+  const [roleKey, setRoleKey] = useState<MembershipRoleKey>('retailer.account_manager');
   const [title, setTitle] = useState('');
   const [authorities, setAuthorities] = useState<MembershipAuthority[]>(['can_order']);
   const [validFrom, setValidFrom] = useState(new Date().toISOString().split('T')[0]);
   const [validTo, setValidTo] = useState('');
   const [status, setStatus] = useState<EntityStatus>('active');
 
+  const [catalogRoles, setCatalogRoles] = useState<RoleDefinition[]>([]);
+  const [roleCategoryFilter, setRoleCategoryFilter] = useState<string>('all');
+  const [selectedRoleDef, setSelectedRoleDef] = useState<RoleDefinition | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch 70 Canonical RBAC roles on open
+  useEffect(() => {
+    if (isOpen) {
+      api.getRoles().then(loadedRoles => {
+        if (loadedRoles && loadedRoles.length > 0) {
+          setCatalogRoles(loadedRoles);
+        }
+      }).catch(err => {
+        console.error('Failed to fetch canonical roles for membership form:', err);
+      });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (initialData) {
@@ -55,7 +88,7 @@ export const MembershipFormModal: React.FC<MembershipFormModalProps> = ({
     } else {
       setPartyId(preselectedPersonId || (persons[0]?.id || ''));
       setOrganizationId(preselectedOrgId || (organizations[0]?.id || ''));
-      setRoleKey('partner');
+      setRoleKey('retailer.account_manager');
       setTitle('');
       setAuthorities(['can_order']);
       setValidFrom(new Date().toISOString().split('T')[0]);
@@ -65,7 +98,27 @@ export const MembershipFormModal: React.FC<MembershipFormModalProps> = ({
     setError(null);
   }, [initialData, isOpen, preselectedPersonId, preselectedOrgId, persons, organizations]);
 
+  // Keep selectedRoleDef in sync with roleKey
+  useEffect(() => {
+    if (catalogRoles.length > 0 && roleKey) {
+      const match = catalogRoles.find(r => r.roleKey === roleKey);
+      setSelectedRoleDef(match || null);
+    }
+  }, [catalogRoles, roleKey]);
+
   if (!isOpen) return null;
+
+  const handleRoleChange = (newKey: string) => {
+    setRoleKey(newKey);
+    const matched = catalogRoles.find(r => r.roleKey === newKey);
+    if (matched) {
+      setSelectedRoleDef(matched);
+      // If title is blank, suggest the standard role title
+      if (!title.trim()) {
+        setTitle(matched.titleFa);
+      }
+    }
+  };
 
   const toggleAuthority = (auth: MembershipAuthority) => {
     if (authorities.includes(auth)) {
@@ -114,6 +167,12 @@ export const MembershipFormModal: React.FC<MembershipFormModalProps> = ({
       setIsSubmitting(false);
     }
   };
+
+  // Group roles by category
+  const categoriesPresent = Array.from(new Set(catalogRoles.map(r => r.category))) as RoleCategory[];
+  const filteredRoles = roleCategoryFilter === 'all'
+    ? catalogRoles
+    : catalogRoles.filter(r => r.category === roleCategoryFilter);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto">
@@ -172,37 +231,97 @@ export const MembershipFormModal: React.FC<MembershipFormModalProps> = ({
             </select>
           </div>
 
-          {/* Role and Title */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <div>
-              <label className="block text-xs text-[#9E9EA8] mb-1">نقش پایه‌ای (Role Key) *</label>
-              <select
-                value={roleKey}
-                onChange={e => setRoleKey(e.target.value as MembershipRoleKey)}
-                className="w-full bg-[#121218] border border-[#2C2C3C] focus:border-[#C8A951] rounded-xl px-3 py-2 text-xs text-[#EDEDED] outline-none"
-              >
-                <option value="owner">صاحب امتیاز (Owner)</option>
-                <option value="partner">شریک تجاری (Partner)</option>
-                <option value="agent">عامل رسمی (Agent)</option>
-                <option value="sales">مسئول فروش (Sales)</option>
-                <option value="accountant">مسئول حسابداری (Accountant)</option>
-                <option value="manager">مدیر اجرایی (Manager)</option>
-                <option value="authorized_signatory">دارنده حق امضا (Authorized Signatory)</option>
-                <option value="other">سایر (Other)</option>
-              </select>
+          {/* Role and Title with 70 Canonical RBAC Roles Integration */}
+          <div className="p-4 rounded-xl bg-[#13131A] border border-[#262634] space-y-3.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#252535] pb-2.5">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#C8A951]" />
+                <span className="text-xs font-bold text-[#E5C365]">
+                  نقش عملیاتی استاندارد (کاتالوگ ۷۰ نقش RBAC) *
+                </span>
+              </div>
+
+              {/* Category quick filter */}
+              <div className="flex items-center gap-1.5">
+                <Filter className="w-3.5 h-3.5 text-[#8E8E9E]" />
+                <select
+                  value={roleCategoryFilter}
+                  onChange={e => setRoleCategoryFilter(e.target.value)}
+                  className="bg-[#1B1B25] border border-[#303042] text-[11px] text-[#D0D0DE] px-2 py-1 rounded-lg outline-none focus:border-[#C8A951]"
+                >
+                  <option value="all">تمام ۱۱ حوزه عملیاتی ({catalogRoles.length} نقش)</option>
+                  {categoriesPresent.map(cat => (
+                    <option key={cat} value={cat}>
+                      {CATEGORY_LABELS_FA[cat] || cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs text-[#9E9EA8] mb-1">عنوان رسمی سمت *</label>
-              <input
-                type="text"
-                required
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="مثال: مدیر فروشگاه و دارنده حق سفارش"
-                className="w-full bg-[#121218] border border-[#2C2C3C] focus:border-[#C8A951] rounded-xl px-3 py-2 text-xs text-[#EDEDED] outline-none"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label className="block text-xs text-[#9E9EA8] mb-1">انتخاب نقش سازمانی *</label>
+                <select
+                  value={roleKey}
+                  onChange={e => handleRoleChange(e.target.value)}
+                  className="w-full bg-[#121218] border border-[#2C2C3C] focus:border-[#C8A951] rounded-xl px-3 py-2 text-xs text-[#EDEDED] outline-none font-sans"
+                >
+                  {filteredRoles.map(role => (
+                    <option key={role.roleKey} value={role.roleKey}>
+                      [{role.analysisCode}] {role.titleFa} ({role.roleKey})
+                    </option>
+                  ))}
+                  {/* Fallback legacy options if catalog not loaded yet */}
+                  {filteredRoles.length === 0 && (
+                    <>
+                      <option value="retailer.account_manager">[B01] مدیر حساب کسب‌وکار / نماینده مجاز</option>
+                      <option value="retailer.branch_manager">[B02] مدیر شعبه</option>
+                      <option value="retailer.sales_lead">[B03] سرپرست فروش</option>
+                      <option value="retailer.gold_order_specialist">[B04] کارشناس سفارش‌گذاری و استعلام</option>
+                      <option value="retailer.finance_custodian">[B05] مسئول حسابداری و خزانه شعبه</option>
+                      <option value="supplier.key_account_manager">[S01] مدیر حساب کلیدی تأمین‌کننده</option>
+                      <option value="agent.independent_distributor">[A01] عامل رسمی توزیع</option>
+                      <option value="operations.supervisor">[O01] ناظر ارشد عملیات دیدار</option>
+                    </>
+                  )}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs text-[#9E9EA8] mb-1">عنوان رسمی سمت در سازمان *</label>
+                <input
+                  type="text"
+                  required
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  placeholder="مثال: مدیر فروشگاه و دارنده حق سفارش"
+                  className="w-full bg-[#121218] border border-[#2C2C3C] focus:border-[#C8A951] rounded-xl px-3 py-2 text-xs text-[#EDEDED] outline-none"
+                />
+              </div>
             </div>
+
+            {/* Selected Role Context & Security Boundary Card */}
+            {selectedRoleDef && (
+              <div className="p-2.5 rounded-lg bg-[#181824] border border-[#2C2C3E] text-[11px] space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-[#E5C365] bg-[#2A2315] px-2 py-0.5 rounded border border-[#C8A951]/40">
+                      {selectedRoleDef.analysisCode}
+                    </span>
+                    <span className="text-[#F0F0F5] font-semibold">{selectedRoleDef.titleFa}</span>
+                    <span className="text-[#888898] text-[10px] hidden sm:inline">({selectedRoleDef.titleEn})</span>
+                  </div>
+                  <span className="text-[10px] text-[#A0A0B0] bg-[#222230] px-2 py-0.5 rounded border border-[#333345]">
+                    محیط هدف: {selectedRoleDef.targetEnvironment}
+                  </span>
+                </div>
+                <div className="text-[#9E9EB0] flex items-start gap-1 text-[10px] leading-relaxed">
+                  <span className="text-[#C8A951] font-medium flex-shrink-0">مرز عملیاتی امنیتی:</span>
+                  <span>{selectedRoleDef.mainBoundaryFa}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Delegated Authorities Checkboxes */}

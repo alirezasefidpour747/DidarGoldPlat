@@ -44,32 +44,32 @@ export const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({
     switch (type) {
       case 'assay_hallmarked':
         return {
-          bg: 'bg-amber-100 text-amber-900 border-amber-300',
+          bg: 'bg-[#C8A951]/15 text-[#E5C365] border-[#C8A951]/40',
           icon: Scale
         };
       case 'vault_intake_qc':
         return {
-          bg: 'bg-blue-100 text-blue-900 border-blue-300',
+          bg: 'bg-blue-500/15 text-blue-400 border-blue-500/40',
           icon: Building2
         };
       case 'consumer_registered':
         return {
-          bg: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+          bg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40',
           icon: CheckCircle2
         };
       case 'stolen_flagged':
         return {
-          bg: 'bg-rose-100 text-rose-900 border-rose-300',
+          bg: 'bg-[#E5484D]/15 text-[#FF6B6B] border-[#E5484D]/40',
           icon: AlertTriangle
         };
       case 'recovered_cleared':
         return {
-          bg: 'bg-teal-100 text-teal-900 border-teal-300',
+          bg: 'bg-teal-500/15 text-teal-300 border-teal-500/40',
           icon: ShieldCheck
         };
       default:
         return {
-          bg: 'bg-purple-100 text-purple-900 border-purple-300',
+          bg: 'bg-purple-500/15 text-purple-300 border-purple-500/40',
           icon: Clock
         };
     }
@@ -78,7 +78,7 @@ export const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-[#161622] p-4 rounded-2xl border border-[#28283C] shadow-md flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 min-w-[280px]">
           <div className="relative flex-1">
             <input
@@ -86,18 +86,18 @@ export const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({
               placeholder="جستجو در وقایع زنجیره (شناسه UID، عنوان رویداد، متصدی، شهر)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 pl-9"
+              className="w-full text-xs px-3 py-2.5 bg-[#191926] border border-[#2E2E44] text-[#EDEDED] placeholder-[#767688] rounded-xl focus:outline-none focus:border-[#C8A951] pl-9"
             />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-[#A0A0B5] absolute left-3 top-3" />
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <Filter className="w-4 h-4 text-slate-400" />
+          <Filter className="w-4 h-4 text-[#A0A0B5]" />
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="text-xs px-3 py-2 bg-[#191926] border border-[#2E2E44] text-[#EDEDED] rounded-xl focus:outline-none focus:border-[#C8A951]"
           >
             <option value="all">تمام انواع رویدادها</option>
             <option value="assay_hallmarked">سنجش عیار و انگ ری‌گیری</option>
@@ -112,14 +112,14 @@ export const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({
 
       {/* Timeline Stream */}
       {filteredEvents.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-sm">
-          <Clock className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h4 className="text-base font-bold text-slate-800">هیچ رویدادی با این شرایط یافت نشد</h4>
-          <p className="text-xs text-slate-500 mt-1">عبارت جستجو یا فیلتر را تغییر دهید.</p>
+        <div className="bg-[#161622] rounded-2xl p-12 text-center border border-[#28283C] shadow-md">
+          <Clock className="w-12 h-12 text-[#6C6C80] mx-auto mb-3" />
+          <h4 className="text-base font-bold text-white">هیچ رویدادی با این شرایط یافت نشد</h4>
+          <p className="text-xs text-[#A0A0B5] mt-1">عبارت جستجو یا فیلتر را تغییر دهید.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-          <div className="relative border-r-2 border-slate-200 pr-6 mr-3 space-y-8">
+        <div className="bg-[#161622] rounded-2xl p-6 border border-[#28283C] shadow-md">
+          <div className="relative border-r-2 border-[#28283C] pr-6 mr-3 space-y-8">
             {filteredEvents.map((event) => {
               const badge = getEventBadge(event.eventType);
               const IconComponent = badge.icon;
@@ -128,12 +128,12 @@ export const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({
               return (
                 <div key={event.id} className="relative group">
                   {/* Pin Dot */}
-                  <div className="absolute -right-[33px] top-1.5 w-5 h-5 rounded-full bg-white border-2 border-purple-600 flex items-center justify-center group-hover:scale-125 transition-transform shadow-xs">
-                    <div className="w-2 h-2 rounded-full bg-purple-600" />
+                  <div className="absolute -right-[33px] top-1.5 w-5 h-5 rounded-full bg-[#161622] border-2 border-[#C8A951] flex items-center justify-center group-hover:scale-125 transition-transform shadow-xs">
+                    <div className="w-2 h-2 rounded-full bg-[#C8A951]" />
                   </div>
 
                   {/* Event Card */}
-                  <div className="bg-slate-50 hover:bg-amber-50/20 p-5 rounded-2xl border border-slate-200 hover:border-amber-300 transition-all shadow-2xs">
+                  <div className="bg-[#191926] hover:bg-[#1E1E2F] p-5 rounded-2xl border border-[#28283C] hover:border-[#C8A951]/40 transition-all shadow-md">
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
                         <span
@@ -143,49 +143,49 @@ export const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({
                           {event.eventTypeFa}
                         </span>
 
-                        <span className="font-mono text-xs font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">
+                        <span className="font-mono text-xs font-bold text-[#E5C365] bg-[#161622] px-2 py-0.5 rounded border border-[#2E2E44]">
                           {event.uid}
                         </span>
                       </div>
 
-                      <span className="text-xs text-slate-500 font-mono">{event.timestampFa}</span>
+                      <span className="text-xs text-[#A0A0B5] font-mono">{event.timestampFa}</span>
                     </div>
 
-                    <h4 className="text-sm font-bold text-slate-900 mb-1">{event.titleFa}</h4>
-                    <p className="text-xs text-slate-600 leading-relaxed">{event.descriptionFa}</p>
+                    <h4 className="text-sm font-bold text-white mb-1">{event.titleFa}</h4>
+                    <p className="text-xs text-[#A0A0B5] leading-relaxed">{event.descriptionFa}</p>
 
                     {/* Flow & Participants */}
-                    <div className="mt-4 pt-3 border-t border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                      <div className="flex items-center gap-1.5 text-slate-600">
-                        <span className="text-slate-400">انتقال فیزیکی:</span>
-                        <span className="font-semibold text-slate-800">{event.fromHolder}</span>
-                        <ArrowLeft className="w-3 h-3 text-slate-400" />
-                        <span className="font-semibold text-slate-800">{event.toHolder}</span>
+                    <div className="mt-4 pt-3 border-t border-[#242436] grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      <div className="flex items-center gap-1.5 text-[#A0A0B5]">
+                        <span className="text-[#828299]">انتقال فیزیکی:</span>
+                        <span className="font-semibold text-white">{event.fromHolder}</span>
+                        <ArrowLeft className="w-3 h-3 text-[#C8A951]" />
+                        <span className="font-semibold text-white">{event.toHolder}</span>
                       </div>
 
-                      <div className="text-slate-600">
-                        <span className="text-slate-400">متصدی / ناظر:</span>{' '}
-                        <span className="font-medium text-slate-800">
+                      <div className="text-[#A0A0B5]">
+                        <span className="text-[#828299]">متصدی / ناظر:</span>{' '}
+                        <span className="font-medium text-white">
                           {event.actorName} ({event.actorRoleFa})
                         </span>
                       </div>
 
-                      <div className="text-slate-600">
-                        <span className="text-slate-400">موقعیت ثبت:</span>{' '}
-                        <span className="font-medium text-slate-800">{event.locationFa}</span>
+                      <div className="text-[#A0A0B5]">
+                        <span className="text-[#828299]">موقعیت ثبت:</span>{' '}
+                        <span className="font-medium text-white">{event.locationFa}</span>
                       </div>
                     </div>
 
                     {/* Cryptographic Proof & Passport Link */}
-                    <div className="mt-3 pt-2.5 border-t border-slate-200/50 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                      <div className="font-mono text-slate-400 dir-ltr text-right">
-                        هش تراکنش دفتر کل: <span className="text-slate-600">{event.blockHash}</span>
+                    <div className="mt-3 pt-2.5 border-t border-[#242436] flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                      <div className="font-mono text-[#828299] dir-ltr text-right">
+                        هش تراکنش دفتر کل: <span className="text-[#C8A951]">{event.blockHash}</span>
                       </div>
 
                       {relatedPassport && (
                         <button
                           onClick={() => onSelectPassport(relatedPassport)}
-                          className="text-amber-800 hover:text-amber-950 font-semibold hover:underline flex items-center gap-1"
+                          className="text-[#E5C365] hover:text-[#FFD875] font-semibold hover:underline flex items-center gap-1"
                         >
                           مشاهده شناسنامه کامل مصنوع ({relatedPassport.productSkuCode})
                         </button>

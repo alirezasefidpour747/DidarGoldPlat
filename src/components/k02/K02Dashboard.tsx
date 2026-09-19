@@ -28,9 +28,10 @@ import {
   ChecklistStepKey,
   VerificationCallLog
 } from '../../types/k02.js';
-import { Party, Organization } from '../../types/k01.js';
+import { Party, Organization, Membership } from '../../types/k01.js';
 import { OnboardingQueue } from './OnboardingQueue.js';
 import { EntitlementsManager } from './EntitlementsManager.js';
+import { EffectiveAccessExplorer } from './EffectiveAccessExplorer.js';
 import { ApplicationDetailDrawer } from './ApplicationDetailDrawer.js';
 import { NewApplicationModal } from './NewApplicationModal.js';
 import { TrustTierMatrixModal } from './TrustTierMatrixModal.js';
@@ -39,6 +40,7 @@ interface K02DashboardProps {
   k02Data: K02DataPayload;
   persons: Party[];
   organizations: Organization[];
+  memberships?: Membership[];
   onRefresh: () => Promise<void>;
   onCreateApplication: (data: Partial<OnboardingApplication>) => Promise<void>;
   onUpdateChecklistStep: (appId: string, stepKey: ChecklistStepKey, completed: boolean, notes?: string) => Promise<void>;
@@ -55,6 +57,7 @@ export const K02Dashboard: React.FC<K02DashboardProps> = ({
   k02Data,
   persons,
   organizations,
+  memberships = [],
   onRefresh,
   onCreateApplication,
   onUpdateChecklistStep,
@@ -62,7 +65,7 @@ export const K02Dashboard: React.FC<K02DashboardProps> = ({
   onMakeDecision,
   onUpdateEntitlements
 }) => {
-  const [activeTab, setActiveTab] = useState<'queue' | 'entitlements'>('queue');
+  const [activeTab, setActiveTab] = useState<'queue' | 'entitlements' | 'effective_access'>('queue');
   const [selectedApplication, setSelectedApplication] = useState<OnboardingApplication | null>(null);
   const [isNewAppModalOpen, setIsNewAppModalOpen] = useState(false);
   const [isMatrixModalOpen, setIsMatrixModalOpen] = useState(false);
@@ -287,6 +290,21 @@ export const K02Dashboard: React.FC<K02DashboardProps> = ({
             {Object.keys(k02Data.entitlements).length}
           </span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('effective_access')}
+          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'effective_access'
+              ? 'border-[#C8A951] text-[#E5C365]'
+              : 'border-transparent text-[#7A7A88] hover:text-[#B5B5C4]'
+          }`}
+        >
+          <Shield className="w-4 h-4" />
+          <span>کاوشگر دسترسی مؤثر (Effective Access Engine)</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#C8A951]/20 text-[#E5C365]">
+            RBAC
+          </span>
+        </button>
       </div>
 
       {/* Tab Panels */}
@@ -296,11 +314,17 @@ export const K02Dashboard: React.FC<K02DashboardProps> = ({
           onOpenDetail={handleOpenDetail}
           onOpenCreate={() => setIsNewAppModalOpen(true)}
         />
-      ) : (
+      ) : activeTab === 'entitlements' ? (
         <EntitlementsManager
           entitlements={k02Data.entitlements}
           tierConfigs={k02Data.tierConfigs}
           onUpdateEntitlements={onUpdateEntitlements}
+        />
+      ) : (
+        <EffectiveAccessExplorer
+          persons={persons}
+          organizations={organizations}
+          memberships={memberships}
         />
       )}
 

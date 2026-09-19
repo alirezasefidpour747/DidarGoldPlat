@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Info,
   LayoutGrid,
-  ListFilter
+  ListFilter,
+  Database
 } from 'lucide-react';
 
 interface DomainNavigationProps {
@@ -117,6 +118,21 @@ export const DomainNavigation: React.FC<DomainNavigationProps> = ({
           <div className="flex items-center gap-2 self-end sm:self-auto">
             {/* View Mode Toggle: Scroll vs Grid */}
             <div className="flex items-center gap-1 bg-[#121218] p-1 rounded-xl border border-[#2B2B3C]">
+              <button
+                onClick={() => onSelectDomain('MDM')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  selectedDomain === 'MDM'
+                    ? 'bg-[#C8A951] text-[#141416] shadow-sm'
+                    : 'text-[#E5C365] hover:bg-[#20202E]'
+                }`}
+                title="مرکز مدیریت واژه‌نامه‌های پایه و جداول مرجع سامانه (علل، عیارها و شرایط تسویه)"
+              >
+                <Database className="w-3.5 h-3.5" />
+                <span>واژه‌نامه‌های پایه (MDM)</span>
+              </button>
+
+              <div className="w-[1px] h-4 bg-[#2B2B3C] mx-0.5" />
+
               <button
                 onClick={() => setViewMode('scroll')}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${

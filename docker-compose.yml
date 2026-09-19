@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  didar-kernel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: didar_gold_kernel
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://didar_user:didar_secret_pass_2026@didar-db:5432/didar_gold
+      - JWT_SECRET=didar_master_secret_jwt_key_99824
+    volumes:
+      - didar_data:/app/data
+    depends_on:
+      - didar-db
+    networks:
+      - didar_network
+
+  didar-db:
+    image: postgres:16-alpine
+    container_name: didar_postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: didar_user
+      POSTGRES_PASSWORD: didar_secret_pass_2026
+      POSTGRES_DB: didar_gold
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - didar_network
+
+volumes:
+  didar_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  didar_network:
+    driver: bridge

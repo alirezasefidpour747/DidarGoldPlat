@@ -162,46 +162,46 @@ export const K10Dashboard: React.FC = () => {
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'submitted':
-        return { label: 'در انتظار تخصیص', bg: 'bg-amber-50 text-amber-800 border-amber-200' };
+        return { label: 'در انتظار تخصیص', bg: 'bg-[#C8A951]/15 text-[#E5C365] border-[#C8A951]/30' };
       case 'credit_approved':
-        return { label: 'تأیید مالی', bg: 'bg-blue-50 text-blue-800 border-blue-200' };
+        return { label: 'تأیید مالی', bg: 'bg-blue-500/15 text-blue-400 border-blue-500/30' };
       case 'allocated':
-        return { label: 'تخصیص‌یافته', bg: 'bg-indigo-50 text-indigo-800 border-indigo-200' };
+        return { label: 'تخصیص‌یافته', bg: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' };
       case 'packed_sealed':
-        return { label: 'پلمپ امنیتی', bg: 'bg-purple-50 text-purple-800 border-purple-200' };
+        return { label: 'پلمپ امنیتی', bg: 'bg-purple-500/15 text-purple-400 border-purple-500/30' };
       case 'dispatched':
-        return { label: 'در مسیر حمل', bg: 'bg-cyan-50 text-cyan-800 border-cyan-200' };
+        return { label: 'در مسیر حمل', bg: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30' };
       case 'delivered':
-        return { label: 'تحویل قطعی (POD)', bg: 'bg-emerald-50 text-emerald-800 border-emerald-200' };
+        return { label: 'تحویل قطعی (POD)', bg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' };
       case 'completed':
-        return { label: 'تکمیل‌شده', bg: 'bg-gray-100 text-gray-800 border-gray-300' };
+        return { label: 'تکمیل‌شده', bg: 'bg-[#28283C] text-[#EDEDED] border-[#3E3E58]' };
       case 'cancelled':
-        return { label: 'لغوشده', bg: 'bg-rose-50 text-rose-800 border-rose-200' };
+        return { label: 'لغوشده', bg: 'bg-[#E5484D]/15 text-[#FF6B6B] border-[#E5484D]/30' };
       default:
-        return { label: status, bg: 'bg-gray-50 text-gray-700 border-gray-200' };
+        return { label: status, bg: 'bg-[#191926] text-[#A0A0B5] border-[#28283C]' };
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-16 text-right" dir="rtl">
+    <div className="min-h-screen bg-[#0E0E15] text-[#EDEDED] pb-16 text-right" dir="rtl">
       
       {/* Top Header */}
-      <div className="border-b border-gray-200 bg-white shadow-xs sticky top-0 z-30">
+      <div className="border-b border-[#28283C] bg-[#151520] shadow-xs sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 to-amber-800 text-white flex items-center justify-center font-bold text-lg shadow-sm border border-amber-700">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#C8A951] to-[#997B2E] text-[#141416] flex items-center justify-center font-bold text-lg shadow-sm border border-[#E5C365]/40">
                 K10
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-gray-900">سفارش، تخصیص و ایفای سفارش</h1>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <h1 className="text-xl font-bold text-white">سفارش، تخصیص و ایفای سفارش</h1>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                     فعال و عملیاتی
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-[#A0A0B5] mt-0.5">
                   سفارش مستقیم و با ویزیتور، تخصیص از خزانه و کیف، پلمپ ضدجعل و اثبات تحویل فیزیکی (POD)
                 </p>
               </div>
@@ -211,15 +211,15 @@ export const K10Dashboard: React.FC = () => {
               <button
                 onClick={loadK10Data}
                 disabled={isLoading}
-                className="p-2 text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-xs"
+                className="p-2 text-[#A0A0B5] hover:text-white bg-[#191926] border border-[#28283C] rounded-lg hover:bg-[#222234] transition-colors shadow-xs"
                 title="به‌روزرسانی اطلاعات"
               >
-                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-amber-600' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-[#C8A951]' : ''}`} />
               </button>
 
               <button
                 onClick={() => setIsNewOrderModalOpen(true)}
-                className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors"
+                className="px-4 py-2 bg-[#C8A951] hover:bg-[#D9B961] text-[#141416] rounded-lg text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 ثبت سفارش جدید طلا (New B2B Order)
@@ -229,13 +229,13 @@ export const K10Dashboard: React.FC = () => {
           </div>
 
           {/* Sub-Tabs Bar */}
-          <div className="flex items-center gap-1 mt-4 pt-3 border-t border-gray-100 overflow-x-auto">
+          <div className="flex items-center gap-1 mt-4 pt-3 border-t border-[#28283C] overflow-x-auto">
             <button
               onClick={() => setActiveTab('orders')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
                 activeTab === 'orders'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-[#C8A951] text-[#141416] shadow-xs'
+                  : 'text-[#A0A0B5] hover:text-white hover:bg-[#191926]'
               }`}
             >
               <Package className="w-4 h-4" />
@@ -246,14 +246,14 @@ export const K10Dashboard: React.FC = () => {
               onClick={() => setActiveTab('allocation')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
                 activeTab === 'allocation'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-[#C8A951] text-[#141416] shadow-xs'
+                  : 'text-[#A0A0B5] hover:text-white hover:bg-[#191926]'
               }`}
             >
               <Layers className="w-4 h-4" />
               میز تخصیص و رزرو هوشمند موجودی
               {data?.metrics.pendingAllocationCount ? (
-                <span className="bg-amber-100 text-amber-900 text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                <span className="bg-[#141416] text-[#E5C365] text-[10px] px-1.5 py-0.2 rounded-full font-bold">
                   {data.metrics.pendingAllocationCount}
                 </span>
               ) : null}
@@ -263,8 +263,8 @@ export const K10Dashboard: React.FC = () => {
               onClick={() => setActiveTab('fulfillment')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
                 activeTab === 'fulfillment'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-[#C8A951] text-[#141416] shadow-xs'
+                  : 'text-[#A0A0B5] hover:text-white hover:bg-[#191926]'
               }`}
             >
               <Truck className="w-4 h-4" />
@@ -275,8 +275,8 @@ export const K10Dashboard: React.FC = () => {
               onClick={() => setActiveTab('pod')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
                 activeTab === 'pod'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-[#C8A951] text-[#141416] shadow-xs'
+                  : 'text-[#A0A0B5] hover:text-white hover:bg-[#191926]'
               }`}
             >
               <ShieldCheck className="w-4 h-4" />
@@ -292,45 +292,45 @@ export const K10Dashboard: React.FC = () => {
         {/* Operational Metrics Cards */}
         {data && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div className="bg-white border border-gray-200 rounded-xl p-3.5 shadow-xs">
-              <span className="text-gray-500 text-xs block mb-1">سفارشات فعال در جریان:</span>
+            <div className="bg-[#161622] border border-[#28283C] rounded-xl p-3.5 shadow-xs">
+              <span className="text-[#A0A0B5] text-xs block mb-1">سفارشات فعال در جریان:</span>
               <div className="flex items-baseline justify-between">
-                <span className="text-xl font-bold font-mono text-gray-900">{data.metrics.activeOrdersCount}</span>
-                <span className="text-[11px] text-gray-400">از {data.metrics.totalOrdersCount} کل</span>
+                <span className="text-xl font-bold font-mono text-white">{data.metrics.activeOrdersCount}</span>
+                <span className="text-[11px] text-[#828299]">از {data.metrics.totalOrdersCount} کل</span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-3.5 shadow-xs">
-              <span className="text-gray-500 text-xs block mb-1">طلای در مسیر حمل (زرهی):</span>
+            <div className="bg-[#161622] border border-[#28283C] rounded-xl p-3.5 shadow-xs">
+              <span className="text-[#A0A0B5] text-xs block mb-1">طلای در مسیر حمل (زرهی):</span>
               <div className="flex items-baseline justify-between">
-                <span className="text-xl font-bold font-mono text-cyan-700">{data.metrics.inTransitGoldGrams}</span>
-                <span className="text-[11px] text-cyan-600 font-semibold">گرم طلا</span>
+                <span className="text-xl font-bold font-mono text-cyan-400">{data.metrics.inTransitGoldGrams}</span>
+                <span className="text-[11px] text-cyan-400/80 font-semibold">گرم طلا</span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-3.5 shadow-xs">
-              <span className="text-gray-500 text-xs block mb-1">تحویل امروز با سند POD:</span>
+            <div className="bg-[#161622] border border-[#28283C] rounded-xl p-3.5 shadow-xs">
+              <span className="text-[#A0A0B5] text-xs block mb-1">تحویل امروز با سند POD:</span>
               <div className="flex items-baseline justify-between">
-                <span className="text-xl font-bold font-mono text-emerald-700">{data.metrics.todayFulfilledGoldGrams}</span>
-                <span className="text-[11px] text-emerald-600 font-semibold">گرم ({data.metrics.todayFulfilledOrdersCount} پلمپ)</span>
+                <span className="text-xl font-bold font-mono text-emerald-400">{data.metrics.todayFulfilledGoldGrams}</span>
+                <span className="text-[11px] text-emerald-400/80 font-semibold">گرم ({data.metrics.todayFulfilledOrdersCount} پلمپ)</span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-3.5 shadow-xs">
-              <span className="text-gray-500 text-xs block mb-1">کسری و انتظار تخصیص:</span>
+            <div className="bg-[#161622] border border-[#28283C] rounded-xl p-3.5 shadow-xs">
+              <span className="text-[#A0A0B5] text-xs block mb-1">کسری و انتظار تخصیص:</span>
               <div className="flex items-baseline justify-between">
-                <span className="text-xl font-bold font-mono text-amber-700">{data.metrics.totalPendingAllocationGrams}</span>
-                <span className="text-[11px] text-amber-600 font-semibold">گرم ({data.metrics.pendingAllocationCount} سفارش)</span>
+                <span className="text-xl font-bold font-mono text-[#E5C365]">{data.metrics.totalPendingAllocationGrams}</span>
+                <span className="text-[11px] text-[#C8A951] font-semibold">گرم ({data.metrics.pendingAllocationCount} سفارش)</span>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-3.5 shadow-xs col-span-2 md:col-span-1">
-              <span className="text-gray-500 text-xs block mb-1">ارزش کل گردش عمده‌فروشی:</span>
+            <div className="bg-[#161622] border border-[#28283C] rounded-xl p-3.5 shadow-xs col-span-2 md:col-span-1">
+              <span className="text-[#A0A0B5] text-xs block mb-1">ارزش کل گردش عمده‌فروشی:</span>
               <div className="flex items-baseline justify-between">
-                <span className="text-lg font-bold font-mono text-gray-900">
+                <span className="text-lg font-bold font-mono text-white">
                   {(data.metrics.totalWholesaleValueToman / 1000000).toLocaleString('fa-IR')}
                 </span>
-                <span className="text-[11px] text-gray-500">میلیون تومان</span>
+                <span className="text-[11px] text-[#828299]">میلیون تومان</span>
               </div>
             </div>
           </div>
@@ -338,18 +338,18 @@ export const K10Dashboard: React.FC = () => {
 
         {/* Tab 1: Orders & Lifecycle Queue */}
         {activeTab === 'orders' && (
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden">
+          <div className="bg-[#161622] border border-[#28283C] rounded-2xl shadow-xs overflow-hidden">
             
             {/* Filter and Search Bar */}
-            <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div className="p-4 border-b border-[#28283C] bg-[#151520] flex flex-col md:flex-row items-center justify-between gap-3">
               <div className="relative w-full md:w-80">
-                <Search className="w-4 h-4 text-gray-400 absolute right-3 top-2.5" />
+                <Search className="w-4 h-4 text-[#828299] absolute right-3 top-2.5" />
                 <input
                   type="text"
                   placeholder="جستجو با کد سفارش، خریدار، شهر، کالا یا پلمپ..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pr-9 pl-3 py-1.5 text-xs bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                  className="w-full pr-9 pl-3 py-1.5 text-xs bg-[#191926] border border-[#28283C] text-white rounded-lg focus:ring-1 focus:ring-[#C8A951] placeholder-[#828299]"
                 />
               </div>
 
@@ -357,7 +357,7 @@ export const K10Dashboard: React.FC = () => {
                 <select
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
-                  className="px-3 py-1.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-amber-500"
+                  className="px-3 py-1.5 text-xs bg-[#191926] border border-[#28283C] rounded-lg text-[#EDEDED] focus:ring-1 focus:ring-[#C8A951]"
                 >
                   <option value="all">همه وضعیت‌ها</option>
                   <option value="submitted">در انتظار تخصیص</option>
@@ -371,7 +371,7 @@ export const K10Dashboard: React.FC = () => {
                 <select
                   value={channelFilter}
                   onChange={e => setChannelFilter(e.target.value)}
-                  className="px-3 py-1.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-amber-500"
+                  className="px-3 py-1.5 text-xs bg-[#191926] border border-[#28283C] rounded-lg text-[#EDEDED] focus:ring-1 focus:ring-[#C8A951]"
                 >
                   <option value="all">همه کانال‌ها</option>
                   <option value="direct_retailer">سفارش مستقیم پورتال</option>
@@ -384,7 +384,7 @@ export const K10Dashboard: React.FC = () => {
             {/* Orders Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-right text-xs">
-                <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 font-semibold">
+                <thead className="bg-[#151520] border-b border-[#28283C] text-[#A0A0B5] font-semibold">
                   <tr>
                     <th className="px-4 py-3">شناسه سفارش</th>
                     <th className="px-4 py-3">خریدار و شهر</th>
@@ -397,10 +397,10 @@ export const K10Dashboard: React.FC = () => {
                     <th className="px-4 py-3 text-center">عملیات</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-[#28283C]">
                   {filteredOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="py-12 text-center text-gray-500">
+                      <td colSpan={9} className="py-12 text-center text-[#828299]">
                         سفارشی با معیارهای انتخاب‌شده یافت نشد.
                       </td>
                     </tr>
@@ -408,56 +408,56 @@ export const K10Dashboard: React.FC = () => {
                     filteredOrders.map(order => {
                       const badge = getStatusBadge(order.status);
                       return (
-                        <tr key={order.id} className="hover:bg-amber-50/30 transition-colors">
+                        <tr key={order.id} className="hover:bg-[#C8A951]/5 transition-colors">
                           <td className="px-4 py-3.5">
-                            <span className="font-mono font-bold text-gray-900 block">{order.orderCode}</span>
-                            <span className="text-[11px] text-gray-400 font-mono">{order.orderDateFa}</span>
+                            <span className="font-mono font-bold text-white block">{order.orderCode}</span>
+                            <span className="text-[11px] text-[#828299] font-mono">{order.orderDateFa}</span>
                           </td>
                           <td className="px-4 py-3.5">
-                            <span className="font-bold text-gray-900 block">{order.retailerNameFa}</span>
-                            <span className="text-[11px] text-gray-500">{order.retailerCityFa}</span>
+                            <span className="font-bold text-white block">{order.retailerNameFa}</span>
+                            <span className="text-[11px] text-[#A0A0B5]">{order.retailerCityFa}</span>
                           </td>
                           <td className="px-4 py-3.5">
-                            <span className="text-gray-800 font-medium block">{order.channelFa}</span>
-                            <span className="text-[11px] text-gray-500">{order.fulfillmentMethodFa}</span>
+                            <span className="text-[#EDEDED] font-medium block">{order.channelFa}</span>
+                            <span className="text-[11px] text-[#828299]">{order.fulfillmentMethodFa}</span>
                           </td>
                           <td className="px-4 py-3.5">
                             <div className="flex flex-wrap gap-1">
                               {order.items.map(it => (
                                 <span
                                   key={it.id}
-                                  className="text-[10px] bg-amber-50 text-amber-900 px-1.5 py-0.5 rounded border border-amber-200"
+                                  className="text-[10px] bg-[#C8A951]/15 text-[#E5C365] px-1.5 py-0.5 rounded border border-[#C8A951]/30"
                                 >
                                   {it.caratFa}
                                 </span>
                               ))}
                             </div>
-                            <span className="text-[11px] text-gray-400 mt-1 block">
+                            <span className="text-[11px] text-[#828299] mt-1 block">
                               {order.items.length} ردیف ({order.totalPiecesCount} قطعه)
                             </span>
                           </td>
                           <td className="px-4 py-3.5">
-                            <span className="font-mono font-bold text-gray-900 block">
+                            <span className="font-mono font-bold text-white block">
                               {(order.totalActualAllocatedWeightGrams || order.totalEstimatedWeightGrams).toFixed(2)}
                             </span>
-                            <span className="text-[11px] text-gray-400">معادل ۷۵۰: {order.pureGoldEquivalentGrams.toFixed(2)}</span>
+                            <span className="text-[11px] text-[#828299]">معادل ۷۵۰: {order.pureGoldEquivalentGrams.toFixed(2)}</span>
                           </td>
                           <td className="px-4 py-3.5">
-                            <span className="font-bold text-gray-900 block">
+                            <span className="font-bold text-white block">
                               {order.grandTotalToman.toLocaleString('fa-IR')}
                             </span>
-                            <span className="text-[10px] text-gray-500">{order.paymentTermFa}</span>
+                            <span className="text-[10px] text-[#A0A0B5]">{order.paymentTermFa}</span>
                           </td>
                           <td className="px-4 py-3.5 font-mono text-[11px]">
                             {order.securitySealSerial ? (
-                              <span className="text-purple-800 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200 block">
+                              <span className="text-purple-300 bg-purple-500/15 px-1.5 py-0.5 rounded border border-purple-500/30 block">
                                 {order.securitySealSerial}
                               </span>
                             ) : (
-                              <span className="text-gray-400">—</span>
+                              <span className="text-[#828299]">—</span>
                             )}
                             {order.waybillNumber && (
-                              <span className="text-cyan-800 bg-cyan-50 px-1.5 py-0.5 rounded border border-cyan-200 block mt-1">
+                              <span className="text-cyan-300 bg-cyan-500/15 px-1.5 py-0.5 rounded border border-cyan-500/30 block mt-1">
                                 {order.waybillNumber}
                               </span>
                             )}
@@ -474,7 +474,7 @@ export const K10Dashboard: React.FC = () => {
                                   setSelectedOrder(order);
                                   setIsDetailDrawerOpen(true);
                                 }}
-                                className="p-1.5 text-gray-600 hover:text-amber-700 hover:bg-amber-50 rounded-md transition-colors"
+                                className="p-1.5 text-[#A0A0B5] hover:text-[#E5C365] hover:bg-[#191926] rounded-md transition-colors"
                                 title="مشاهده جزئیات سفارش"
                               >
                                 <Eye className="w-4 h-4" />
@@ -486,7 +486,7 @@ export const K10Dashboard: React.FC = () => {
                                     setSelectedOrder(order);
                                     setIsAllocationModalOpen(true);
                                   }}
-                                  className="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[11px] font-semibold"
+                                  className="px-2 py-1 bg-[#C8A951] hover:bg-[#D9B961] text-[#141416] rounded text-[11px] font-bold"
                                 >
                                   تخصیص
                                 </button>
@@ -508,7 +508,7 @@ export const K10Dashboard: React.FC = () => {
                                   onClick={() => {
                                     setDispatchModalState({ isOpen: true, mode: 'dispatch', order });
                                   }}
-                                  className="px-2 py-1 bg-cyan-700 hover:bg-cyan-800 text-white rounded text-[11px] font-semibold"
+                                  className="px-2 py-1 bg-cyan-600 hover:bg-cyan-700 text-white rounded text-[11px] font-semibold"
                                 >
                                   خروج
                                 </button>
@@ -544,27 +544,27 @@ export const K10Dashboard: React.FC = () => {
             
             {/* Left Col: Pending Orders */}
             <div className="lg:col-span-2 space-y-4">
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs">
+              <div className="bg-[#161622] border border-[#28283C] rounded-2xl p-5 shadow-xs">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-indigo-600" />
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-indigo-400" />
                     صف سفارشات نیازمند تخصیص موجودی
                   </h3>
-                  <span className="text-xs bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-full border border-amber-200">
+                  <span className="text-xs bg-[#C8A951]/15 text-[#E5C365] px-2.5 py-0.5 rounded-full border border-[#C8A951]/30">
                     {orders.filter(o => ['submitted', 'partially_allocated'].includes(o.status)).length} سفارش منتظر
                   </span>
                 </div>
 
                 <div className="space-y-3">
                   {orders.filter(o => ['submitted', 'partially_allocated'].includes(o.status)).map(ord => (
-                    <div key={ord.id} className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-between">
+                    <div key={ord.id} className="p-4 bg-[#191926] rounded-xl border border-[#28283C] flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-gray-900 text-sm">{ord.orderCode}</span>
-                          <span className="text-xs text-gray-600">({ord.retailerNameFa})</span>
+                          <span className="font-mono font-bold text-white text-sm">{ord.orderCode}</span>
+                          <span className="text-xs text-[#A0A0B5]">({ord.retailerNameFa})</span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                          وزن اقلام: <strong>{ord.totalEstimatedWeightGrams} گرم</strong> | کانال: {ord.channelFa}
+                        <p className="text-xs text-[#828299] mt-1">
+                          وزن اقلام: <strong className="text-[#EDEDED]">{ord.totalEstimatedWeightGrams} گرم</strong> | کانال: {ord.channelFa}
                         </p>
                       </div>
                       <button
@@ -572,7 +572,7 @@ export const K10Dashboard: React.FC = () => {
                           setSelectedOrder(ord);
                           setIsAllocationModalOpen(true);
                         }}
-                        className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-xs transition-colors"
+                        className="px-3.5 py-1.5 bg-[#C8A951] hover:bg-[#D9B961] text-[#141416] rounded-lg text-xs font-bold shadow-xs transition-colors"
                       >
                         ورود به میز تخصیص
                       </button>
@@ -580,7 +580,7 @@ export const K10Dashboard: React.FC = () => {
                   ))}
 
                   {orders.filter(o => ['submitted', 'partially_allocated'].includes(o.status)).length === 0 && (
-                    <div className="py-8 text-center text-gray-500 text-xs">
+                    <div className="py-8 text-center text-[#828299] text-xs">
                       تمامی سفارشات جاری موجودی فیزیکی دریافت کرده‌اند.
                     </div>
                   )}
@@ -590,39 +590,39 @@ export const K10Dashboard: React.FC = () => {
 
             {/* Right Col: Vault & Bag Stock Summary */}
             <div className="space-y-4">
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs">
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <Package className="w-4 h-4 text-amber-600" />
+              <div className="bg-[#161622] border border-[#28283C] rounded-2xl p-5 shadow-xs">
+                <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                  <Package className="w-4 h-4 text-[#E5C365]" />
                   موجودی خزانه‌ها و کیف‌های ویزیتوری
                 </h3>
                 
                 <div className="space-y-3 text-xs">
                   <div>
-                    <span className="text-gray-500 block mb-1 font-semibold">خزانه‌های رسمی:</span>
+                    <span className="text-[#A0A0B5] block mb-1 font-semibold">خزانه‌های رسمی:</span>
                     {data.vaultLocations.map(vlt => (
-                      <div key={vlt.id} className="p-2.5 bg-gray-50 rounded-lg border border-gray-200 mb-2 flex items-center justify-between">
+                      <div key={vlt.id} className="p-2.5 bg-[#191926] rounded-lg border border-[#28283C] mb-2 flex items-center justify-between">
                         <div>
-                          <span className="font-bold text-gray-800">{vlt.nameFa}</span>
-                          <span className="block text-[11px] font-mono text-gray-500">{vlt.code}</span>
+                          <span className="font-bold text-[#EDEDED]">{vlt.nameFa}</span>
+                          <span className="block text-[11px] font-mono text-[#828299]">{vlt.code}</span>
                         </div>
-                        <span className="font-mono font-bold text-amber-800">
+                        <span className="font-mono font-bold text-[#E5C365]">
                           {vlt.totalGoldWeightGrams.toLocaleString('fa-IR')} گرم
                         </span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="pt-2 border-t border-gray-200">
-                    <span className="text-gray-500 block mb-1 font-semibold">کیف‌های میدانی ویزیتورها:</span>
+                  <div className="pt-2 border-t border-[#28283C]">
+                    <span className="text-[#A0A0B5] block mb-1 font-semibold">کیف‌های میدانی ویزیتورها:</span>
                     {data.agentBags.map(bag => (
-                      <div key={bag.id} className="p-2.5 bg-blue-50/60 rounded-lg border border-blue-150 mb-2 flex items-center justify-between">
+                      <div key={bag.id} className="p-2.5 bg-blue-500/10 rounded-lg border border-blue-500/20 mb-2 flex items-center justify-between">
                         <div>
-                          <span className="font-bold text-blue-950">{bag.bagCode}</span>
-                          <span className="block text-[11px] text-blue-800">{bag.agentNameFa}</span>
+                          <span className="font-bold text-blue-300">{bag.bagCode}</span>
+                          <span className="block text-[11px] text-blue-400">{bag.agentNameFa}</span>
                         </div>
                         <div className="text-left font-mono">
-                          <span className="font-bold text-blue-900 block">{bag.currentWeightGrams} گرم</span>
-                          <span className="text-[10px] text-blue-600">{bag.piecesCount} قطعه</span>
+                          <span className="font-bold text-blue-200 block">{bag.currentWeightGrams} گرم</span>
+                          <span className="text-[10px] text-blue-400">{bag.piecesCount} قطعه</span>
                         </div>
                       </div>
                     ))}
@@ -636,53 +636,53 @@ export const K10Dashboard: React.FC = () => {
 
         {/* Tab 3: Fulfillment & Dispatch Logistics */}
         {activeTab === 'fulfillment' && data && (
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+          <div className="bg-[#161622] border border-[#28283C] rounded-2xl p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#28283C] pb-3">
               <div>
-                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-cyan-700" />
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-cyan-400" />
                   مدیریت پلمپ امنیتی و لجستیک ترابری
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-[#A0A0B5] mt-0.5">
                   الصاق پلمپ‌های ضدسرقت هولوگرام‌دار و اعزام خودروهای زرهی حمل طلا
                 </p>
               </div>
-              <span className="text-xs bg-cyan-50 text-cyan-800 px-3 py-1 rounded-full border border-cyan-200 font-semibold">
+              <span className="text-xs bg-cyan-500/15 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/30 font-semibold">
                 {orders.filter(o => ['allocated', 'packed_sealed', 'dispatched'].includes(o.status)).length} محموله در چرخه ترخیص
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {orders.filter(o => ['allocated', 'packed_sealed', 'dispatched'].includes(o.status)).map(ord => (
-                <div key={ord.id} className="p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
+                <div key={ord.id} className="p-4 bg-[#191926] rounded-xl border border-[#28283C] space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="font-mono font-bold text-gray-900 text-sm">{ord.orderCode}</span>
-                      <p className="text-xs font-semibold text-gray-700 mt-0.5">{ord.retailerNameFa}</p>
+                      <span className="font-mono font-bold text-white text-sm">{ord.orderCode}</span>
+                      <p className="text-xs font-semibold text-[#A0A0B5] mt-0.5">{ord.retailerNameFa}</p>
                     </div>
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getStatusBadge(ord.status).bg}`}>
                       {getStatusBadge(ord.status).label}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 bg-white p-3 rounded-lg border border-gray-200">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-[#A0A0B5] bg-[#161622] p-3 rounded-lg border border-[#28283C]">
                     <div>
-                      <span className="text-gray-400 block">روش حمل:</span>
-                      <strong className="text-gray-800">{ord.fulfillmentMethodFa}</strong>
+                      <span className="text-[#828299] block">روش حمل:</span>
+                      <strong className="text-[#EDEDED]">{ord.fulfillmentMethodFa}</strong>
                     </div>
                     <div>
-                      <span className="text-gray-400 block">وزن محموله:</span>
-                      <strong className="text-gray-800 font-mono">
+                      <span className="text-[#828299] block">وزن محموله:</span>
+                      <strong className="text-[#EDEDED] font-mono">
                         {(ord.totalActualAllocatedWeightGrams || ord.totalEstimatedWeightGrams).toFixed(2)} گرم
                       </strong>
                     </div>
                     <div>
-                      <span className="text-gray-400 block">شماره پلمپ:</span>
-                      <strong className="text-purple-800 font-mono">{ord.securitySealSerial || 'در انتظار الصاق'}</strong>
+                      <span className="text-[#828299] block">شماره پلمپ:</span>
+                      <strong className="text-purple-300 font-mono">{ord.securitySealSerial || 'در انتظار الصاق'}</strong>
                     </div>
                     <div>
-                      <span className="text-gray-400 block">شماره بارنامه:</span>
-                      <strong className="text-cyan-800 font-mono">{ord.waybillNumber || 'در انتظار صدور'}</strong>
+                      <span className="text-[#828299] block">شماره بارنامه:</span>
+                      <strong className="text-cyan-300 font-mono">{ord.waybillNumber || 'در انتظار صدور'}</strong>
                     </div>
                   </div>
 
@@ -692,7 +692,7 @@ export const K10Dashboard: React.FC = () => {
                         setSelectedOrder(ord);
                         setIsDetailDrawerOpen(true);
                       }}
-                      className="px-3 py-1.5 text-xs text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="px-3 py-1.5 text-xs text-[#A0A0B5] hover:text-white border border-[#28283C] rounded-lg hover:bg-[#222234] transition-colors"
                     >
                       پرونده کامل
                     </button>
@@ -713,7 +713,7 @@ export const K10Dashboard: React.FC = () => {
                         onClick={() => {
                           setDispatchModalState({ isOpen: true, mode: 'dispatch', order: ord });
                         }}
-                        className="px-3.5 py-1.5 bg-cyan-700 hover:bg-cyan-800 text-white rounded-lg text-xs font-bold transition-colors"
+                        className="px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-xs font-bold transition-colors"
                       >
                         صدور بارنامه و اعزام
                       </button>
@@ -739,18 +739,18 @@ export const K10Dashboard: React.FC = () => {
 
         {/* Tab 4: Proof of Delivery (POD) Archive */}
         {activeTab === 'pod' && data && (
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+          <div className="bg-[#161622] border border-[#28283C] rounded-2xl p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#28283C] pb-3">
               <div>
-                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   دفتر اسناد و شواهد اثبات تحویل قطعی (POD Archive)
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-[#A0A0B5] mt-0.5">
                   سوابق الکترونیک وزن‌سنجی مقصد، تأییدیه رمز OTP و امضای حقوقی تحویل‌گیرنده
                 </p>
               </div>
-              <span className="text-xs bg-emerald-50 text-emerald-800 px-3 py-1 rounded-full border border-emerald-200 font-semibold">
+              <span className="text-xs bg-emerald-500/15 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-semibold">
                 {orders.filter(o => o.pod).length} سند ثبت‌شده
               </span>
             </div>
@@ -759,33 +759,33 @@ export const K10Dashboard: React.FC = () => {
               {orders.filter(o => o.pod).map(ord => {
                 const pod = ord.pod!;
                 return (
-                  <div key={ord.id} className="p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-emerald-300 transition-colors">
+                  <div key={ord.id} className="p-4 bg-[#191926] rounded-xl border border-[#28283C] hover:border-emerald-500/40 transition-colors">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-gray-900">{ord.orderCode}</span>
-                          <span className="font-semibold text-gray-800">{ord.retailerNameFa}</span>
-                          <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                          <span className="font-mono font-bold text-white">{ord.orderCode}</span>
+                          <span className="font-semibold text-[#EDEDED]">{ord.retailerNameFa}</span>
+                          <span className="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">
                             {pod.verifiedAtFa}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                          تحویل‌گیرنده: <strong>{pod.recipientNameFa}</strong> ({pod.recipientRoleFa}) | مأمور: {pod.handoverOfficerNameFa}
+                        <p className="text-xs text-[#A0A0B5] mt-1">
+                          تحویل‌گیرنده: <strong className="text-white">{pod.recipientNameFa}</strong> ({pod.recipientRoleFa}) | مأمور: {pod.handoverOfficerNameFa}
                         </p>
                       </div>
 
                       <div className="flex items-center gap-4 text-xs font-mono">
                         <div>
-                          <span className="text-gray-400 block text-[10px]">وزن خروج:</span>
-                          <span className="font-bold text-gray-800">{pod.scaleWeightAtDispatchGrams.toFixed(2)} گرم</span>
+                          <span className="text-[#828299] block text-[10px]">وزن خروج:</span>
+                          <span className="font-bold text-[#EDEDED]">{pod.scaleWeightAtDispatchGrams.toFixed(2)} گرم</span>
                         </div>
                         <div>
-                          <span className="text-gray-400 block text-[10px]">وزن مقصد:</span>
-                          <span className="font-bold text-gray-800">{pod.scaleWeightAtHandoverGrams.toFixed(2)} گرم</span>
+                          <span className="text-[#828299] block text-[10px]">وزن مقصد:</span>
+                          <span className="font-bold text-[#EDEDED]">{pod.scaleWeightAtHandoverGrams.toFixed(2)} گرم</span>
                         </div>
                         <div>
-                          <span className="text-gray-400 block text-[10px]">مغایرت:</span>
-                          <span className="font-bold text-emerald-700">
+                          <span className="text-[#828299] block text-[10px]">مغایرت:</span>
+                          <span className="font-bold text-emerald-400">
                             {pod.weightDiscrepancyGrams === 0 ? '۰.۰۰' : pod.weightDiscrepancyGrams} گرم
                           </span>
                         </div>
@@ -794,7 +794,7 @@ export const K10Dashboard: React.FC = () => {
                             setSelectedOrder(ord);
                             setIsDetailDrawerOpen(true);
                           }}
-                          className="px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-sans"
+                          className="px-3 py-1.5 text-xs bg-[#161622] border border-[#28283C] text-[#EDEDED] hover:bg-[#222234] rounded-lg transition-colors font-sans"
                         >
                           مشاهده سند POD
                         </button>

@@ -70,24 +70,24 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto" dir="rtl">
+      <div className="relative w-full max-w-2xl bg-[#161622] rounded-2xl shadow-2xl border border-[#28283C] overflow-hidden my-8 text-white">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#151520] border-b border-[#28283C]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+            <div className="w-10 h-10 rounded-xl bg-[#C8A951]/15 text-[#E5C365] flex items-center justify-center border border-[#C8A951]/30">
               <QrCode className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold">سامانه عمومی استعلام اصالت و رمزنگاری طلا</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-base font-bold text-white">سامانه عمومی استعلام اصالت و رمزنگاری طلا</h3>
+              <p className="text-xs text-[#A0A0B5]">
                 پرتال اسکن QR، بارکد یا شناسه یکتای پلاک جهت احراز اصالت و پیشگیری از معامله مال مسروقه
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-1.5 text-[#A0A0B5] hover:text-white hover:bg-[#222234] rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -96,7 +96,7 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
         <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
           {/* Search Box */}
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-semibold text-[#EDEDED]">
               شناسه یکتا (UID)، کد سریال، کد انگ یا شناسه NFC قطعه:
             </label>
             <div className="flex gap-2">
@@ -106,14 +106,14 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="مثال: DID-AU750-2026-8820-001"
-                  className="w-full text-xs font-mono px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 pl-10"
+                  className="w-full text-xs font-mono px-4 py-2.5 bg-[#191926] border border-[#28283C] rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951] pl-10"
                 />
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-[#828299] absolute left-3 top-3" />
               </div>
               <button
                 onClick={() => handleVerify()}
                 disabled={loading}
-                className="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                className="px-6 py-2.5 bg-[#C8A951] hover:bg-[#D9B961] text-[#141416] font-bold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-1.5 disabled:opacity-50"
               >
                 {loading ? 'در حال بررسی...' : 'استعلام اصالت'}
               </button>
@@ -121,7 +121,7 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
 
             {/* Samples */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
-              <span className="text-slate-400 text-[11px]">نمونه‌های تست:</span>
+              <span className="text-[#828299] text-[11px]">نمونه‌های تست:</span>
               {sampleQueries.map((s) => (
                 <button
                   key={s.code}
@@ -130,7 +130,7 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
                     setQuery(s.code);
                     handleVerify(s.code);
                   }}
-                  className="px-2.5 py-1 text-[11px] bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-900 rounded-lg font-medium transition-colors border border-slate-200"
+                  className="px-2.5 py-1 text-[11px] bg-[#191926] hover:bg-[#222234] text-[#EDEDED] hover:text-[#E5C365] rounded-lg font-medium transition-colors border border-[#28283C]"
                 >
                   {s.label}
                 </button>
@@ -143,30 +143,30 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
             <div className="pt-2 space-y-4">
               {/* STATUS 1: STOLEN ALERT */}
               {result.isStolen && result.passport && (
-                <div className="p-5 rounded-2xl bg-rose-50 border-2 border-rose-400 shadow-md space-y-3">
+                <div className="p-5 rounded-2xl bg-[#2A1517] border-2 border-[#E5484D] shadow-md space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-rose-600 text-white flex items-center justify-center animate-bounce">
+                    <div className="w-12 h-12 rounded-xl bg-[#E5484D] text-white flex items-center justify-center animate-bounce">
                       <AlertTriangle className="w-7 h-7" />
                     </div>
                     <div>
-                      <h4 className="text-base font-bold text-rose-900">
+                      <h4 className="text-base font-bold text-[#FF8B8B]">
                         هشدار فوری: قطعه طلا دارای پرچم سرقت / مفقودی است
                       </h4>
-                      <p className="text-xs text-rose-700 mt-0.5">
+                      <p className="text-xs text-[#FFA4A4] mt-0.5">
                         این شناسه در سامانه متمرکز پیشگیری از خرید مال مسروقه صنف طلا علامت‌گذاری شده است.
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white/90 rounded-xl border border-rose-200 text-xs text-slate-800 space-y-1">
-                    <p className="font-semibold text-rose-800">
+                  <div className="p-3 bg-[#191926] rounded-xl border border-[#E5484D]/40 text-xs text-[#EDEDED] space-y-1">
+                    <p className="font-semibold text-[#FF8B8B]">
                       خرید، تعویض یا ذوب این قطعه غیرقانونی بوده و موجب پیگرد قضایی می‌گردد.
                     </p>
-                    <p className="text-slate-600">
+                    <p className="text-[#A0A0B5]">
                       مشخصات مصنوع: {result.passport.productTitleFa} ({result.passport.actualScaleWeightGrams} گرم)
                     </p>
-                    <p className="text-slate-600">علت ثبت: {result.passport.stolenReportReason}</p>
-                    <p className="text-slate-500 font-mono text-[11px]">
+                    <p className="text-[#A0A0B5]">علت ثبت: {result.passport.stolenReportReason}</p>
+                    <p className="text-[#828299] font-mono text-[11px]">
                       کد پیگیری انتظامی: {result.passport.uid}
                     </p>
                   </div>
@@ -175,7 +175,7 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
 
               {/* STATUS 2: 100% AUTHENTIC VERIFIED */}
               {!result.isStolen && result.found && result.passport && (
-                <div className="p-5 rounded-2xl bg-emerald-50/70 border-2 border-emerald-400 shadow-sm space-y-4">
+                <div className="p-5 rounded-2xl bg-emerald-950/20 border-2 border-emerald-500/50 shadow-sm space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
@@ -183,14 +183,14 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-base font-bold text-emerald-950">
+                          <h4 className="text-base font-bold text-white">
                             اصالت و شناسنامه طلا ۱۰۰٪ تأیید گردید
                           </h4>
-                          <span className="text-[11px] font-semibold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">
+                          <span className="text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
                             گواهی معتبر
                           </span>
                         </div>
-                        <p className="text-xs text-emerald-800 mt-0.5">
+                        <p className="text-xs text-emerald-400 mt-0.5">
                           تأییدشده توسط شبکه سراسری دیدار گلد و اتحادیه طلا و جواهر
                         </p>
                       </div>
@@ -198,59 +198,59 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
                   </div>
 
                   {/* Details Card */}
-                  <div className="bg-white p-4 rounded-xl border border-emerald-200/80 space-y-3">
-                    <div className="text-sm font-bold text-slate-900">
+                  <div className="bg-[#191926] p-4 rounded-xl border border-[#28283C] space-y-3">
+                    <div className="text-sm font-bold text-white">
                       {result.passport.productTitleFa}
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                      <div className="p-2.5 bg-slate-50 rounded-lg">
-                        <span className="text-slate-400 block text-[11px]">وزن واقعی ترازو:</span>
-                        <span className="font-bold text-slate-900 font-mono text-sm">
+                      <div className="p-2.5 bg-[#161622] border border-[#28283C] rounded-lg">
+                        <span className="text-[#828299] block text-[11px]">وزن واقعی ترازو:</span>
+                        <span className="font-bold text-white font-mono text-sm">
                           {Number(result.passport.actualScaleWeightGrams || 0).toFixed(3)} گرم
                         </span>
                       </div>
 
-                      <div className="p-2.5 bg-slate-50 rounded-lg">
-                        <span className="text-slate-400 block text-[11px]">عیار رسمی ری‌گیری:</span>
-                        <span className="font-bold text-amber-700 font-mono text-sm">
+                      <div className="p-2.5 bg-[#161622] border border-[#28283C] rounded-lg">
+                        <span className="text-[#828299] block text-[11px]">عیار رسمی ری‌گیری:</span>
+                        <span className="font-bold text-[#E5C365] font-mono text-sm">
                           {result.passport.certifiedFineness} / ۱۰۰۰
                         </span>
                       </div>
 
-                      <div className="p-2.5 bg-slate-50 rounded-lg">
-                        <span className="text-slate-400 block text-[11px]">کد انگ آزمایشگاه:</span>
-                        <span className="font-bold text-slate-900 font-mono text-sm">
+                      <div className="p-2.5 bg-[#161622] border border-[#28283C] rounded-lg">
+                        <span className="text-[#828299] block text-[11px]">کد انگ آزمایشگاه:</span>
+                        <span className="font-bold text-white font-mono text-sm">
                           {result.passport.hallmarkCode}
                         </span>
                       </div>
 
-                      <div className="p-2.5 bg-slate-50 rounded-lg">
-                        <span className="text-slate-400 block text-[11px]">امتیاز کیفیت QC:</span>
-                        <span className="font-bold text-emerald-700 font-mono text-sm">
+                      <div className="p-2.5 bg-[#161622] border border-[#28283C] rounded-lg">
+                        <span className="text-[#828299] block text-[11px]">امتیاز کیفیت QC:</span>
+                        <span className="font-bold text-[#3DD68C] font-mono text-sm">
                           {result.passport.qcScore}٪ (A+)
                         </span>
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
+                    <div className="pt-2 border-t border-[#28283C] flex flex-wrap items-center justify-between gap-2 text-xs text-[#A0A0B5]">
                       <div>
                         آزمایشگاه ری‌گیری:{' '}
-                        <span className="font-semibold text-slate-800">
+                        <span className="font-semibold text-white">
                           {result.passport.assayLabName}
                         </span>
                       </div>
                       <div>
                         حکاکی لیزری:{' '}
-                        <span className="font-mono font-bold text-slate-800">
+                        <span className="font-mono font-bold text-white">
                           {result.passport.laserEngravingText}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-xs text-slate-500 flex items-center gap-1.5 font-mono">
-                    <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                  <div className="text-xs text-[#828299] flex items-center gap-1.5 font-mono">
+                    <Lock className="w-3.5 h-3.5 text-emerald-400" />
                     چک‌سام SHA-256 ترازوی هوشمند: {result.passport.cryptographicHash.slice(0, 24)}...
                   </div>
                 </div>
@@ -258,17 +258,17 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
 
               {/* STATUS 3: NOT FOUND / UNVERIFIED */}
               {!result.found && (
-                <div className="p-5 rounded-2xl bg-amber-50 border-2 border-amber-300 space-y-2">
+                <div className="p-5 rounded-2xl bg-[#2A2415] border-2 border-[#C8A951]/60 space-y-2">
                   <div className="flex items-center gap-3">
-                    <XCircle className="w-8 h-8 text-amber-600 shrink-0" />
+                    <XCircle className="w-8 h-8 text-[#E5C365] shrink-0" />
                     <div>
-                      <h4 className="text-sm font-bold text-amber-950">
+                      <h4 className="text-sm font-bold text-[#E5C365]">
                         شناسنامه معتبری با این مشخصات یافت نشد
                       </h4>
-                      <p className="text-xs text-amber-800 mt-0.5">{result.verificationMessage}</p>
+                      <p className="text-xs text-[#D1B875] mt-0.5">{result.verificationMessage}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-600 pt-2 border-t border-amber-200">
+                  <p className="text-xs text-[#A0A0B5] pt-2 border-t border-[#C8A951]/20">
                     توصیه: در صورت خرید طلا، قبل از تسویه فاکتور از فروشنده بخواهید شناسنامه دیجیتال را در پرتال دیدار گلد احراز نماید.
                   </p>
                 </div>
@@ -278,11 +278,11 @@ export const PublicVerificationModal: React.FC<PublicVerificationModalProps> = (
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-200">
-          <span className="text-xs text-slate-500">پشتیبانی سراسری اصالت دیدار: ۰۲۱-۸۸۴۵۰۰۰۰</span>
+        <div className="flex items-center justify-between px-6 py-4 bg-[#151520] border-t border-[#28283C]">
+          <span className="text-xs text-[#828299]">پشتیبانی سراسری اصالت دیدار: ۰۲۱-۸۸۴۵۰۰۰۰</span>
           <button
             onClick={onClose}
-            className="px-5 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-colors"
+            className="px-5 py-2 text-xs font-semibold bg-[#191926] hover:bg-[#222234] text-[#EDEDED] border border-[#28283C] rounded-xl transition-colors"
           >
             بستن
           </button>

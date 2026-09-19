@@ -192,21 +192,21 @@ export const K06Dashboard: React.FC = () => {
   if (loading && !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
-        <div className="w-10 h-10 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
-        <span className="text-xs text-slate-500 font-medium">در حال بارگذاری شناسنامه‌های یکتا و زنجیره اصالت طلا...</span>
+        <div className="w-10 h-10 border-3 border-[#C8A951] border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs text-[#A0A0B5] font-medium">در حال بارگذاری شناسنامه‌های یکتا و زنجیره اصالت طلا...</span>
       </div>
     );
   }
 
   if (error && !data) {
     return (
-      <div className="p-6 bg-rose-50 border border-rose-200 rounded-2xl text-center max-w-lg mx-auto my-12">
-        <AlertTriangle className="w-10 h-10 text-rose-600 mx-auto mb-2" />
-        <h4 className="text-base font-bold text-rose-900 mb-1">خطا در بارگذاری سامانه K06</h4>
-        <p className="text-xs text-rose-700 mb-4">{error}</p>
+      <div className="p-6 bg-[#E5484D]/10 border border-[#E5484D]/30 rounded-2xl text-center max-w-lg mx-auto my-12">
+        <AlertTriangle className="w-10 h-10 text-[#E5484D] mx-auto mb-2" />
+        <h4 className="text-base font-bold text-[#FF8B8B] mb-1">خطا در بارگذاری سامانه K06</h4>
+        <p className="text-xs text-[#FFA4A4] mb-4">{error}</p>
         <button
           onClick={loadData}
-          className="px-4 py-2 bg-rose-600 text-white text-xs font-semibold rounded-lg hover:bg-rose-700 transition-colors"
+          className="px-4 py-2 bg-[#E5484D] text-white text-xs font-semibold rounded-lg hover:bg-[#E5484D]/80 transition-colors"
         >
           تلاش مجدد
         </button>
@@ -226,169 +226,169 @@ export const K06Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 pb-16 text-right" dir="rtl">
       {/* Toast Notification */}
       {notification && (
         <div
           className={`fixed bottom-5 left-5 z-50 px-4 py-3 rounded-xl shadow-lg border text-xs font-semibold flex items-center gap-2 animate-slide-up ${
             notification.type === 'success'
-              ? 'bg-emerald-900 text-white border-emerald-700'
-              : 'bg-rose-900 text-white border-rose-700'
+              ? 'bg-[#15271E] text-[#3DD68C] border-[#3DD68C]/40'
+              : 'bg-[#2A1517] text-[#FF8B8B] border-[#E5484D]/40'
           }`}
         >
           {notification.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-[#3DD68C]" />
           ) : (
-            <AlertTriangle className="w-4 h-4 text-rose-400" />
+            <AlertTriangle className="w-4 h-4 text-[#FF6B6B]" />
           )}
           <span>{notification.message}</span>
         </div>
       )}
 
       {/* Top Banner & Header */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-80 h-80 bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-6 rounded-2xl bg-[#151520] border border-[#262636] relative overflow-hidden shadow-lg">
+        <div className="absolute top-0 right-0 w-80 h-full bg-gradient-to-l from-[#C8A951]/10 to-transparent pointer-events-none" />
 
-        <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-white flex items-center justify-center shadow-md shadow-amber-500/20">
-              <Award className="w-7 h-7" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 text-[11px] font-mono font-bold bg-amber-100 text-amber-900 rounded-md">
-                  KERNEL DOMAIN K06
-                </span>
-                <span className="text-xs text-slate-500 font-medium">پایگاه متمرکز اصالت و رمزنگاری</span>
-              </div>
-              <h2 className="text-xl font-bold text-slate-900 mt-1">
-                شناسه یکتا، گذرنامه دیجیتال مصنوعات طلا و زنجیره اصالت (Provenance)
-              </h2>
-              <p className="text-xs text-slate-600 mt-0.5 max-w-2xl">
-                تخصیص شناسه یکتا به هر قطعه فیزیکی طلا، وزن‌سنجی تحلیلی کالیبره، استعلام عیار ری‌گیری رسمی (کوپلاسیون/XRF)، شواهد میکروسکوپی QC و ثبت سند تغییرناپذیر مالکیت
-              </p>
-            </div>
+        <div className="relative z-10 flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#C8A951]/15 border border-[#C8A951]/40 flex items-center justify-center text-[#E5C365] shadow-lg shadow-[#C8A951]/10 shrink-0">
+            <Award className="w-7 h-7" />
           </div>
-
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={() => {
-                setVerificationInitialQuery('');
-                setShowVerificationModal(true);
-              }}
-              className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors flex items-center gap-1.5"
-            >
-              <QrCode className="w-4 h-4 text-slate-700" />
-              استعلام آنلاین QR/NFC
-            </button>
-
-            <button
-              onClick={() => setShowMintModal(true)}
-              className="px-4 py-2 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl transition-colors shadow-sm flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              صدور گذرنامه جدید (Mint)
-            </button>
-
-            <button
-              onClick={loadData}
-              title="بروزرسانی داده‌ها"
-              className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl border border-slate-200 transition-colors"
-            >
-              <RotateCw className="w-4 h-4" />
-            </button>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-bold font-mono bg-[#C8A951]/20 text-[#E5C365] border border-[#C8A951]/40">
+                DOMAIN K06
+              </span>
+              <h1 className="text-xl font-black text-white">
+                شناسه یکتا، گذرنامه دیجیتال مصنوعات طلا و زنجیره اصالت
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                فعال و عملیاتی
+              </span>
+            </div>
+            <p className="text-xs text-[#A0A0B5] mt-1 max-w-3xl leading-relaxed">
+              تخصیص شناسه یکتا (UID) به هر قطعه فیزیکی طلا، وزن‌سنجی تحلیلی کالیبره، عیار ری‌گیری رسمی اتحادیه، شواهد میکروسکوپی QC و ثبت سند تغییرناپذیر مالکیت
+            </p>
           </div>
         </div>
 
-        {/* Live Metrics Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6 pt-5 border-t border-slate-100">
-          <div className="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
-            <span className="text-[11px] text-slate-500 block">کل قطعات پلاک‌گذاری‌شده</span>
-            <div className="text-lg font-bold text-slate-900 font-mono mt-1">
-              {metrics.totalPassportsMinted}{' '}
-              <span className="text-xs font-normal text-slate-500">قطعه</span>
-            </div>
-            <span className="text-[10px] text-amber-700 font-medium">دارای بارکد و تگ NFC</span>
-          </div>
+        <div className="relative z-10 flex items-center gap-2.5 shrink-0 self-end lg:self-center">
+          <button
+            onClick={() => {
+              setVerificationInitialQuery('');
+              setShowVerificationModal(true);
+            }}
+            className="px-3.5 py-2.5 text-xs font-semibold text-[#EDEDED] bg-[#191926] hover:bg-[#252538] border border-[#28283C] rounded-xl transition-colors flex items-center gap-1.5"
+          >
+            <QrCode className="w-4 h-4 text-[#C8A951]" />
+            استعلام آنلاین QR/NFC
+          </button>
 
-          <div className="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
-            <span className="text-[11px] text-slate-500 block">موجود در خزانه مرکزی دیدار</span>
-            <div className="text-lg font-bold text-blue-800 font-mono mt-1">
-              {metrics.inVaultCount}{' '}
-              <span className="text-xs font-normal text-slate-500">قطعه</span>
-            </div>
-            <span className="text-[10px] text-blue-600 font-medium">آماده واگذاری به بنکدار</span>
-          </div>
+          <button
+            onClick={() => setShowMintModal(true)}
+            className="px-4 py-2.5 text-xs font-bold text-[#141416] bg-[#C8A951] hover:bg-[#D9B961] rounded-xl transition-all shadow-lg shadow-[#C8A951]/20 flex items-center gap-1.5 active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            صدور گذرنامه جدید (Mint)
+          </button>
 
-          <div className="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
-            <span className="text-[11px] text-slate-500 block">در ویترین گالری‌های همکار</span>
-            <div className="text-lg font-bold text-amber-800 font-mono mt-1">
-              {metrics.withRetailersCount}{' '}
-              <span className="text-xs font-normal text-slate-500">قطعه</span>
-            </div>
-            <span className="text-[10px] text-amber-600 font-medium">موجودی آماده عرضه نهایی</span>
-          </div>
+          <button
+            onClick={loadData}
+            title="بروزرسانی داده‌ها"
+            className="p-2.5 text-[#A0A0B5] hover:text-white bg-[#191926] hover:bg-[#252538] rounded-xl border border-[#28283C] transition-colors"
+          >
+            <RotateCw className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
 
-          <div className="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
-            <span className="text-[11px] text-slate-500 block">تحویل به مصرف‌کننده نهایی</span>
-            <div className="text-lg font-bold text-emerald-800 font-mono mt-1">
-              {metrics.activeWithConsumersCount}{' '}
-              <span className="text-xs font-normal text-slate-500">قطعه</span>
-            </div>
-            <span className="text-[10px] text-emerald-600 font-medium">شناسنامه فعال و بیمه اصالت</span>
+      {/* Live Metrics Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="bg-[#161622] p-4 rounded-2xl border border-[#28283C] shadow-md space-y-1">
+          <span className="text-[11px] text-[#A0A0B5] block">کل قطعات پلاک‌گذاری‌شده</span>
+          <div className="text-xl font-black text-white font-mono">
+            {metrics.totalPassportsMinted.toLocaleString('fa-IR')}{' '}
+            <span className="text-xs font-normal text-[#A0A0B5]">قطعه</span>
           </div>
+          <span className="text-[10px] text-[#E5C365] font-medium block">دارای بارکد و تگ NFC</span>
+        </div>
 
-          <div className="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
-            <span className="text-[11px] text-slate-500 block">مجموع وزن طلای رهگیری‌شده</span>
-            <div className="text-lg font-bold text-slate-900 font-mono mt-1">
-              {(metrics.totalGramsTracked || 0).toFixed(2)}{' '}
-              <span className="text-xs font-normal text-slate-500">گرم</span>
-            </div>
-            <span className="text-[10px] text-purple-700 font-medium">
-              میانگین عیار: {metrics.avgFinenessPurity}‰
-            </span>
+        <div className="bg-[#161622] p-4 rounded-2xl border border-[#28283C] shadow-md space-y-1">
+          <span className="text-[11px] text-[#A0A0B5] block">موجود در خزانه دیدار</span>
+          <div className="text-xl font-black text-[#60A5FA] font-mono">
+            {metrics.inVaultCount.toLocaleString('fa-IR')}{' '}
+            <span className="text-xs font-normal text-[#A0A0B5]">قطعه</span>
           </div>
+          <span className="text-[10px] text-[#93C5FD] font-medium block">آماده واگذاری به بنکدار</span>
+        </div>
 
-          <div className={`p-3.5 rounded-xl border ${
-            metrics.reportedLostStolenCount > 0
-              ? 'bg-rose-50 border-rose-300 text-rose-950'
-              : 'bg-slate-50/80 border-slate-200/80'
+        <div className="bg-[#161622] p-4 rounded-2xl border border-[#28283C] shadow-md space-y-1">
+          <span className="text-[11px] text-[#A0A0B5] block">در ویترین گالری‌های همکار</span>
+          <div className="text-xl font-black text-[#F5A623] font-mono">
+            {metrics.withRetailersCount.toLocaleString('fa-IR')}{' '}
+            <span className="text-xs font-normal text-[#A0A0B5]">قطعه</span>
+          </div>
+          <span className="text-[10px] text-[#FCD34D] font-medium block">موجودی آماده عرضه نهایی</span>
+        </div>
+
+        <div className="bg-[#161622] p-4 rounded-2xl border border-[#28283C] shadow-md space-y-1">
+          <span className="text-[11px] text-[#A0A0B5] block">تحویل به خریدار نهایی</span>
+          <div className="text-xl font-black text-[#3DD68C] font-mono">
+            {metrics.activeWithConsumersCount.toLocaleString('fa-IR')}{' '}
+            <span className="text-xs font-normal text-[#A0A0B5]">قطعه</span>
+          </div>
+          <span className="text-[10px] text-[#6EE7B7] font-medium block">شناسنامه فعال و بیمه‌دار</span>
+        </div>
+
+        <div className="bg-[#161622] p-4 rounded-2xl border border-[#28283C] shadow-md space-y-1">
+          <span className="text-[11px] text-[#A0A0B5] block">مجموع وزن طلای رهگیری‌شده</span>
+          <div className="text-xl font-black text-white font-mono">
+            {(metrics.totalGramsTracked || 0).toLocaleString('fa-IR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
+            <span className="text-xs font-normal text-[#A0A0B5]">گرم</span>
+          </div>
+          <span className="text-[10px] text-[#C4B5FD] font-medium block">
+            میانگین عیار: {metrics.avgFinenessPurity}‰
+          </span>
+        </div>
+
+        <div className={`p-4 rounded-2xl border shadow-md space-y-1 ${
+          metrics.reportedLostStolenCount > 0
+            ? 'bg-[#2A1517] border-[#E5484D]/50 text-white'
+            : 'bg-[#161622] border-[#28283C]'
+        }`}>
+          <span className="text-[11px] text-[#A0A0B5] block">هشدار سرقت و لیست سیاه</span>
+          <div className={`text-xl font-black font-mono ${
+            metrics.reportedLostStolenCount > 0 ? 'text-[#FF6B6B]' : 'text-white'
           }`}>
-            <span className="text-[11px] text-slate-500 block">هشدار سرقت و لیست سیاه</span>
-            <div className={`text-lg font-bold font-mono mt-1 ${
-              metrics.reportedLostStolenCount > 0 ? 'text-rose-700' : 'text-slate-900'
-            }`}>
-              {metrics.reportedLostStolenCount}{' '}
-              <span className="text-xs font-normal text-slate-500">مورد</span>
-            </div>
-            <span className="text-[10px] text-rose-600 font-medium">پایش ضدجعل سراسری</span>
+            {metrics.reportedLostStolenCount.toLocaleString('fa-IR')}{' '}
+            <span className="text-xs font-normal text-[#A0A0B5]">مورد</span>
           </div>
+          <span className="text-[10px] text-[#FF8B8B] font-medium block">پایش ضدجعل سراسری</span>
         </div>
       </div>
 
       {/* Tabs & Search / Filter Controls */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-3">
+      <div className="bg-[#161622] rounded-2xl border border-[#28283C] shadow-md p-4 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#28283C] pb-3">
           {/* Main Tabs */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setActiveTab('passports')}
               className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
                 activeTab === 'passports'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-[#C8A951] text-[#141416] shadow-md shadow-[#C8A951]/15'
+                  : 'bg-[#191926] text-[#A0A0B5] hover:text-white hover:bg-[#222234] border border-[#2B2B3E]'
               }`}
             >
               <Award className="w-4 h-4" />
-              گذرنامه‌های دیجیتال طلا ({filteredPassports.length})
+              گذرنامه‌های دیجیتال طلا ({filteredPassports.length.toLocaleString('fa-IR')})
             </button>
 
             <button
               onClick={() => setActiveTab('provenance')}
               className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
                 activeTab === 'provenance'
-                  ? 'bg-purple-600 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-[#C8A951] text-[#141416] shadow-md shadow-[#C8A951]/15'
+                  : 'bg-[#191926] text-[#A0A0B5] hover:text-white hover:bg-[#222234] border border-[#2B2B3E]'
               }`}
             >
               <Clock className="w-4 h-4" />
@@ -399,19 +399,19 @@ export const K06Dashboard: React.FC = () => {
               onClick={() => setActiveTab('stolen_watch')}
               className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
                 activeTab === 'stolen_watch'
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-[#E5484D] text-white shadow-md shadow-[#E5484D]/20'
+                  : 'bg-[#191926] text-[#A0A0B5] hover:text-white hover:bg-[#222234] border border-[#2B2B3E]'
               }`}
             >
               <AlertTriangle className="w-4 h-4" />
-              دیدبان سرقت و اصالت ({metrics.reportedLostStolenCount})
+              دیدبان سرقت و اصالت ({metrics.reportedLostStolenCount.toLocaleString('fa-IR')})
             </button>
           </div>
 
           {/* Quick Stats Pill */}
-          <div className="text-xs text-slate-500 flex items-center gap-2 font-mono">
-            <Lock className="w-3.5 h-3.5 text-emerald-600" />
-            <span>سیستم زنجیره تأمین بدون نقص و ضدجعل</span>
+          <div className="text-xs text-[#A0A0B5] flex items-center gap-2 font-mono">
+            <Lock className="w-3.5 h-3.5 text-[#3DD68C]" />
+            <span>سیستم زنجیره تأمین بدون نقص و ضدجعل دیدار</span>
           </div>
         </div>
 
@@ -424,18 +424,18 @@ export const K06Dashboard: React.FC = () => {
                 placeholder="جستجو بر اساس UID، سریال، مدل کاتالوگ، نام خریدار، آزمایشگاه ری‌گیری، کد انگ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 pl-9"
+                className="w-full text-xs px-3.5 py-2.5 bg-[#191926] border border-[#2E2E44] text-[#EDEDED] placeholder-[#767688] rounded-xl focus:outline-none focus:border-[#C8A951] pl-9"
               />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Search className="w-4 h-4 text-[#A0A0B5] absolute left-3 top-3" />
             </div>
 
             <div className="flex flex-wrap items-center gap-2 text-xs">
               <div className="flex items-center gap-1.5">
-                <span className="text-slate-400">وضعیت:</span>
+                <span className="text-[#A0A0B5]">وضعیت:</span>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="text-xs px-3 py-2 bg-[#191926] border border-[#2E2E44] text-[#EDEDED] rounded-xl focus:outline-none focus:border-[#C8A951]"
                 >
                   <option value="all">همه وضعیت‌ها</option>
                   <option value="in_vault">موجود در خزانه دیدار</option>
@@ -447,11 +447,11 @@ export const K06Dashboard: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-1.5">
-                <span className="text-slate-400">عیار:</span>
+                <span className="text-[#A0A0B5]">عیار:</span>
                 <select
                   value={caratFilter}
                   onChange={(e) => setCaratFilter(e.target.value)}
-                  className="text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="text-xs px-3 py-2 bg-[#191926] border border-[#2E2E44] text-[#EDEDED] rounded-xl focus:outline-none focus:border-[#C8A951]"
                 >
                   <option value="all">همه عیارها</option>
                   <option value="18k_750">۱۸ عیار (۷۵۰)</option>
@@ -499,17 +499,17 @@ export const K06Dashboard: React.FC = () => {
 
       {activeTab === 'stolen_watch' && (
         <div className="space-y-6">
-          <div className="bg-rose-50 border-2 border-rose-300 rounded-2xl p-6 space-y-3">
+          <div className="bg-[#2A1517] border border-[#E5484D]/40 rounded-2xl p-6 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-rose-600 text-white flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-[#E5484D] text-white flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-rose-950">
+                <h3 className="text-base font-bold text-[#FF8B8B]">
                   مرکز پایش سراسری اصالت طلا و پیشگیری از معامله مال مسروقه
                 </h3>
-                <p className="text-xs text-rose-800">
-                  هرگونه قطعه مفقودشده یا سرقت‌شده در صورت استعلام توسط هر یک از بنکداران یا گالری‌های کشور بلافاصله اعلام هشدار می‌دهد.
+                <p className="text-xs text-[#FFA4A4] mt-1 leading-relaxed">
+                  هرگونه قطعه مفقودشده یا سرقت‌شده در صورت استعلام توسط هر یک از بنکداران یا گالری‌های کشور بلافاصله اعلام هشدار داده و کد پیگیری صادر می‌نماید.
                 </p>
               </div>
             </div>

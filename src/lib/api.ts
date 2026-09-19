@@ -41,6 +41,13 @@ import {
   LiveGoldSpotRate
 } from '../types/k05.js';
 import {
+  RoleDefinition,
+  PermissionDefinition,
+  RoleAssignment,
+  WorkContext,
+  EffectiveAccessResult
+} from '../types/rbac.js';
+import {
   K06DataPayload,
   UniqueItemPassport,
   ProvenanceEvent
@@ -76,6 +83,50 @@ import {
   FulfillmentMethod,
   ProofOfDelivery
 } from '../types/k10.js';
+import {
+  K11DataPayload,
+  Retailer,
+  CommercialTier,
+  RetailerLifecycleStatus,
+  CommercialTerms,
+  RetailerTerritory,
+  RetailerAllowedBasket
+} from '../types/k11.js';
+import {
+  K12DataPayload,
+  FieldAgent,
+  Territory,
+  FieldVisit,
+  MobileShowcaseItem,
+  ProxyOrderDraft,
+  AgentDutyStatus
+} from '../types/k12.js';
+import {
+  K16DataPayload,
+  ZarrinCatalogItem,
+  ZarrinDocumentOutboxEntry,
+  ZarrinSyncSummary,
+  SettlementPartnerAccount,
+  SettlementTransaction,
+  SettlementLedgerSummary,
+  SettlementTransactionType,
+  TripartiteReconciliationItem,
+  TripartiteReconciliationSummary
+} from '../types/k16.js';
+import {
+  K17DataPayload,
+  OwnershipClaim,
+  WarrantyCard,
+  OwnershipTransferRequest,
+  StolenReport,
+  UidScanResult,
+  WarrantyServiceLog
+} from '../types/k17.js';
+import {
+  MasterDataCategory,
+  MasterDataItem,
+  MasterDataPayload
+} from '../types/masterData.js';
 
 const API_BASE = '/api/admin/kernel/k01';
 const K02_API_BASE = '/api/admin/kernel/k02';
@@ -87,6 +138,9 @@ const K07_API_BASE = '/api/admin/kernel/k07';
 const K08_API_BASE = '/api/admin/kernel/k08';
 const K09_API_BASE = '/api/admin/kernel/k09';
 const K10_API_BASE = '/api/admin/kernel/k10';
+const K11_API_BASE = '/api/admin/kernel/k11';
+const K12_API_BASE = '/api/admin/kernel/k12';
+const MASTERDATA_API_BASE = '/api/admin/masterdata';
 
 export async function fetchK01Data(): Promise<K01DataPayload> {
   const response = await fetch(API_BASE, {
@@ -259,32 +313,48 @@ export async function apiVerifyDocument(id: string, verificationStatus: Verifica
   return result.data;
 }
 
-export async function apiGetSupabaseHealth(): Promise<{
-  configured: boolean;
-  url: string | null;
-  hasSecretKey: boolean;
-  hasPublishableKey: boolean;
-  status: 'connected' | 'unreachable' | 'not_configured';
+export interface DatabaseHealthData {
+  engine: 'independent_local_acid' | 'self_hosted_postgres';
+  status: 'connected' | 'healthy' | 'degraded';
+  vendorLockIn: false;
+  databaseUrlConfigured: boolean;
+  persistenceMode: 'disk_volume_acid' | 'relational_db';
+  dataDirectory: string;
+  backupDirectory: string;
+  lastBackupTimestamp: string | null;
+  totalEntitiesCount: number;
   message: string;
-  latencyMs?: number;
-}> {
-  const response = await fetch(`${API_BASE}/supabase/health`, {
+  latencyMs: number;
+  configured?: boolean;
+}
+
+export async function apiGetDatabaseHealth(): Promise<DatabaseHealthData> {
+  const response = await fetch(`${API_BASE}/database/health`, {
     headers: { 'Accept': 'application/json' }
   });
   if (!response.ok) {
-    throw new Error('خطا در بررسی اتصال Supabase');
+    throw new Error('خطا در بررسی اتصال پایگاه داده مستقل');
   }
   const result = await response.json();
   return result.data;
 }
 
-export async function apiSyncToSupabase(): Promise<{ success: boolean; message: string }> {
-  const response = await fetch(`${API_BASE}/supabase/sync`, {
+export async function apiCreateDatabaseBackup(): Promise<{ success: boolean; message: string; filename?: string }> {
+  const response = await fetch(`${API_BASE}/database/backup`, {
     method: 'POST',
     headers: { 'Accept': 'application/json' }
   });
   return response.json();
 }
+
+// Backward compatibility alias for UI components
+export const apiGetSupabaseHealth = async (): Promise<any> => {
+  return apiGetDatabaseHealth();
+};
+
+export const apiSyncToSupabase = async (): Promise<{ success: boolean; message: string }> => {
+  return apiCreateDatabaseBackup();
+};
 
 /* ====================================================================
    K02 API Endpoints: Progressive Onboarding, Trust & Entitlements
@@ -1408,7 +1478,458 @@ export async function apiCancelOrder(orderId: string, reason: string): Promise<O
   return result.data;
 }
 
+// ---------------------------------------------------------------------------
+// K11: Retailer Lifecycle & Commercial Access (چرخه خرده‌فروش و دسترسی تجاری)
+// ---------------------------------------------------------------------------
+
+export async function fetchK11Data(): Promise<K11DataPayload> {
+  const response = await fetch(K11_API_BASE, {
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: 'خطا در دریافت اطلاعات K11' }));
+    throw new Error(err.error || 'خطا در برقراری ارتباط با سرویس خرده‌فروشان K11');
+  }
+  const result = await response.json();
+  return result.data;
+}
+
+export async function apiCreateRetailer(payload: Partial<Retailer>): Promise<Retailer> {
+  const response = await fetch(`${K11_API_BASE}/retailers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ثبت پرونده خرده‌فروش جدید');
+  }
+  return result.data;
+}
+
+export async function apiUpdateRetailerTier(
+  id: string,
+  tierUpdates: {
+    tier: CommercialTier;
+    trustScore: number;
+    creditLimitToman: number;
+    creditLimitGoldGrams: number;
+    wageDiscountPercent: number;
+    paymentTenorDays: 0 | 7 | 15 | 30 | 45 | 60;
+    allowPostDatedCheque: boolean;
+    allowScrapGoldBarter: boolean;
+    guaranteeDocReference?: string;
+    notesFa?: string;
+  }
+): Promise<Retailer> {
+  const response = await fetch(`${K11_API_BASE}/retailers/${id}/tier`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(tierUpdates)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در به‌روزرسانی رتبه تجاری و سقف اعتبار');
+  }
+  return result.data;
+}
+
+export async function apiUpdateRetailerTerritory(
+  id: string,
+  territoryUpdates: Partial<RetailerTerritory>
+): Promise<Retailer> {
+  const response = await fetch(`${K11_API_BASE}/retailers/${id}/territory`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(territoryUpdates)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در تخصیص قلمرو و ویزیتور میدانی');
+  }
+  return result.data;
+}
+
+export async function apiUpdateRetailerBasket(
+  id: string,
+  basketUpdates: Partial<RetailerAllowedBasket>
+): Promise<Retailer> {
+  const response = await fetch(`${K11_API_BASE}/retailers/${id}/basket`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(basketUpdates)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در به‌روزرسانی سبد کالای مجاز خرده‌فروش');
+  }
+  return result.data;
+}
+
+export async function apiChangeRetailerStatus(
+  id: string,
+  status: RetailerLifecycleStatus,
+  reasonFa: string
+): Promise<Retailer> {
+  const response = await fetch(`${K11_API_BASE}/retailers/${id}/status`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ status, reasonFa })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در تغییر وضعیت چرخه عمر خرده‌فروش');
+  }
+  return result.data;
+}
+
+export async function apiAddRetailerException(
+  id: string,
+  exceptionData: {
+    expiryDateFa: string;
+    authorizedByFa: string;
+    temporaryCreditBonusGoldGrams: number;
+    temporaryCreditBonusToman: number;
+    reasonFa: string;
+  }
+): Promise<Retailer> {
+  const response = await fetch(`${K11_API_BASE}/retailers/${id}/exception`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(exceptionData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ثبت استثنای تجاری موقت');
+  }
+  return result.data;
+}
+
+export async function fetchK12Data(): Promise<K12DataPayload> {
+  const response = await fetch(K12_API_BASE, {
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: 'خطا در بارگذاری اطلاعات K12' }));
+    throw new Error(err.error || `HTTP ${response.status}`);
+  }
+  const result = await response.json();
+  return result.data;
+}
+
+export async function apiCreateAgent(agentData: Partial<FieldAgent>): Promise<FieldAgent> {
+  const response = await fetch(`${K12_API_BASE}/agents`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(agentData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ثبت مأمور میدانی');
+  }
+  return result.data;
+}
+
+export async function apiUpdateAgentStatus(agentId: string, dutyStatus: AgentDutyStatus): Promise<FieldAgent> {
+  const response = await fetch(`${K12_API_BASE}/agents/${agentId}/status`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ dutyStatus })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در به‌روزرسانی وضعیت شیفت مأمور');
+  }
+  return result.data;
+}
+
+export async function apiToggleAgentActive(agentId: string, isActive?: boolean): Promise<FieldAgent> {
+  const response = await fetch(`${K12_API_BASE}/agents/${agentId}/toggle-active`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ isActive })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در تغییر وضعیت فعال/غیرفعال مأمور');
+  }
+  return result.data;
+}
+
+export async function apiAssignAgentTerritory(agentId: string, territoryId: string): Promise<FieldAgent> {
+  const response = await fetch(`${K12_API_BASE}/agents/${agentId}/territory`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ territoryId })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در تخصیص مأمور به قلمرو');
+  }
+  return result.data;
+}
+
+export async function apiAssignAgentBag(
+  agentId: string,
+  bagId: string,
+  bagCode: string,
+  weightGrams: number
+): Promise<FieldAgent> {
+  const response = await fetch(`${K12_API_BASE}/agents/${agentId}/bag`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ bagId, bagCode, weightGrams })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در تخصیص کیف هوشمند به مأمور');
+  }
+  return result.data;
+}
+
+export async function apiCreateTerritory(territoryData: Partial<Territory>): Promise<Territory> {
+  const response = await fetch(`${K12_API_BASE}/territories`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(territoryData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ایجاد قلمرو جدید');
+  }
+  return result.data;
+}
+
+export async function apiScheduleVisit(visitData: Partial<FieldVisit>): Promise<FieldVisit> {
+  const response = await fetch(`${K12_API_BASE}/visits`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(visitData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در زمان‌بندی ویزیت');
+  }
+  return result.data;
+}
+
+export async function apiCheckInVisit(
+  visitId: string,
+  lat: number,
+  lng: number,
+  distanceMeters: number
+): Promise<FieldVisit> {
+  const response = await fetch(`${K12_API_BASE}/visits/${visitId}/checkin`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ lat, lng, distanceMeters })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ثبت حضور ژئوفنسینگ');
+  }
+  return result.data;
+}
+
+export async function apiCompleteVisit(
+  visitId: string,
+  outcomeData: {
+    retailerFeedbackScore: number;
+    retailerNotesFa: string;
+    agentOutcomeNotesFa: string;
+    showcaseInterestLevel: 'very_high' | 'high' | 'neutral' | 'low';
+    carriedBagSealIntact: boolean;
+  }
+): Promise<FieldVisit> {
+  const response = await fetch(`${K12_API_BASE}/visits/${visitId}/complete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(outcomeData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ثبت نهایی ویزیت');
+  }
+  return result.data;
+}
+
+export async function apiSubmitProxyOrder(
+  proxyData: ProxyOrderDraft
+): Promise<{ success: boolean; proxyOrderId: string; orderDraft: ProxyOrderDraft }> {
+  const response = await fetch(`${K12_API_BASE}/proxy-order`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(proxyData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ثبت سفارش نیابتی');
+  }
+  return result.data;
+}
+
+export async function apiAddStoreToTerritory(territoryId: string, storeData: any): Promise<any> {
+  const response = await fetch(`${K12_API_BASE}/territories/${territoryId}/stores`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(storeData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در افزودن فروشگاه به قلمرو');
+  }
+  return result.data;
+}
+
+export async function apiRecordVisitOutcome(visitId: string, outcomeData: any): Promise<FieldVisit> {
+  const response = await fetch(`${K12_API_BASE}/visits/${visitId}/outcome`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(outcomeData)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ثبت وضعیت مراجعه و فاکتور');
+  }
+  return result.data;
+}
+
+// Master Data Management (MDM) API Calls
+export async function fetchMasterData(): Promise<MasterDataPayload> {
+  const response = await fetch(MASTERDATA_API_BASE, {
+    headers: { 'Accept': 'application/json' }
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در دریافت اطلاعات داده‌های پایه');
+  }
+  return result.data;
+}
+
+export async function fetchMasterDataCategories(): Promise<MasterDataCategory[]> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/categories`, {
+    headers: { 'Accept': 'application/json' }
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در دریافت دسته‌بندی‌های داده پایه');
+  }
+  return result.data;
+}
+
+export async function apiCreateMasterCategory(payload: Partial<MasterDataCategory>): Promise<MasterDataCategory> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/categories`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ایجاد دسته‌بندی داده پایه');
+  }
+  return result.data;
+}
+
+export async function apiDeleteMasterCategory(id: string): Promise<{ success: boolean; message: string }> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/categories/${id}`, {
+    method: 'DELETE',
+    headers: { 'Accept': 'application/json' }
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در حذف دسته‌بندی داده پایه');
+  }
+  return result;
+}
+
+export async function fetchMasterDataItems(categoryId: string, activeOnly = false): Promise<MasterDataItem[]> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/items?categoryId=${encodeURIComponent(categoryId)}&activeOnly=${activeOnly}`, {
+    headers: { 'Accept': 'application/json' }
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در دریافت گزینه‌های داده پایه');
+  }
+  return result.data;
+}
+
+export async function apiCreateMasterItem(payload: Partial<MasterDataItem>): Promise<MasterDataItem> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در ایجاد آیتم داده پایه');
+  }
+  return result.data;
+}
+
+export async function apiUpdateMasterItem(id: string, updates: Partial<MasterDataItem>): Promise<MasterDataItem> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/items/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(updates)
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در به‌روزرسانی آیتم داده پایه');
+  }
+  return result.data;
+}
+
+export async function apiToggleMasterItemActive(id: string, isActive?: boolean): Promise<MasterDataItem> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/items/${id}/toggle-active`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ isActive })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در تغییر وضعیت آیتم داده پایه');
+  }
+  return result.data;
+}
+
+export async function apiDeleteMasterItem(id: string): Promise<{ success: boolean; message: string }> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/items/${id}`, {
+    method: 'DELETE',
+    headers: { 'Accept': 'application/json' }
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در حذف آیتم داده پایه');
+  }
+  return result;
+}
+
+export async function apiReorderMasterItems(categoryId: string, orderedIds: string[]): Promise<MasterDataItem[]> {
+  const response = await fetch(`${MASTERDATA_API_BASE}/reorder`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ categoryId, orderedIds })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'خطا در تغییر چیدمان آیتم‌های داده پایه');
+  }
+  return result.data;
+}
+
 export const api = {
+  // Master Data
+  getMasterData: fetchMasterData,
+  getMasterCategories: fetchMasterDataCategories,
+  createMasterCategory: apiCreateMasterCategory,
+  deleteMasterCategory: apiDeleteMasterCategory,
+  getMasterItems: fetchMasterDataItems,
+  createMasterItem: apiCreateMasterItem,
+  updateMasterItem: apiUpdateMasterItem,
+  toggleMasterItemActive: apiToggleMasterItemActive,
+  deleteMasterItem: apiDeleteMasterItem,
+  reorderMasterItems: apiReorderMasterItems,
+
   getK01Data: fetchK01Data,
   getK02Data: fetchK02Data,
   getK03Data: fetchK03Data,
@@ -1419,6 +1940,28 @@ export const api = {
   getK08Data: fetchK08Data,
   getK09Data: fetchK09Data,
   getK10Data: fetchK10Data,
+  getK11Data: fetchK11Data,
+  getK12Data: fetchK12Data,
+  // K12
+  createAgent: apiCreateAgent,
+  updateAgentStatus: apiUpdateAgentStatus,
+  toggleAgentActive: apiToggleAgentActive,
+  assignAgentTerritory: apiAssignAgentTerritory,
+  assignAgentBag: apiAssignAgentBag,
+  createTerritory: apiCreateTerritory,
+  addStoreToTerritory: apiAddStoreToTerritory,
+  scheduleVisit: apiScheduleVisit,
+  checkInVisit: apiCheckInVisit,
+  completeVisit: apiCompleteVisit,
+  recordVisitOutcome: apiRecordVisitOutcome,
+  submitProxyOrder: apiSubmitProxyOrder,
+  // K11
+  createRetailer: apiCreateRetailer,
+  updateRetailerTier: apiUpdateRetailerTier,
+  updateRetailerTerritory: apiUpdateRetailerTerritory,
+  updateRetailerBasket: apiUpdateRetailerBasket,
+  changeRetailerStatus: apiChangeRetailerStatus,
+  addRetailerException: apiAddRetailerException,
   // K10
   createOrder: apiCreateOrder,
   allocateOrderStock: apiAllocateOrderStock,
@@ -1440,6 +1983,8 @@ export const api = {
     apiUpdateStatus('membership', id, status, reason),
   uploadDocument: apiUploadDocument,
   verifyDocument: apiVerifyDocument,
+  getDatabaseHealth: apiGetDatabaseHealth,
+  createDatabaseBackup: apiCreateDatabaseBackup,
   getSupabaseHealth: apiGetSupabaseHealth,
   syncToSupabase: apiSyncToSupabase,
   // K02
@@ -1501,6 +2046,413 @@ export const api = {
   createStockTransfer: apiCreateStockTransfer,
   confirmTransferArrival: apiConfirmTransferArrival,
   createAgentBag: apiCreateAgentBag,
-  recordVaultAudit: apiRecordVaultAudit
+  recordVaultAudit: apiRecordVaultAudit,
+
+  // RBAC & Kernel Access (DIDAR-KERNEL-ACCESS-CHANGE-001)
+  getRoles: async (filters?: { category?: string; targetEnvironment?: string; query?: string }): Promise<RoleDefinition[]> => {
+    const params = new URLSearchParams();
+    if (filters?.category) params.append('category', filters.category);
+    if (filters?.targetEnvironment) params.append('targetEnvironment', filters.targetEnvironment);
+    if (filters?.query) params.append('query', filters.query);
+    const res = await fetch(`/api/admin/kernel/rbac/roles?${params.toString()}`);
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  getPermissions: async (): Promise<PermissionDefinition[]> => {
+    const res = await fetch('/api/admin/kernel/rbac/permissions');
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  getRoleAssignments: async (filters?: { partyId?: string; organizationId?: string; membershipId?: string }): Promise<RoleAssignment[]> => {
+    const params = new URLSearchParams();
+    if (filters?.partyId) params.append('partyId', filters.partyId);
+    if (filters?.organizationId) params.append('organizationId', filters.organizationId);
+    if (filters?.membershipId) params.append('membershipId', filters.membershipId);
+    const res = await fetch(`/api/admin/kernel/rbac/assignments?${params.toString()}`);
+    const json = await res.json();
+    return json.data || [];
+  },
+
+  requestRoleAssignment: async (payload: {
+    membershipId: string;
+    roleKey: string;
+    scope: { type: any; ids: string[]; labelFa?: string };
+    validFrom?: string;
+    validTo?: string | null;
+    reason: string;
+    expectedVersion?: number;
+  }) => {
+    const res = await fetch('/api/admin/kernel/rbac/assignments/request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.error?.message || 'خطا در ثبت درخواست انتساب نقش');
+    }
+    return json;
+  },
+
+  revokeRoleAssignment: async (assignmentId: string, reason: string) => {
+    const res = await fetch(`/api/admin/kernel/rbac/assignments/${assignmentId}/revoke`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason })
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.error?.message || 'خطا در لغو انتساب نقش');
+    }
+    return json;
+  },
+
+  getEffectiveAccess: async (partyId: string, context: WorkContext): Promise<EffectiveAccessResult> => {
+    const res = await fetch('/api/admin/kernel/rbac/effective-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ partyId, context })
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.error?.message || 'خطا در استعلام دسترسی مؤثر');
+    }
+    return json.data;
+  },
+
+  getUserWorkspaces: async (partyId?: string) => {
+    const headers: Record<string, string> = {};
+    if (partyId) headers['x-actor-party-id'] = partyId;
+    const res = await fetch('/api/me/workspaces', { headers });
+    const json = await res.json();
+    return json.data;
+  },
+
+  // -------------------------------------------------------------
+  // Kernel 16 (K16): Settlement & Zarrin Reconciliation
+  // -------------------------------------------------------------
+  getK16Data: async (): Promise<K16DataPayload> => {
+    const res = await fetch('/api/admin/kernel/k16');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در بارگذاری داده‌های تسویه و تطبیق زرین K16');
+    return json.data;
+  },
+
+  syncZarrinCatalog: async (): Promise<{ syncedCount: number; updatedCount: number }> => {
+    const res = await fetch('/api/admin/kernel/k16/catalog/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در همگام‌سازی کاتالوگ زرین');
+    return json.data;
+  },
+
+  queueZarrinVoucher: async (payload: {
+    idempotencyKey: string;
+    eventType?: string;
+    eventTypeFa?: string;
+    sourceDomain?: string;
+    referenceId?: string;
+    retailerOrgId?: string;
+    retailerName?: string;
+    items?: any[];
+    totalGoldWeightGrams?: number;
+    totalAmountRials?: number;
+    autoDispatch?: boolean;
+  }): Promise<{ document: ZarrinDocumentOutboxEntry; isDuplicatePrevented: boolean }> => {
+    const res = await fetch('/api/admin/kernel/k16/outbox', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در صدور سند حسابداری در زرین');
+    return { document: json.data, isDuplicatePrevented: json.isDuplicatePrevented };
+  },
+
+  dispatchZarrinDocument: async (documentId: string): Promise<ZarrinDocumentOutboxEntry> => {
+    const res = await fetch(`/api/admin/kernel/k16/outbox/${documentId}/dispatch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ارسال سند به زرین');
+    return json.data;
+  },
+
+  retryFailedZarrinDocuments: async (): Promise<{ retriedCount: number; succeededCount: number }> => {
+    const res = await fetch('/api/admin/kernel/k16/outbox/retry-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ارسال مجدد اسناد ناموفق');
+    return json.data;
+  },
+
+  toggleZarrinOfflineSimulation: async (offline: boolean): Promise<{ isOffline: boolean; message: string }> => {
+    const res = await fetch('/api/admin/kernel/k16/offline-toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ offline })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در تغییر وضعیت اتصال');
+    return json;
+  },
+
+  resolveZarrinDiscrepancy: async (
+    documentId: string,
+    resolutionNote: string,
+    actor?: string
+  ): Promise<ZarrinDocumentOutboxEntry> => {
+    const res = await fetch(`/api/admin/kernel/k16/outbox/${documentId}/reconcile`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resolutionNote, actor })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت رفع مغایرت');
+    return json.data;
+  },
+
+  simulateOrderVoucher: async (orderId: string): Promise<{ document: ZarrinDocumentOutboxEntry; isDuplicatePrevented: boolean }> => {
+    const res = await fetch('/api/admin/kernel/k16/simulate-order-voucher', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ایجاد سند فروش سفارش');
+    return { document: json.data, isDuplicatePrevented: json.isDuplicatePrevented };
+  },
+
+  getK16SettlementAccounts: async (): Promise<{ accounts: SettlementPartnerAccount[]; summary: SettlementLedgerSummary }> => {
+    const res = await fetch('/api/admin/kernel/k16/settlement/accounts');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت حساب‌های تسویه');
+    return json.data;
+  },
+
+  getK16SettlementTransactions: async (): Promise<SettlementTransaction[]> => {
+    const res = await fetch('/api/admin/kernel/k16/settlement/transactions');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت تراکنش‌های تسویه');
+    return json.data;
+  },
+
+  recordK16SettlementTransaction: async (payload: {
+    partnerId: string;
+    type: SettlementTransactionType;
+    goldWeightGrams: number;
+    fiatAmountToman: number;
+    referenceBankTraceNo?: string;
+    registeredBy?: string;
+    noteFa?: string;
+  }): Promise<{ transaction: SettlementTransaction; zarrinOutboxDoc?: ZarrinDocumentOutboxEntry }> => {
+    const res = await fetch('/api/admin/kernel/k16/settlement/transaction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت تراکنش تسویه');
+    return json.data;
+  },
+
+  executeK16BilateralNetting: async (payload: {
+    partnerId: string;
+    customGoldWeight?: number;
+    customPriceToman?: number;
+  }): Promise<{ settlementTransaction: SettlementTransaction; nettedGoldGrams: number; nettedFiatToman: number }> => {
+    const res = await fetch('/api/admin/kernel/k16/settlement/bilateral-netting', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در اجرای تهاتر دوطرفه');
+    return json.data;
+  },
+
+  syncK13InvoiceToZarrin: async (invoiceId: string): Promise<{ document: ZarrinDocumentOutboxEntry; isDuplicatePrevented: boolean; invoiceNumber: string }> => {
+    const res = await fetch('/api/admin/kernel/k16/sync-invoice-voucher', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ invoiceId })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ارسال صورتحساب به زرین');
+    return json.data;
+  },
+
+  toggleK16CatalogReservation: async (itemId: string, bagOrOrderId?: string): Promise<ZarrinCatalogItem> => {
+    const res = await fetch(`/api/admin/kernel/k16/catalog/${itemId}/reserve-toggle`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bagOrOrderId })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در تغییر وضعیت رزرو کالا');
+    return json.data;
+  },
+
+  getK16TripartiteReconciliation: async (): Promise<{
+    items: TripartiteReconciliationItem[];
+    summary: TripartiteReconciliationSummary;
+  }> => {
+    const res = await fetch('/api/admin/kernel/k16/reconciliation');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در بارگذاری تطبیق سه‌جانبه');
+    return json.data;
+  },
+
+  autoFixK16TripartiteDiscrepancy: async (
+    recordId: string
+  ): Promise<{ success: boolean; message: string; updatedRecord?: TripartiteReconciliationItem }> => {
+    const res = await fetch('/api/admin/kernel/k16/reconciliation/auto-fix', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recordId })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در رفع خودکار مغایرت');
+    return json;
+  },
+
+  batchReconcileK16Tripartite: async (): Promise<{
+    success: boolean;
+    message: string;
+    reconciledCount: number;
+  }> => {
+    const res = await fetch('/api/admin/kernel/k16/reconciliation/batch-reconcile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در تطبیق دسته‌ای اسناد');
+    return json;
+  },
+
+  // Kernel 17: Consumer Ownership Claims, Provenance & Warranty
+  getK17Data: async (): Promise<K17DataPayload> => {
+    const res = await fetch('/api/admin/kernel/k17');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در بارگذاری داده‌های K17');
+    return json.data;
+  },
+
+  scanK17Uid: async (query: string): Promise<UidScanResult> => {
+    const res = await fetch(`/api/admin/kernel/k17/scan/${encodeURIComponent(query)}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در استعلام شناسنامه UID');
+    return json.data;
+  },
+
+  createK17Claim: async (payload: {
+    itemUid: string;
+    productTitleFa?: string;
+    caratFa?: string;
+    weightGrams?: number;
+    consumerFullNameFa: string;
+    consumerNationalId: string;
+    consumerMobile: string;
+    consumerCityFa?: string;
+    retailerNameFa: string;
+    salesInvoiceNumber: string;
+    purchasePriceToman?: number;
+    guildPermitNo?: string;
+  }): Promise<{ success: boolean; claim: OwnershipClaim; warranty: WarrantyCard; message: string }> => {
+    const res = await fetch('/api/admin/kernel/k17/claim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت سند مالکیت مصرف‌کننده');
+    return json;
+  },
+
+  requestK17Transfer: async (payload: {
+    claimId: string;
+    newOwnerNameFa: string;
+    newOwnerNationalId: string;
+    newOwnerMobile: string;
+    reasonFa?: string;
+  }): Promise<{ success: boolean; transfer: OwnershipTransferRequest; message: string }> => {
+    const res = await fetch('/api/admin/kernel/k17/transfer/request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت درخواست انتقال مالکیت');
+    return json;
+  },
+
+  confirmK17Transfer: async (payload: {
+    transferId: string;
+    otpCode: string;
+  }): Promise<{ success: boolean; updatedClaim: OwnershipClaim; message: string }> => {
+    const res = await fetch('/api/admin/kernel/k17/transfer/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در تأیید انتقال سند');
+    return json;
+  },
+
+  reportK17Stolen: async (payload: {
+    itemUid: string;
+    reporterNameFa: string;
+    reporterMobile?: string;
+    policeStationFa: string;
+    policeCaseNumber: string;
+    descriptionFa?: string;
+  }): Promise<{ success: boolean; report: StolenReport; message: string }> => {
+    const res = await fetch('/api/admin/kernel/k17/stolen/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت هشدار سرقت');
+    return json;
+  },
+
+  resolveK17Stolen: async (reportId: string): Promise<{ success: boolean; message: string }> => {
+    const res = await fetch('/api/admin/kernel/k17/stolen/resolve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reportId })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در لغو اعلام سرقت');
+    return json;
+  },
+
+  addK17WarrantyService: async (payload: {
+    warrantyId: string;
+    serviceTypeFa: string;
+    workshopNameFa?: string;
+    descriptionFa: string;
+    costToman?: number;
+    wasFreeUnderWarranty?: boolean;
+    officerNameFa?: string;
+  }): Promise<{ success: boolean; serviceLog: WarrantyServiceLog; message: string }> => {
+    const res = await fetch('/api/admin/kernel/k17/warranty/service', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت سرویس گارانتی');
+    return json;
+  }
 };
 

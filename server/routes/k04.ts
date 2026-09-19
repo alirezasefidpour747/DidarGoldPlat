@@ -5,6 +5,7 @@
 
 import { Router, Request, Response } from 'express';
 import { k04Storage } from '../storage-k04.js';
+import { RbacService } from '../storage-rbac.js';
 
 export const k04Router = Router();
 
@@ -103,6 +104,11 @@ k04Router.post('/approvals/:id/approve', (req: Request, res: Response) => {
       return res.status(400).json(result);
     }
 
+    // If approval finalized, apply effect to RBAC role assignment if linked
+    if (result.request && result.request.status === 'approved') {
+      RbacService.applyApprovedAssignment(id, 'approved');
+    }
+
     res.json(result);
   } catch (err: unknown) {
     console.error('Error approving request step:', err);
@@ -134,6 +140,10 @@ k04Router.post('/approvals/:id/reject', (req: Request, res: Response) => {
       actorRoleFa: actorRoleFa || 'کارشناس انطباق',
       reason
     });
+
+    if (result.success) {
+      RbacService.applyApprovedAssignment(id, 'rejected');
+    }
 
     res.json(result);
   } catch (err: unknown) {

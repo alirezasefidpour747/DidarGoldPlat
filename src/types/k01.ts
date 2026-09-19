@@ -38,7 +38,8 @@ export type MembershipRoleKey =
   | 'agent'
   | 'operator'
   | 'service_contact'
-  | 'other';
+  | 'other'
+  | (string & {});
 
 export type MembershipAuthority =
   | 'can_order'

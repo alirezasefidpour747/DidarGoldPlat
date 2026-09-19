@@ -80,38 +80,38 @@ export const OwnershipTransferModal: React.FC<OwnershipTransferModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto" dir="rtl">
+      <div className="relative w-full max-w-lg bg-[#161622] rounded-2xl shadow-2xl border border-[#28283C] overflow-hidden my-8 text-white">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-emerald-600 to-teal-700 text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#151520] border-b border-[#28283C]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+              <User className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <h3 className="text-base font-bold">ثبت انتقال مالکیت طلا (Certificate Issuance)</h3>
-              <p className="text-xs text-emerald-100">
+              <h3 className="text-base font-bold text-white">ثبت انتقال مالکیت طلا (Certificate Issuance)</h3>
+              <p className="text-xs text-[#A0A0B5]">
                 صدور سند دیجیتال مالکیت و فعال‌سازی گارانتی برای خریدار
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            className="p-1.5 text-[#A0A0B5] hover:text-white hover:bg-[#222234] rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Selected Item Summary */}
-        <div className="px-6 py-3 bg-emerald-50/50 border-b border-emerald-100 flex items-center justify-between text-xs">
+        <div className="px-6 py-3 bg-[#191926] border-b border-[#28283C] flex items-center justify-between text-xs">
           <div>
-            <span className="font-bold text-slate-800">{passport.productTitleFa}</span>
-            <span className="text-slate-500 block">
+            <span className="font-bold text-white">{passport.productTitleFa}</span>
+            <span className="text-[#A0A0B5] block">
               وزن: {Number(passport.actualScaleWeightGrams || 0).toFixed(3)}g | عیار: {passport.certifiedFineness}
             </span>
           </div>
-          <span className="font-mono text-[11px] font-semibold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded">
+          <span className="font-mono text-[11px] font-semibold text-[#E5C365] bg-[#C8A951]/15 border border-[#C8A951]/30 px-2 py-0.5 rounded">
             {passport.uid}
           </span>
         </div>
@@ -119,15 +119,15 @@ export const OwnershipTransferModal: React.FC<OwnershipTransferModalProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 bg-[#2A1517] border border-[#E5484D]/40 rounded-xl text-xs text-[#FF8B8B] flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-[#FF6B6B]" />
               <span>{error}</span>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              نام و نام خانوادگی خریدار نهایی <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+              نام و نام خانوادگی خریدار نهایی <span className="text-[#FF6B6B]">*</span>
             </label>
             <input
               type="text"
@@ -135,14 +135,14 @@ export const OwnershipTransferModal: React.FC<OwnershipTransferModalProps> = ({
               value={ownerName}
               onChange={(e) => setOwnerName(e.target.value)}
               required
-              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
-                کد ملی خریدار (جهت ماسک و ثبت سند) <span className="text-rose-500">*</span>
+              <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                کد ملی خریدار (جهت ماسک و ثبت سند) <span className="text-[#FF6B6B]">*</span>
               </label>
               <input
                 type="text"
@@ -151,12 +151,12 @@ export const OwnershipTransferModal: React.FC<OwnershipTransferModalProps> = ({
                 value={ownerNationalCode}
                 onChange={(e) => setOwnerNationalCode(e.target.value)}
                 required
-                className="w-full text-xs font-mono px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full text-xs font-mono px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-[#EDEDED] mb-1">
                 شماره همراه خریدار (جهت ارسال پیامک سند)
               </label>
               <input
@@ -164,69 +164,69 @@ export const OwnershipTransferModal: React.FC<OwnershipTransferModalProps> = ({
                 placeholder="۰۹۱۲۳۴۵۶۷۸۹"
                 value={ownerPhone}
                 onChange={(e) => setOwnerPhone(e.target.value)}
-                className="w-full text-xs font-mono px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full text-xs font-mono px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
-                شماره فاکتور رسمی طلافروشی <span className="text-rose-500">*</span>
+              <label className="block text-xs font-medium text-[#EDEDED] mb-1">
+                شماره فاکتور رسمی طلافروشی <span className="text-[#FF6B6B]">*</span>
               </label>
               <input
                 type="text"
                 value={retailInvoiceNumber}
                 onChange={(e) => setRetailInvoiceNumber(e.target.value)}
                 required
-                className="w-full text-xs font-mono px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full text-xs font-mono px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-[#EDEDED] mb-1">
                 نام گالری طلا صادرکننده فاکتور
               </label>
               <input
                 type="text"
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
-                className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label className="block text-xs font-medium text-[#EDEDED] mb-1">
               توضیحات و شرایط فروش
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
             />
           </div>
 
-          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
             <div>
               با تأیید این انتقال، ۲ سال گارانتی رسمی اصالت دیدار گلد فعال شده و این سند به عنوان واقعه نهایی به دفتر کل زنجیره اصالت افزوده می‌شود.
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#28283C]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              className="px-4 py-2 text-xs font-semibold text-[#EDEDED] bg-[#191926] border border-[#28283C] rounded-lg hover:bg-[#222234] transition-colors"
             >
               انصراف
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
+              className="px-6 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
             >
               {loading ? <span>در حال ثبت...</span> : 'تأیید و صدور سند مالکیت'}
             </button>

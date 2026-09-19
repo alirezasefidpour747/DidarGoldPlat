@@ -7,14 +7,23 @@ import React, { useState } from 'react';
 import { useI18n, SupportedLocale } from '../../lib/i18n.js';
 import { ShieldCheck, RefreshCw, Download, Globe, UserCheck, Layers, Database } from 'lucide-react';
 import { SupabaseStatusModal } from '../k01/SupabaseStatusModal.js';
+import { WorkspaceSwitcher } from './WorkspaceSwitcher.js';
 
 interface HeaderProps {
   onRefresh?: () => void;
   isLoading?: boolean;
   activeDomainCount?: number;
+  onNavigateDomain?: (domainId: string) => void;
+  currentDomain?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading = false, activeDomainCount = 1 }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onRefresh,
+  isLoading = false,
+  activeDomainCount = 1,
+  onNavigateDomain,
+  currentDomain
+}) => {
   const { t, locale, setLocale } = useI18n();
   const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState(false);
 
@@ -58,10 +67,13 @@ export const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading = false, ac
           {/* Domain Readiness Indicator */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1E1E26] border border-[#2C2C38] text-xs text-[#B5B5C2]">
             <Layers className="w-3.5 h-3.5 text-[#C8A951]" />
-            <span>K01-K09: <strong className="text-[#3DD68C]">فعال و متصل</strong></span>
+            <span>K01-K17: <strong className="text-[#3DD68C]">فعال و متصل</strong></span>
             <span className="text-[#555562]">|</span>
-            <span>K10-K20: <span className="text-[#9E9EA8]">در صف پیاده‌سازی</span></span>
+            <span>K18-K20: <span className="text-[#9E9EA8]">در صف توسعه زنجیره</span></span>
           </div>
+
+          {/* Explicit WorkContext Switcher (DIDAR-KERNEL-ACCESS-CHANGE-001) */}
+          <WorkspaceSwitcher />
 
           {/* Language Switcher */}
           <div className="flex items-center gap-1 bg-[#1E1E26] border border-[#2C2C38] rounded-lg p-1">
@@ -101,15 +113,29 @@ export const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading = false, ac
             </button>
           </div>
 
-          {/* Supabase Cloud Connection Status */}
+          {/* Master Data Management Direct Button */}
+          <button
+            onClick={() => onNavigateDomain ? onNavigateDomain('MDM') : (window.location.hash = '#MDM')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all cursor-pointer shadow-sm ${
+              currentDomain === 'MDM'
+                ? 'bg-[#C8A951] text-[#141416] border-[#F4DC98]'
+                : 'bg-[#C8A951]/15 hover:bg-[#C8A951]/25 text-[#E5C365] border-[#C8A951]/40'
+            }`}
+            title="مدیریت داده‌های پایه و منوهای کشویی"
+          >
+            <Database className="w-3.5 h-3.5" />
+            <span className="font-bold">داده‌های پایه (MDM)</span>
+          </button>
+
+          {/* Independent Database Connection Status */}
           <button
             onClick={() => setIsSupabaseModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#3ECF8E]/10 hover:bg-[#3ECF8E]/20 border border-[#3ECF8E]/30 text-xs text-[#6CE5AC] transition-all cursor-pointer shadow-sm"
-            title="وضعیت پایگاه داده ابری Supabase"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#3DD68C]/10 hover:bg-[#3DD68C]/20 border border-[#3DD68C]/30 text-xs text-[#4EE59D] transition-all cursor-pointer shadow-sm"
+            title="وضعیت پایگاه داده مستقل و خودمیزبان (Self-Hosted)"
           >
-            <Database className="w-3.5 h-3.5 text-[#3ECF8E]" />
-            <span className="hidden sm:inline font-medium">Supabase Cloud</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#3ECF8E] animate-ping"></span>
+            <Database className="w-3.5 h-3.5 text-[#3DD68C]" />
+            <span className="hidden sm:inline font-medium">پایگاه داده مستقل</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#3DD68C] animate-pulse"></span>
           </button>
 
           {/* Refresh Action */}
