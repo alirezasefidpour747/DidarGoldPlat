@@ -157,6 +157,26 @@ export const AdminLayout: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Backend Connection Monitoring (Requirement 12)
+  const [backendOffline, setBackendOffline] = useState(false);
+  const [backendPort, setBackendPort] = useState<number>(8000);
+
+  const checkBackendHealth = useCallback(async () => {
+    const health = await api.checkHealth();
+    if (health.ok) {
+      setBackendOffline(false);
+      if (health.data?.port) setBackendPort(health.data.port);
+    } else {
+      setBackendOffline(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkBackendHealth();
+    const interval = setInterval(checkBackendHealth, 8000);
+    return () => clearInterval(interval);
+  }, [checkBackendHealth]);
+
   // Modals & Drawers State
   // Person
   const [isPersonModalOpen, setIsPersonModalOpen] = useState(false);
@@ -496,6 +516,33 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main Workspace Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+        {/* Backend Offline Warning Banner (Requirement 12) */}
+        {backendOffline && (
+          <div className="bg-[#2A1115] border border-[#E5484D] rounded-xl p-4 text-[#FF9E9E] shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#E5484D]/20 flex items-center justify-center shrink-0 border border-[#E5484D]/40">
+                <AlertCircle className="w-5 h-5 text-[#E5484D]" />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-[#FFD0D0] flex items-center gap-2">
+                  <span>خطای عدم برقراری ارتباط با سرویس بکاند (API Server Offline)</span>
+                  <span className="text-[10px] bg-[#E5484D]/30 text-[#FFA0A0] px-2 py-0.5 rounded font-mono">Port {backendPort}</span>
+                </div>
+                <div className="text-xs text-[#FF9E9E]/90 mt-1">
+                  ارتباط فرانتاند (پورت ۳۰۰۰) با سرور بکاند روی پورت {backendPort} برقرار نیست. برای فعال‌سازی، لطفاً در ترمینال دستور <code className="bg-black/50 px-1.5 py-0.5 rounded font-mono text-[#E5C365]">npm run dev:backend</code> را اجرا کنید.
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => { checkBackendHealth(); loadData(); }}
+              className="px-4 py-2 bg-[#E5484D] hover:bg-[#F2555A] text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer shadow-md active:scale-95"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>تلاش مجدد اتصال</span>
+            </button>
+          </div>
+        )}
+
         {selectedDomain === 'PAAS' ? (
           /* Platform as a Service (PaaS) Layer */
           <PaaSDashboard

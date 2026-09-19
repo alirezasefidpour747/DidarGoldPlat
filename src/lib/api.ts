@@ -155,6 +155,103 @@ import {
 import { PaasDataPayload, EventBusMessage } from '../types/paas.js';
 import { BiDataPayload } from '../types/bi.js';
 
+/**
+ * Didar Gold Platform - Client API Layer
+ * Connects Frontend (Port 3000) to Independent Backend Service (Port 8000).
+ * 
+ * Requirement 3: Backend address is dynamically read from VITE_API_BASE_URL (not hardcoded).
+ * Requirement 4: Centralized API client dispatches all requests to the backend API.
+ */
+
+// Reads backend URL from environment variable VITE_API_BASE_URL without hardcoding
+export const VITE_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/+$/, '');
+
+export function getBackendBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    // In cloud preview container (e.g. *.run.app) or HTTPS sessions, the client browser
+    // cannot connect directly to container-internal loopback ports (localhost / 127.0.0.1).
+    // In these cases, we must use relative path ('') so that the request goes to port 3000
+    // and Vite reverse-proxies it to the backend.
+    const isLoopbackTarget =
+      !VITE_API_BASE_URL ||
+      VITE_API_BASE_URL.includes('localhost') ||
+      VITE_API_BASE_URL.includes('127.0.0.1') ||
+      VITE_API_BASE_URL.includes('0.0.0.0');
+
+    if (!isLocalhost || (window.location.protocol === 'https:' && VITE_API_BASE_URL.startsWith('http://'))) {
+      if (isLoopbackTarget) {
+        return '';
+      }
+    }
+  }
+  return VITE_API_BASE_URL;
+}
+
+export function buildApiUrl(endpoint: string): string {
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    return endpoint;
+  }
+  const base = getBackendBaseUrl();
+  const cleanPath = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return base ? `${base}${cleanPath}` : cleanPath;
+}
+
+export async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const urlStr = typeof input === 'string' ? input : input instanceof URL ? input.toString() : (input as Request).url;
+  const targetUrl = buildApiUrl(urlStr);
+
+  const modifiedInit: RequestInit = {
+    ...init,
+    headers: {
+      'Accept': 'application/json',
+      ...(init?.headers || {})
+    }
+  };
+
+  try {
+    const response = await window.fetch(targetUrl, modifiedInit);
+    return response;
+  } catch (err: any) {
+    // If direct local connection failed, fallback to relative URL through Vite reverse proxy
+    if (targetUrl.startsWith('http://localhost') || targetUrl.startsWith('http://127.0.0.1')) {
+      try {
+        const cleanPath = urlStr.startsWith('http') ? new URL(urlStr).pathname + new URL(urlStr).search : (urlStr.startsWith('/') ? urlStr : `/${urlStr}`);
+        const fallbackResponse = await window.fetch(cleanPath, modifiedInit);
+        return fallbackResponse;
+      } catch (fallbackErr) {
+        // Fallback error will be caught below
+      }
+    }
+
+    const isOffline = err?.name === 'TypeError' || err?.message?.includes('fetch') || err?.message?.includes('Failed');
+    if (isOffline) {
+      console.error(`[API Network Disconnection] Cannot reach Backend at ${targetUrl}:`, err);
+      throw new Error(`خطای عدم دسترسی به سرور بکاند (${targetUrl}): لطفاً اطمینان حاصل کنید که سرویس بکاند فعال و در حال اجرا است.`);
+    }
+    throw err;
+  }
+}
+
+// Check connectivity with the backend (for health banner and connection status)
+export async function checkBackendHealthStatus(): Promise<{ ok: boolean; url: string; data?: any; error?: string }> {
+  const url = buildApiUrl('/api/health');
+  try {
+    const res = await apiFetch(url, { headers: { 'Accept': 'application/json' } });
+    if (res.ok) {
+      const data = await res.json();
+      return { ok: true, url, data };
+    }
+    return { ok: false, url, error: `HTTP ${res.status}` };
+  } catch (err: any) {
+    return { ok: false, url, error: err?.message || 'Failed to fetch' };
+  }
+}
+
+// Shadow local fetch in this module to route all calls through apiFetch
+const fetch = apiFetch;
+
 const API_BASE = '/api/admin/kernel/k01';
 const K02_API_BASE = '/api/admin/kernel/k02';
 const K03_API_BASE = '/api/admin/kernel/k03';
@@ -2892,6 +2989,12 @@ export const api = {
     const json = await res.json();
     if (!res.ok) throw new Error(json.message || 'خطا در دریافت تله‌متری لایه‌های معماری');
     return json;
-  }
+  },
+
+  // Backend Connectivity & Health Check
+  checkHealth: checkBackendHealthStatus,
+  apiFetch: apiFetch,
+  buildApiUrl: buildApiUrl,
+  getBackendUrl: getBackendBaseUrl
 };
 

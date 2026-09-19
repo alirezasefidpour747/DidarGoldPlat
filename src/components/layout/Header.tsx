@@ -64,6 +64,14 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Actions & Status Tools */}
         <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
+          {/* Independent Microservices Topology Indicator */}
+          <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#191924] border border-[#2F2F40] text-[11px] text-[#A0A0B0]">
+            <span className="w-2 h-2 rounded-full bg-[#3DD68C] animate-pulse"></span>
+            <span className="font-mono text-[#3DD68C] font-semibold">FE: 3000</span>
+            <span className="text-[#555562]">↔</span>
+            <span className="font-mono text-[#E5C365] font-semibold">API: 8000</span>
+          </div>
+
           {/* Three-Tier Architecture Readiness Indicator */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1E1E26] border border-[#2C2C38] text-xs text-[#B5B5C2]">
             <Layers className="w-3.5 h-3.5 text-[#C8A951]" />

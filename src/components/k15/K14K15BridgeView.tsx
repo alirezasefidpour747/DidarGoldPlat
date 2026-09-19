@@ -32,6 +32,9 @@ import {
   DualJournalVoucher,
   DoubleEntryArticleLeg
 } from '../../types/k15.js';
+import { apiFetch } from '../../lib/api.js';
+
+const fetch = apiFetch;
 
 interface K14K15BridgeViewProps {
   onVoucherCreated?: () => void;

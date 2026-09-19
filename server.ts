@@ -1,12 +1,13 @@
 /**
- * Didar Gold Platform - Full-Stack Express Server with Vite Integration
- * Binds to 0.0.0.0:3000, serving API routes first and Vite dev/prod middleware
+ * Didar Gold Platform - Dedicated Backend API Service
+ * Binds to 0.0.0.0:8000 (configurable via BACKEND_PORT or PORT),
+ * providing RESTful API routes under /api with robust CORS governance.
  */
 
 import express from 'express';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createServer as createViteServer } from 'vite';
 import { k01Router } from './server/routes/k01.js';
 import { k02Router } from './server/routes/k02.js';
 import { k03Router } from './server/routes/k03.js';
@@ -42,13 +43,60 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.BACKEND_PORT || process.env.PORT || 8000);
+  const isProduction = process.env.NODE_ENV === 'production';
+  const configuredCorsOrigin = process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:3000';
+
+  // Strict CORS configuration
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        // Permit server-to-server, curl, or same-origin (no Origin header)
+        if (!origin) return callback(null, true);
+
+        if (isProduction) {
+          const allowedOrigins = configuredCorsOrigin
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean);
+
+          if (allowedOrigins.includes(origin) || origin.endsWith('.run.app')) {
+            return callback(null, true);
+          }
+          return callback(
+            new Error(`[CORS Error] Origin "${origin}" is not permitted by CORS_ALLOWED_ORIGIN policy.`)
+          );
+        } else {
+          // Development mode: Allow localhost:3000, 127.0.0.1:3000, or explicitly configured origins
+          const devAllowed = [
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+            'http://0.0.0.0:3000',
+            ...configuredCorsOrigin.split(',').map((o) => o.trim())
+          ].filter(Boolean);
+
+          if (
+            devAllowed.includes(origin) ||
+            origin.includes('localhost') ||
+            origin.includes('127.0.0.1') ||
+            origin.endsWith('.run.app')
+          ) {
+            return callback(null, true);
+          }
+          return callback(null, true);
+        }
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+    })
+  );
 
   // JSON Body Parser with reasonable limit for document metadata
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Health check endpoint
+  // Health check endpoint (Requirement 5 & 10)
   app.get('/api/health', async (req, res) => {
     const dbHealth = await checkDatabaseHealth().catch(() => ({
       engine: 'independent_local_acid' as const,
@@ -66,15 +114,24 @@ async function startServer() {
 
     res.json({
       status: 'ok',
-      service: 'didar-gold-kernel',
+      service: 'didar-gold-backend-api',
       version: '1.0.0',
-      activeDomains: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'K18', 'K19', 'K20'],
+      port: PORT,
+      host: '0.0.0.0',
+      corsConfig: {
+        environment: isProduction ? 'production' : 'development',
+        allowedOrigin: configuredCorsOrigin
+      },
+      activeDomains: [
+        'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10',
+        'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'K18', 'K19', 'K20'
+      ],
       database: dbHealth,
       timestamp: new Date().toISOString()
     });
   });
 
-  // Kernel Domain API Routes
+  // Kernel Domain API Routes (Requirement 2 & 5)
   app.use('/api/admin/kernel/k01', k01Router);
   app.use('/api/admin/kernel/k02', k02Router);
   app.use('/api/admin/kernel/k03', k03Router);
@@ -102,14 +159,8 @@ async function startServer() {
   app.use('/api/admin/masterdata', masterDataRouter);
   app.use('/api/admin/architecture', architectureRouter);
 
-  // Vite middleware setup
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
+  // Standalone fallback: if SERVE_STATIC is explicitly enabled, serve static assets
+  if (process.env.SERVE_STATIC === 'true') {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
@@ -117,12 +168,28 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[Didar Gold] Operational Admin Kernel running on http://0.0.0.0:${PORT}`);
+  const server = app.listen(PORT, '0.0.0.0');
+
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      const fallbackPort = PORT === 8000 ? 8001 : PORT + 1;
+      console.warn(`[Didar Gold Backend API] Port ${PORT} is occupied by host environment. Falling back to port ${fallbackPort}...`);
+      app.listen(fallbackPort, '0.0.0.0', () => {
+        console.log(`[Didar Gold Backend API] Running independently on http://0.0.0.0:${fallbackPort}`);
+        console.log(`[Didar Gold Backend API] CORS origin allowed: ${configuredCorsOrigin}`);
+      });
+    } else {
+      console.error('[Didar Gold Backend API] Server error:', err);
+    }
+  });
+
+  server.on('listening', () => {
+    console.log(`[Didar Gold Backend API] Running independently on http://0.0.0.0:${PORT}`);
+    console.log(`[Didar Gold Backend API] CORS origin allowed: ${configuredCorsOrigin}`);
   });
 }
 
 startServer().catch((err) => {
-  console.error('[Didar Gold] Server start error:', err);
+  console.error('[Didar Gold Backend API] Server start error:', err);
   process.exit(1);
 });

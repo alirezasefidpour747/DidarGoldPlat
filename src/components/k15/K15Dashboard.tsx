@@ -44,6 +44,9 @@ import {
   PartyAccountStatus
 } from '../../types/k15.js';
 import { K14K15BridgeView } from './K14K15BridgeView.js';
+import { apiFetch } from '../../lib/api.js';
+
+const fetch = apiFetch;
 
 type K15SubTab = 'parties' | 'vouchers' | 'trial_balance' | 'netting' | 'bridge';
 

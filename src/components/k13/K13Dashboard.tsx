@@ -51,6 +51,9 @@ import {
   PackageCheck,
   Truck
 } from 'lucide-react';
+import { apiFetch } from '../../lib/api.js';
+
+const fetch = apiFetch;
 
 interface DraftInvoiceItem {
   id: string;

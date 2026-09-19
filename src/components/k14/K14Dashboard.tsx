@@ -44,6 +44,9 @@ import {
   CollateralType,
   BuyerCreditStatus
 } from '../../types/k14';
+import { apiFetch } from '../../lib/api.js';
+
+const fetch = apiFetch;
 
 export const K14Dashboard: React.FC = () => {
   const [data, setData] = useState<K14DataPayload | null>(null);
