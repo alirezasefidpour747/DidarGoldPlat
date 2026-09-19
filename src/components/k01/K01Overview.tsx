@@ -27,16 +27,22 @@ export const K01Overview: React.FC<K01OverviewProps> = ({
   const { t } = useI18n();
 
   // Metrics calculations
-  const totalPersons = data.persons.length;
-  const totalOrgs = data.organizations.length;
-  const totalMemberships = data.memberships.length;
-  const totalDocs = data.documents.length;
-  const totalAudit = data.auditLogs.length;
+  const personsList = data?.persons || [];
+  const orgsList = data?.organizations || [];
+  const membershipsList = data?.memberships || [];
+  const docsList = data?.documents || [];
+  const auditList = data?.auditLogs || [];
 
-  const agentsCount = data.persons.filter(p => p.partyType === 'field_agent').length;
-  const retailersCount = data.organizations.filter(o => o.organizationType === 'retailer').length;
-  const manufacturersCount = data.organizations.filter(o => o.organizationType === 'manufacturer').length;
-  const wholesalersCount = data.organizations.filter(o => o.organizationType === 'wholesaler').length;
+  const totalPersons = personsList.length;
+  const totalOrgs = orgsList.length;
+  const totalMemberships = membershipsList.length;
+  const totalDocs = docsList.length;
+  const totalAudit = auditList.length;
+
+  const agentsCount = personsList.filter(p => p.partyType === 'field_agent').length;
+  const retailersCount = orgsList.filter(o => o.organizationType === 'retailer').length;
+  const manufacturersCount = orgsList.filter(o => o.organizationType === 'manufacturer').length;
+  const wholesalersCount = orgsList.filter(o => o.organizationType === 'wholesaler').length;
 
   return (
     <div className="space-y-6">

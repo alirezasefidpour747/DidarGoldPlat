@@ -92,6 +92,19 @@ import { K16Dashboard } from '../k16/K16Dashboard.js';
 // K17 Components
 import { K17Dashboard } from '../k17/K17Dashboard.js';
 
+// K18 Components
+import { K18Dashboard } from '../k18/K18Dashboard.js';
+
+// K19 Components
+import { K19Dashboard } from '../k19/K19Dashboard.js';
+
+// K20 Components
+import { K20Dashboard } from '../k20/K20Dashboard.js';
+
+// PaaS and BI Layer Components
+import { PaaSDashboard } from '../paas/PaaSDashboard.js';
+import { BIDashboard } from '../bi/BIDashboard.js';
+
 // Master Data Management Component
 import { MasterDataDashboard } from '../masterData/MasterDataDashboard.js';
 import { RolesCatalogViewer } from '../k01/RolesCatalogViewer.js';
@@ -117,7 +130,7 @@ export const AdminLayout: React.FC = () => {
   const [selectedDomain, setSelectedDomain] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace('#', '').toUpperCase();
-      const allowed = ['MDM', 'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16'];
+      const allowed = ['PAAS', 'BI', 'MDM', 'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'K18', 'K19', 'K20'];
       if (allowed.includes(hash)) return hash;
       const saved = localStorage.getItem('didar_selected_domain');
       if (saved && allowed.includes(saved)) return saved;
@@ -129,7 +142,7 @@ export const AdminLayout: React.FC = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '').toUpperCase();
-      const allowed = ['MDM', 'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16'];
+      const allowed = ['PAAS', 'BI', 'MDM', 'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'K18', 'K19', 'K20'];
       if (allowed.includes(hash)) {
         setSelectedDomain(hash);
       }
@@ -483,9 +496,27 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main Workspace Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
-        {selectedDomain === 'MDM' ? (
+        {selectedDomain === 'PAAS' ? (
+          /* Platform as a Service (PaaS) Layer */
+          <PaaSDashboard
+            onNavigateToMdm={() => setSelectedDomain('MDM')}
+            onNavigateToDomain={(dom) => setSelectedDomain(dom)}
+          />
+        ) : selectedDomain === 'BI' ? (
+          /* Business Intelligence (BI) Layer */
+          <BIDashboard onNavigateToDomain={(dom) => setSelectedDomain(dom)} />
+        ) : selectedDomain === 'MDM' ? (
           /* Master Data Management Domain */
           <MasterDataDashboard onBackToDomain={(dom) => setSelectedDomain(dom)} />
+        ) : selectedDomain === 'K20' ? (
+          /* Domain K20 View: Secondary Market, Refurbishment & Scrap Smelting/Recycling */
+          <K20Dashboard />
+        ) : selectedDomain === 'K19' ? (
+          /* Domain K19 View: Buyback, Condition Assay, Trade-In & Settlement */
+          <K19Dashboard />
+        ) : selectedDomain === 'K18' ? (
+          /* Domain K18 View: After-sales Cases, Returns, Repairs & Warranty */
+          <K18Dashboard />
         ) : selectedDomain === 'K17' ? (
           /* Domain K17 View: Consumer Ownership Claims, Digital Provenance & Warranty */
           <K17Dashboard />
@@ -579,12 +610,12 @@ export const AdminLayout: React.FC = () => {
               <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 scrollbar-none">
                 {[
                   { id: 'overview', label: 'داشبورد کلی K01', icon: LayoutDashboard },
-                  { id: 'persons', label: t.persons, icon: Users, count: data?.persons.length },
-                  { id: 'organizations', label: t.organizations, icon: Building2, count: data?.organizations.length },
-                  { id: 'memberships', label: t.memberships, icon: Link2, count: data?.memberships.length },
+                  { id: 'persons', label: t.persons, icon: Users, count: data?.persons?.length },
+                  { id: 'organizations', label: t.organizations, icon: Building2, count: data?.organizations?.length },
+                  { id: 'memberships', label: t.memberships, icon: Link2, count: data?.memberships?.length },
                   { id: 'roles_catalog', label: 'کاتالوگ ۷۰ نقش RBAC', icon: ShieldCheck, count: 70 },
-                  { id: 'documents', label: t.documents, icon: FileCheck2, count: data?.documents.length },
-                  { id: 'audit', label: t.auditTrail, icon: History, count: data?.auditLogs.length }
+                  { id: 'documents', label: t.documents, icon: FileCheck2, count: data?.documents?.length },
+                  { id: 'audit', label: t.auditTrail, icon: History, count: data?.auditLogs?.length }
                 ].map((tab) => {
                   const isActive = activeTab === tab.id;
                   return (

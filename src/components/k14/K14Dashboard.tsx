@@ -578,7 +578,7 @@ export const K14Dashboard: React.FC = () => {
           <CreditCard className="w-4 h-4" />
           <span>پایش پروفایل‌های اعتباری و مواجهه خریداران</span>
           <span className="bg-[#242436] px-1.5 py-0.5 rounded text-[10px] font-mono">
-            {data?.creditProfiles.length || 0}
+            {data?.creditProfiles?.length || 0}
           </span>
         </button>
 
@@ -593,7 +593,7 @@ export const K14Dashboard: React.FC = () => {
           <Scale className="w-4 h-4" />
           <span>خزانه وثایق و تضامین تودیع‌شده</span>
           <span className="bg-[#242436] px-1.5 py-0.5 rounded text-[10px] font-mono">
-            {data?.collaterals.length || 0}
+            {data?.collaterals?.length || 0}
           </span>
         </button>
 
@@ -625,7 +625,7 @@ export const K14Dashboard: React.FC = () => {
           <AlertTriangle className="w-4 h-4" />
           <span>رادار هشدارها و نقض سقف</span>
           <span className="bg-[#FF5C5C]/20 text-[#FF5C5C] px-1.5 py-0.5 rounded text-[10px] font-mono font-bold">
-            {data?.alerts.filter((a) => !a.isAcknowledged).length || 0}
+            {data?.alerts?.filter((a) => !a.isAcknowledged)?.length || 0}
           </span>
         </button>
 
@@ -1123,7 +1123,7 @@ export const K14Dashboard: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {data?.overrideRequests.map((ovr) => (
+            {data?.overrideRequests?.map((ovr) => (
               <div
                 key={ovr.id}
                 className="bg-[#151520] border border-[#28283C] rounded-xl p-4 space-y-3 hover:border-[#383852] transition-colors"
@@ -1227,7 +1227,7 @@ export const K14Dashboard: React.FC = () => {
       {/* TAB 4: Alerts & Breaches */}
       {activeTab === 'alerts' && (
         <div className="space-y-3">
-          {data?.alerts.map((alertItem) => (
+          {data?.alerts?.map((alertItem) => (
             <div
               key={alertItem.id}
               className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
@@ -1716,7 +1716,7 @@ export const K14Dashboard: React.FC = () => {
                   className="w-full bg-[#12121A] border border-[#2A2A3E] rounded-lg px-3 py-2 text-xs text-[#EDEDED] focus:border-[#C8A951] outline-none cursor-pointer"
                 >
                   <option value="">-- انتخاب خریدار یا بنکدار --</option>
-                  {data?.creditProfiles.map((p) => (
+                  {data?.creditProfiles?.map((p) => (
                     <option key={p.buyerId} value={p.buyerId}>
                       {p.buyerOrgNameFa} ({p.tier})
                     </option>
@@ -1981,7 +1981,7 @@ export const K14Dashboard: React.FC = () => {
                   className="w-full bg-[#12121A] border border-[#2A2A3E] rounded-lg px-3 py-2 text-xs text-[#EDEDED] focus:border-[#C8A951] outline-none cursor-pointer"
                 >
                   <option value="">-- انتخاب خریدار --</option>
-                  {data?.creditProfiles.map((p) => (
+                  {data?.creditProfiles?.map((p) => (
                     <option key={p.buyerId} value={p.buyerId}>
                       {p.buyerOrgNameFa} (بهره‌برداری: {p.goldUtilizationPercent}٪ طلا | {p.rialUtilizationPercent}٪ ریال)
                     </option>

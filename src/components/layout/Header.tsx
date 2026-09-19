@@ -64,12 +64,15 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Actions & Status Tools */}
         <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
-          {/* Domain Readiness Indicator */}
+          {/* Three-Tier Architecture Readiness Indicator */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1E1E26] border border-[#2C2C38] text-xs text-[#B5B5C2]">
             <Layers className="w-3.5 h-3.5 text-[#C8A951]" />
-            <span>K01-K17: <strong className="text-[#3DD68C]">فعال و متصل</strong></span>
-            <span className="text-[#555562]">|</span>
-            <span>K18-K20: <span className="text-[#9E9EA8]">در صف توسعه زنجیره</span></span>
+            <span>معماری ۳ لایه:</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#C8A951]/15 text-[#E5C365] font-mono text-[11px]">PaaS</span>
+            <span className="text-[#555562]">·</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#3DD68C]/15 text-[#3DD68C] font-mono text-[11px]">K01-K20</span>
+            <span className="text-[#555562]">·</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#00D1FF]/15 text-[#00D1FF] font-mono text-[11px]">BI</span>
           </div>
 
           {/* Explicit WorkContext Switcher (DIDAR-KERNEL-ACCESS-CHANGE-001) */}

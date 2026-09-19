@@ -275,7 +275,7 @@ export const K17Dashboard: React.FC = () => {
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>اسناد مالکیت دیجیتال ({data?.claims.length || 0})</span>
+          <span>اسناد مالکیت دیجیتال ({data?.claims?.length || 0})</span>
         </button>
 
         <button
@@ -287,7 +287,7 @@ export const K17Dashboard: React.FC = () => {
           }`}
         >
           <ShieldCheck className="w-4 h-4" />
-          <span>کارت‌های گارانتی ({data?.warranties.length || 0})</span>
+          <span>کارت‌های گارانتی ({data?.warranties?.length || 0})</span>
         </button>
 
         <button
@@ -299,7 +299,7 @@ export const K17Dashboard: React.FC = () => {
           }`}
         >
           <ArrowRightLeft className="w-4 h-4" />
-          <span>نقل و انتقال سند ({data?.transferRequests.length || 0})</span>
+          <span>نقل و انتقال سند ({data?.transferRequests?.length || 0})</span>
         </button>
 
         <button
@@ -311,7 +311,7 @@ export const K17Dashboard: React.FC = () => {
           }`}
         >
           <ShieldAlert className="w-4 h-4" />
-          <span>سامانه ضدسرقت ({data?.stolenReports.filter(s => s.status === 'active_alert').length || 0})</span>
+          <span>سامانه ضدسرقت ({data?.stolenReports?.filter(s => s.status === 'active_alert')?.length || 0})</span>
         </button>
 
         <button
@@ -588,7 +588,7 @@ export const K17Dashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-3">
-            {data?.transferRequests.map((tr) => (
+            {data?.transferRequests?.map((tr) => (
               <div
                 key={tr.id}
                 className="p-4 rounded-2xl bg-[#161622] border border-[#28283C] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs"
@@ -662,7 +662,7 @@ export const K17Dashboard: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {data?.stolenReports.map((st) => (
+            {data?.stolenReports?.map((st) => (
               <div
                 key={st.id}
                 className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs ${
@@ -794,7 +794,7 @@ export const K17Dashboard: React.FC = () => {
         isOpen={isDeedModalOpen}
         onClose={() => setIsDeedModalOpen(false)}
         claim={selectedClaimForDeed}
-        warranty={data?.warranties.find(w => w.itemUid === selectedClaimForDeed?.itemSpec.uid)}
+        warranty={data?.warranties?.find(w => w.itemUid === selectedClaimForDeed?.itemSpec.uid)}
         onInitiateTransfer={(claim) => {
           setSelectedClaimForTransfer(claim);
           setIsTransferModalOpen(true);

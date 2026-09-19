@@ -339,7 +339,7 @@ export const K14K15BridgeView: React.FC<K14K15BridgeViewProps> = ({ onVoucherCre
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-[#C8A951]" />
             <h3 className="text-xs font-bold text-[#EDEDED]">
-              فاکتورهای تایید شده در K14 در انتظار صدور سند دوطرفه دفتر دوگانه ({bridgeStatus?.pendingInvoices.length || 0})
+              فاکتورهای تایید شده در K14 در انتظار صدور سند دوطرفه دفتر دوگانه ({bridgeStatus?.pendingInvoices?.length || 0})
             </h3>
           </div>
           <span className="text-[11px] text-[#8E8EA0]">
@@ -419,7 +419,7 @@ export const K14K15BridgeView: React.FC<K14K15BridgeViewProps> = ({ onVoucherCre
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-[#70A5FF]" />
             <h3 className="text-xs font-bold text-[#EDEDED]">
-              سوابق و لاگ‌های نظارتی سرویس واسط K14 ↔ K15 ({bridgeStatus?.recentSyncLogs.length || 0} رویداد اخیر)
+              سوابق و لاگ‌های نظارتی سرویس واسط K14 ↔ K15 ({bridgeStatus?.recentSyncLogs?.length || 0} رویداد اخیر)
             </h3>
           </div>
           <span className="text-[11px] text-[#8E8EA0]">

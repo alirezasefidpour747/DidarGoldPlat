@@ -294,9 +294,9 @@ export const K16Dashboard: React.FC = () => {
     }
   };
 
-  const isOffline = data?.summary.connectionStatus === 'disconnected';
+  const isOffline = data?.summary?.connectionStatus === 'disconnected';
 
-  const filteredOutbox = data?.outboxEntries.filter((doc) => {
+  const filteredOutbox = (data?.outboxEntries || []).filter((doc) => {
     const matchesSearch =
       doc.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doc.idempotencyKey.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -308,7 +308,7 @@ export const K16Dashboard: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const filteredCatalog = data?.catalogItems.filter((item) => {
+  const filteredCatalog = (data?.catalogItems || []).filter((item) => {
     return (
       item.titleFa.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.uid.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -527,10 +527,10 @@ export const K16Dashboard: React.FC = () => {
         <div className="flex items-center gap-2">
           {[
             { id: 'reconciliation', label: 'تطبیق سه‌جانبه (K13 / K14 / K15)', count: data?.tripartiteReconciliationItems?.length },
-            { id: 'outbox', label: 'صف خروجی اسناد زرین (Outbox)', count: data?.outboxEntries.length },
-            { id: 'catalog', label: 'کاتالوگ و تطبیق UID (K16B)', count: data?.catalogItems.length },
+            { id: 'outbox', label: 'صف خروجی اسناد زرین (Outbox)', count: data?.outboxEntries?.length },
+            { id: 'catalog', label: 'کاتالوگ و تطبیق UID (K16B)', count: data?.catalogItems?.length },
             { id: 'settlement', label: 'دفتر تسویه و تهاتر (K16A)', count: data?.settlementAccounts?.length },
-            { id: 'audit', label: 'لاگ تطبیق و ممیزی عدم تکرار', count: data?.auditLogs.length }
+            { id: 'audit', label: 'لاگ تطبیق و ممیزی عدم تکرار', count: data?.auditLogs?.length }
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -1156,7 +1156,7 @@ export const K16Dashboard: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {data?.auditLogs.map((log) => (
+            {data?.auditLogs?.map((log) => (
               <div
                 key={log.id}
                 className="p-3.5 rounded-xl bg-[#14141C] border border-[#242434] flex flex-col sm:flex-row sm:items-center justify-between gap-3"

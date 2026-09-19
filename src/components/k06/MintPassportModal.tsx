@@ -54,9 +54,9 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
   );
 
   const [selectedVariantId, setSelectedVariantId] = useState<string>(
-    selectedProduct?.variants[0]?.id || ''
+    selectedProduct?.variants?.[0]?.id || ''
   );
-  const selectedVariant = selectedProduct?.variants.find((v) => v.id === selectedVariantId);
+  const selectedVariant = selectedProduct?.variants?.find((v) => v.id === selectedVariantId);
 
   const [actualScaleWeightGrams, setActualScaleWeightGrams] = useState<number>(
     selectedVariant ? selectedVariant.targetWeightGrams : 12.0
@@ -149,7 +149,7 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
 
   const handleVariantChange = (variantId: string) => {
     setSelectedVariantId(variantId);
-    const v = selectedProduct?.variants.find((item) => item.id === variantId);
+    const v = selectedProduct?.variants?.find((item) => item.id === variantId);
     if (v) {
       setActualScaleWeightGrams(v.targetWeightGrams);
     }
@@ -477,7 +477,7 @@ export const MintPassportModal: React.FC<MintPassportModalProps> = ({
                   onChange={(e) => handleVariantChange(e.target.value)}
                   className="w-full text-xs px-3 py-2 bg-[#191926] border border-[#28283C] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#C8A951]"
                 >
-                  {selectedProduct?.variants.map((v) => {
+                  {selectedProduct?.variants?.map((v) => {
                     const minW =
                       v.minWeightGrams !== undefined
                         ? v.minWeightGrams

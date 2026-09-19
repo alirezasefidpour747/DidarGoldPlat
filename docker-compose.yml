@@ -12,8 +12,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - DATABASE_URL=postgresql://didar_user:didar_secret_pass_2026@didar-db:5432/didar_gold
-      - JWT_SECRET=didar_master_secret_jwt_key_99824
+      - DATABASE_URL=${DATABASE_URL:-postgresql://didar_user:didar_gold_secret_db_pass_2026@didar-db:5432/didar_gold_db}
+      - JWT_SECRET=${JWT_SECRET:-didar_gold_jwt_master_sec_token_99847120_k01_k17_prod_key}
     volumes:
       - didar_data:/app/data
     depends_on:
@@ -27,8 +27,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: didar_user
-      POSTGRES_PASSWORD: didar_secret_pass_2026
-      POSTGRES_DB: didar_gold
+      POSTGRES_PASSWORD: didar_gold_secret_db_pass_2026
+      POSTGRES_DB: didar_gold_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

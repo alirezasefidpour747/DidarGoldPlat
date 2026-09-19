@@ -24,8 +24,14 @@ import { k14Router } from './server/routes/k14.js';
 import { k15Router } from './server/routes/k15.js';
 import { k16Router } from './server/routes/k16.js';
 import { k17Router } from './server/routes/k17.js';
+import { k18Router } from './server/routes/k18.js';
+import { k19Router } from './server/routes/k19.js';
+import { k20Router } from './server/routes/k20.js';
+import { paasRouter } from './server/routes/paas.js';
+import { biRouter } from './server/routes/bi.js';
 import { rbacRouter } from './server/routes/rbac.js';
 import { masterDataRouter } from './server/routes/masterdata.js';
+import { architectureRouter } from './server/routes/architecture.js';
 import { checkDatabaseHealth } from './server/lib/database.js';
 import dotenv from 'dotenv';
 
@@ -62,7 +68,7 @@ async function startServer() {
       status: 'ok',
       service: 'didar-gold-kernel',
       version: '1.0.0',
-      activeDomains: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17'],
+      activeDomains: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'K18', 'K19', 'K20'],
       database: dbHealth,
       timestamp: new Date().toISOString()
     });
@@ -86,9 +92,15 @@ async function startServer() {
   app.use('/api/admin/kernel/k15', k15Router);
   app.use('/api/admin/kernel/k16', k16Router);
   app.use('/api/admin/kernel/k17', k17Router);
+  app.use('/api/admin/kernel/k18', k18Router);
+  app.use('/api/admin/kernel/k19', k19Router);
+  app.use('/api/admin/kernel/k20', k20Router);
+  app.use('/api/admin/paas', paasRouter);
+  app.use('/api/admin/bi', biRouter);
   app.use('/api/admin/kernel/rbac', rbacRouter);
   app.use('/api', rbacRouter); // Supports /api/me/workspaces
   app.use('/api/admin/masterdata', masterDataRouter);
+  app.use('/api/admin/architecture', architectureRouter);
 
   // Vite middleware setup
   if (process.env.NODE_ENV !== 'production') {

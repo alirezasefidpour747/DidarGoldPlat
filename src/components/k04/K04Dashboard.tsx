@@ -173,17 +173,17 @@ export const K04Dashboard: React.FC = () => {
     );
   }
 
-  const pendingApprovalsCount = data?.approvalRequests.filter(
+  const pendingApprovalsCount = data?.approvalRequests?.filter(
     r => r.status === 'pending_first_approval' || r.status === 'pending_second_approval'
-  ).length || 0;
+  )?.length || 0;
 
   const totalPendingGold = data?.approvalRequests
-    .filter(r => r.status.startsWith('pending'))
-    .reduce((acc, curr) => acc + (curr.goldWeightGrams || 0), 0) || 0;
+    ?.filter(r => r.status.startsWith('pending'))
+    ?.reduce((acc, curr) => acc + (curr.goldWeightGrams || 0), 0) || 0;
 
-  const activeExceptionsCount = data?.exceptions.filter(e => e.status === 'active').length || 0;
+  const activeExceptionsCount = data?.exceptions?.filter(e => e.status === 'active')?.length || 0;
 
-  const totalViolationsBlocked = data?.sodRules.reduce(
+  const totalViolationsBlocked = data?.sodRules?.reduce(
     (acc, curr) => acc + curr.violationsBlockedCount,
     0
   ) || 0;

@@ -79,7 +79,7 @@ export const MasterDataDashboard: React.FC<MasterDataDashboardProps> = ({ onBack
       setError(null);
       const res = await api.getMasterData();
       setData(res);
-      if (res.categories.length > 0 && !res.categories.some(c => c.id === selectedCategoryId)) {
+      if (res?.categories?.length > 0 && !res.categories.some(c => c.id === selectedCategoryId)) {
         setSelectedCategoryId(res.categories[0].id);
       }
     } catch (err: any) {
@@ -94,7 +94,7 @@ export const MasterDataDashboard: React.FC<MasterDataDashboardProps> = ({ onBack
   }, []);
 
   const selectedCategory = useMemo(() => {
-    return data?.categories.find(c => c.id === selectedCategoryId) || null;
+    return data?.categories?.find(c => c.id === selectedCategoryId) || null;
   }, [data?.categories, selectedCategoryId]);
 
   const categoryItems = useMemo(() => {
@@ -230,10 +230,10 @@ export const MasterDataDashboard: React.FC<MasterDataDashboardProps> = ({ onBack
   const stats = useMemo(() => {
     if (!data) return { totalCats: 0, totalItems: 0, activeItems: 0, systemItems: 0 };
     return {
-      totalCats: data.categories.length,
-      totalItems: data.items.length,
-      activeItems: data.items.filter(i => i.isActive).length,
-      systemItems: data.items.filter(i => i.isSystem).length
+      totalCats: data.categories?.length || 0,
+      totalItems: data.items?.length || 0,
+      activeItems: (data.items || []).filter(i => i.isActive).length,
+      systemItems: (data.items || []).filter(i => i.isSystem).length
     };
   }, [data]);
 
@@ -346,13 +346,13 @@ export const MasterDataDashboard: React.FC<MasterDataDashboardProps> = ({ onBack
                 <span>دسته‌بندی‌ها و جداول پایه</span>
               </h2>
               <span className="text-[11px] font-mono text-[#88889D]">
-                {data?.categories.length || 0} مورد
+                {data?.categories?.length || 0} مورد
               </span>
             </div>
 
             {/* Categories List */}
             <div className="space-y-1.5 max-h-[580px] overflow-y-auto pr-1">
-              {data?.categories.map(cat => {
+              {data?.categories?.map(cat => {
                 const isSelected = cat.id === selectedCategoryId;
                 return (
                   <button

@@ -123,10 +123,37 @@ import {
   WarrantyServiceLog
 } from '../types/k17.js';
 import {
+  K18DataPayload,
+  ServiceTicket,
+  RepairWorkshop,
+  K18TicketStage,
+  K18ServiceCategory
+} from '../types/k18.js';
+import {
+  K19DataPayload,
+  BuybackRecord,
+  K19BuybackSource,
+  K19ConditionGrade,
+  K19PayoutMethod,
+  K19AssayMethod,
+  K19PricingValuation
+} from '../types/k19.js';
+import {
+  K20DataPayload,
+  K20RefurbishedItem,
+  K20MeltBatch,
+  K20GemRecovery,
+  K20RefurbishStatus,
+  K20MeltStatus,
+  K20GemRecoveryStatus
+} from '../types/k20.js';
+import {
   MasterDataCategory,
   MasterDataItem,
   MasterDataPayload
 } from '../types/masterData.js';
+import { PaasDataPayload, EventBusMessage } from '../types/paas.js';
+import { BiDataPayload } from '../types/bi.js';
 
 const API_BASE = '/api/admin/kernel/k01';
 const K02_API_BASE = '/api/admin/kernel/k02';
@@ -2452,6 +2479,418 @@ export const api = {
     });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || 'خطا در ثبت سرویس گارانتی');
+    return json;
+  },
+
+  // ==================== K18: AFTER-SALES, RETURNS & REPAIRS ====================
+  getK18Data: async (): Promise<K18DataPayload> => {
+    const res = await fetch('/api/admin/kernel/k18');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت داده‌های K18');
+    return json.data;
+  },
+
+  getK18TicketById: async (id: string): Promise<ServiceTicket> => {
+    const res = await fetch(`/api/admin/kernel/k18/tickets/${encodeURIComponent(id)}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت جزئیات پرونده تعمیر');
+    return json.data;
+  },
+
+  createK18Ticket: async (payload: {
+    itemUid: string;
+    itemTitleFa: string;
+    karatFa?: string;
+    karatPurity?: number;
+    consumerFullName: string;
+    consumerMobile: string;
+    consumerNationalId?: string;
+    consumerCity?: string;
+    intakeConditionNotesFa?: string;
+    intakeStaffNameFa?: string;
+    retailerNameFa?: string;
+    priority?: 'normal' | 'express' | 'urgent_vip';
+    serviceCategory: K18ServiceCategory;
+    serviceCategoryFa: string;
+    intakeGrossWeightGrams: number;
+    intakeTareGrams?: number;
+    warrantyNumber?: string;
+  }): Promise<{ success: boolean; data: ServiceTicket }> => {
+    const res = await fetch('/api/admin/kernel/k18/tickets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت پرونده پذیرش جدید');
+    return json;
+  },
+
+  updateK18TicketStage: async (
+    ticketId: string,
+    payload: {
+      nextStage: K18TicketStage;
+      workshopId?: string;
+      operatorNameFa?: string;
+      notesFa?: string;
+      returnGrossWeightGrams?: number;
+      actualLaborCostToman?: number;
+      assayCert?: string;
+    }
+  ): Promise<{ success: boolean; data: ServiceTicket }> => {
+    const res = await fetch(`/api/admin/kernel/k18/tickets/${encodeURIComponent(ticketId)}/stage`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در تغییر مرحله پرونده');
+    return json;
+  },
+
+  getK18Workshops: async (): Promise<RepairWorkshop[]> => {
+    const res = await fetch('/api/admin/kernel/k18/workshops');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت لیست کارگاه‌ها');
+    return json.data;
+  },
+
+  // Kernel K19 - Buyback & Trade-In
+  getK19Data: async (): Promise<K19DataPayload> => {
+    const res = await fetch('/api/admin/kernel/k19');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت داده‌های بازخرید و معاوضه (K19)');
+    return json.data;
+  },
+
+  getK19RecordById: async (id: string): Promise<BuybackRecord> => {
+    const res = await fetch(`/api/admin/kernel/k19/records/${encodeURIComponent(id)}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت جزئیات پرونده بازخرید');
+    return json.data;
+  },
+
+  calculateK19Estimate: async (payload: {
+    source: K19BuybackSource;
+    purity: number;
+    grossWeightGrams: number;
+    tareWeightGrams?: number;
+    hasPreciousStones?: boolean;
+    certifiedStoneValuationToman?: number;
+    conditionGrade?: K19ConditionGrade;
+  }): Promise<{ assay: any; valuation: K19PricingValuation }> => {
+    const res = await fetch('/api/admin/kernel/k19/estimate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در محاسبه ارزش زنده بازخرید');
+    return json.data;
+  },
+
+  createK19Record: async (payload: {
+    itemUid?: string;
+    itemTitleFa: string;
+    source: K19BuybackSource;
+    conditionGrade: K19ConditionGrade;
+    sellerFullName: string;
+    sellerNationalId: string;
+    sellerMobile: string;
+    sellerBankIban?: string;
+    sellerBankNameFa?: string;
+    sellerCity?: string;
+    grossWeightGrams: number;
+    tareWeightGrams?: number;
+    testedKaratFa?: string;
+    testedPurity?: number;
+    hasPreciousStones?: boolean;
+    preciousStoneDescriptionFa?: string;
+    certifiedStoneValuationToman?: number;
+    assayMethod?: K19AssayMethod;
+    operatorNameFa?: string;
+  }): Promise<{ success: boolean; data: BuybackRecord }> => {
+    const res = await fetch('/api/admin/kernel/k19/records', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت پذیرش پرونده بازخرید');
+    return json;
+  },
+
+  updateK19Assay: async (
+    id: string,
+    payload: {
+      testedPurity?: number;
+      grossWeightGrams?: number;
+      tareWeightGrams?: number;
+      certifiedStoneValuationToman?: number;
+      conditionGrade?: K19ConditionGrade;
+      notesFa?: string;
+      operatorNameFa?: string;
+    }
+  ): Promise<{ success: boolean; data: BuybackRecord }> => {
+    const res = await fetch(`/api/admin/kernel/k19/records/${encodeURIComponent(id)}/assay`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در به‌روزرسانی کارشناسی و عیارسنجی');
+    return json;
+  },
+
+  settleK19Record: async (
+    id: string,
+    payload: {
+      method: K19PayoutMethod;
+      transactionRef?: string;
+      operatorNameFa?: string;
+      vaultId?: string;
+    }
+  ): Promise<{ success: boolean; data: BuybackRecord }> => {
+    const res = await fetch(`/api/admin/kernel/k19/records/${encodeURIComponent(id)}/settle`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در تسویه و پرداخت وجه بازخرید');
+    return json;
+  },
+
+  routeK19Destination: async (
+    id: string,
+    payload: {
+      destination: 'k20_refurbish_secondary' | 'k20_scrap_smelting' | 'k09_reserve_vault';
+      notesFa?: string;
+      operatorNameFa?: string;
+    }
+  ): Promise<{ success: boolean; data: BuybackRecord }> => {
+    const res = await fetch(`/api/admin/kernel/k19/records/${encodeURIComponent(id)}/route`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در هدایت کالا به مقصد فیزیکی');
+    return json;
+  },
+
+  // ==========================================
+  // K20 Domain: Secondary Market, Refurbishment & Scrap Smelting/Recycling
+  // ==========================================
+  getK20Data: async (): Promise<{ success: boolean; data: K20DataPayload }> => {
+    const res = await fetch('/api/admin/kernel/k20');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت داده‌های دامنه K20');
+    return json;
+  },
+
+  getK20RefurbishedItem: async (id: string): Promise<{ success: boolean; data: K20RefurbishedItem }> => {
+    const res = await fetch(`/api/admin/kernel/k20/refurbished/${encodeURIComponent(id)}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت جزئیات قطعه احیاشده');
+    return json;
+  },
+
+  createK20RefurbishedIntake: async (payload: {
+    sourceBuybackId?: string;
+    originalTitleFa: string;
+    categoryFa: string;
+    grossWeightGrams: number;
+    netGoldWeightGrams?: number;
+    hasPreciousStones?: boolean;
+    gemsDescriptionFa?: string;
+    workshopNameFa?: string;
+    artisanNameFa?: string;
+    refurbishCostToman?: number;
+    beforeAfterNotesFa?: string;
+  }): Promise<{ success: boolean; data: K20RefurbishedItem }> => {
+    const res = await fetch('/api/admin/kernel/k20/refurbished', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت پذیرش قطعه در کارگاه احیا');
+    return json;
+  },
+
+  updateK20RefurbishedStatus: async (
+    id: string,
+    payload: {
+      status: K20RefurbishStatus;
+      qcScore?: number;
+      qcInspectorFa?: string;
+      passportUid?: string;
+      notesFa?: string;
+      operatorNameFa?: string;
+    }
+  ): Promise<{ success: boolean; data: K20RefurbishedItem }> => {
+    const res = await fetch(`/api/admin/kernel/k20/refurbished/${encodeURIComponent(id)}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در به‌روزرسانی وضعیت احیا و QC');
+    return json;
+  },
+
+  getK20MeltBatch: async (id: string): Promise<{ success: boolean; data: K20MeltBatch }> => {
+    const res = await fetch(`/api/admin/kernel/k20/melt-batches/${encodeURIComponent(id)}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در دریافت اطلاعات بوته ذوب');
+    return json;
+  },
+
+  createK20MeltBatch: async (payload: {
+    crucibleNumber: string;
+    furnaceOperatorFa?: string;
+    sourceItemsCount?: number;
+    sourceItemsSummaryFa?: string;
+    totalInputWeightGrams: number;
+    expectedPurity?: number;
+    destination?: 'k09_reserve_vault' | 'k07_supplier_workshop' | 'treasury_sale';
+  }): Promise<{ success: boolean; data: K20MeltBatch }> => {
+    const res = await fetch('/api/admin/kernel/k20/melt-batches', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ایجاد بوته ذوب جدید');
+    return json;
+  },
+
+  updateK20MeltBatchStatus: async (
+    id: string,
+    payload: {
+      status: K20MeltStatus;
+      meltedIngotWeightGrams?: number;
+      assayLabNameFa?: string;
+      assayCertificateNumber?: string;
+      certifiedPurity?: number;
+      destination?: 'k09_reserve_vault' | 'k07_supplier_workshop' | 'treasury_sale';
+      operatorNameFa?: string;
+    }
+  ): Promise<{ success: boolean; data: K20MeltBatch }> => {
+    const res = await fetch(`/api/admin/kernel/k20/melt-batches/${encodeURIComponent(id)}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در به‌روزرسانی بوته و ثبت نتایج عیارسنجی ری‌گیری');
+    return json;
+  },
+
+  createK20GemRecovery: async (payload: {
+    gemTypeFa: string;
+    sourceBuybackNumber?: string;
+    caratWeight: number;
+    cutShapeFa?: string;
+    colorGrade?: string;
+    clarityGrade?: string;
+    estimatedValueToman: number;
+    gemologistFa?: string;
+    allocatedVaultFa?: string;
+  }): Promise<{ success: boolean; data: K20GemRecovery }> => {
+    const res = await fetch('/api/admin/kernel/k20/gems', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در ثبت گوهرسنگ بازیابی‌شده');
+    return json;
+  },
+
+  updateK20GemStatus: async (
+    id: string,
+    payload: {
+      status: K20GemRecoveryStatus;
+      allocatedVaultFa?: string;
+      operatorNameFa?: string;
+    }
+  ): Promise<{ success: boolean; data: K20GemRecovery }> => {
+    const res = await fetch(`/api/admin/kernel/k20/gems/${encodeURIComponent(id)}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'خطا در به‌روزرسانی وضعیت گوهرسنگ');
+    return json;
+  },
+
+  // PaaS Platform as a Service API
+  getPaasData: async (): Promise<{ success: boolean; data: PaasDataPayload }> => {
+    const res = await fetch('/api/admin/paas');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'خطا در دریافت اطلاعات لایه پلتفرم (PaaS)');
+    return json;
+  },
+
+  dispatchPaasEvent: async (payload: {
+    topic: string;
+    sourceDomain: string;
+    payloadSummaryFa: string;
+  }): Promise<{ success: boolean; data: EventBusMessage; message: string }> => {
+    const res = await fetch('/api/admin/paas/events/dispatch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'خطا در انتشار رویداد گذرگاه');
+    return json;
+  },
+
+  // Business Intelligence (BI) API
+  getBiData: async (): Promise<{ success: boolean; data: BiDataPayload }> => {
+    const res = await fetch('/api/admin/bi');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'خطا در دریافت اطلاعات هوش تجاری (BI)');
+    return json;
+  },
+
+  resolveBiAnomaly: async (id: string): Promise<{ success: boolean; message: string }> => {
+    const res = await fetch(`/api/admin/bi/anomalies/${encodeURIComponent(id)}/resolve`, {
+      method: 'POST'
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'خطا در پیگیری ناهنجاری هوش تجاری');
+    return json;
+  },
+
+  // 5-Layer Multi-Tier Enterprise Architecture Telemetry
+  getArchitectureData: async (): Promise<{
+    success: boolean;
+    data: {
+      timestamp: string;
+      overallHealthScore: number;
+      flowDirection: string;
+      layers: Array<{
+        layerNumber: 1 | 2 | 3 | 4 | 5;
+        name: string;
+        nameFa: string;
+        category: string;
+        status: 'healthy' | 'operational' | 'degraded';
+        latencyMs: number;
+        componentsCount: number;
+        descriptionFa: string;
+        technologies: string[];
+        metrics: Record<string, any>;
+      }>;
+    };
+  }> => {
+    const res = await fetch('/api/admin/architecture');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'خطا در دریافت تله‌متری لایه‌های معماری');
     return json;
   }
 };

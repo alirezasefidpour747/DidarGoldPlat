@@ -53,7 +53,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
       const data = await api.getUserWorkspaces(currentPartyId);
       if (data) {
         setWorkspaces(data);
-        if (data.organizations.length > 0) {
+        if (data.organizations?.length > 0) {
           const firstOrg = data.organizations[0];
           const initial = {
             type: 'organization' as const,
@@ -118,7 +118,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
             {/* Organizations list */}
             <div className="space-y-1">
               <span className="text-[10px] text-[#A0A0B2] px-2 font-medium">سازمان‌ها و فروشگاه‌ها:</span>
-              {workspaces?.organizations.map((org) => {
+              {workspaces?.organizations?.map((org) => {
                 const isSelected =
                   selectedWorkspace.type === 'organization' &&
                   selectedWorkspace.id === org.organizationId;

@@ -100,7 +100,7 @@ export const K11Dashboard: React.FC = () => {
     showNotification('success', 'رتبه تجاری و سقف‌های اعتباری با موفقیت به‌روزرسانی شد.');
     await loadData();
     if (selectedRetailerForDrawer?.id === retailerId) {
-      const updated = data?.retailers.find(r => r.id === retailerId);
+      const updated = data?.retailers?.find(r => r.id === retailerId);
       if (updated) setSelectedRetailerForDrawer(updated);
     }
   };
@@ -110,7 +110,7 @@ export const K11Dashboard: React.FC = () => {
     showNotification('success', 'قلمرو بازار و ویزیتور مسئول با موفقیت به‌روزرسانی شد.');
     await loadData();
     if (selectedRetailerForDrawer?.id === retailerId) {
-      const updated = data?.retailers.find(r => r.id === retailerId);
+      const updated = data?.retailers?.find(r => r.id === retailerId);
       if (updated) setSelectedRetailerForDrawer(updated);
     }
   };
@@ -120,7 +120,7 @@ export const K11Dashboard: React.FC = () => {
     showNotification('success', 'سیاست سبد مجاز، عیارها و طلای امانی با موفقیت ذخیره شد.');
     await loadData();
     if (selectedRetailerForDrawer?.id === retailerId) {
-      const updated = data?.retailers.find(r => r.id === retailerId);
+      const updated = data?.retailers?.find(r => r.id === retailerId);
       if (updated) setSelectedRetailerForDrawer(updated);
     }
   };
@@ -130,7 +130,7 @@ export const K11Dashboard: React.FC = () => {
     showNotification('success', 'وضعیت چرخه عمر خرده‌فروش تغییر یافت و در پرونده ثبت گردید.');
     await loadData();
     if (selectedRetailerForDrawer?.id === retailerId) {
-      const updated = data?.retailers.find(r => r.id === retailerId);
+      const updated = data?.retailers?.find(r => r.id === retailerId);
       if (updated) setSelectedRetailerForDrawer(updated);
     }
   };
@@ -140,7 +140,7 @@ export const K11Dashboard: React.FC = () => {
     showNotification('success', 'استثنای اعتباری موقت با موفقیت صادر و فعال گردید.');
     await loadData();
     if (selectedRetailerForDrawer?.id === retailerId) {
-      const updated = data?.retailers.find(r => r.id === retailerId);
+      const updated = data?.retailers?.find(r => r.id === retailerId);
       if (updated) setSelectedRetailerForDrawer(updated);
     }
   };
@@ -394,7 +394,7 @@ export const K11Dashboard: React.FC = () => {
           }`}
         >
           <MapPin className="w-4 h-4" />
-          <span>قلمروهای بازاری و پورتفولیوی ویزیتورها ({(data?.territoryList.length || 0).toLocaleString('fa-IR')})</span>
+          <span>قلمروهای بازاری و پورتفولیوی ویزیتورها ({(data?.territoryList?.length || 0).toLocaleString('fa-IR')})</span>
         </button>
 
         <button

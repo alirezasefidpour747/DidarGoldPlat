@@ -215,7 +215,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'After-sales Cases, Returns & Repairs',
     titleAr: 'حالات ما بعد البيع والإرجاع والإصلاح',
     titleFr: 'Service Après-vente, Retours et Réparations',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'پذیرش قطعه معیوب، ارسال به کارگاه سازنده برای تعمیر، جایگزینی و تحویل به مشتری',
     descriptionEn: 'Service ticket lifecycle, repair workshop routing, gem replacement, and warranty coverage'
   },
@@ -226,7 +226,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Buyback',
     titleAr: 'إعادة الشراء',
     titleFr: 'Rachat Garanti',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'محاسبه ارزش روز طلا، کارشناسی اصالت، پیشنهاد خرید تضمینی و واریز وجه یا معاوضه',
     descriptionEn: 'Guaranteed buyback pricing, physical condition assay, trade-in valuation, and settlement'
   },
@@ -237,7 +237,7 @@ export const KERNEL_DOMAINS: KernelDomain[] = [
     titleEn: 'Secondary Market, Refurbishment & Recycling',
     titleAr: 'السوق الثانوية والتجديد وإعادة التدوير',
     titleFr: 'Marché Secondaire, Remise à Neuf et Recyclage',
-    status: 'planned',
+    status: 'active',
     descriptionFa: 'ارزیابی قطعات بازخرید شده برای جلا و عرضه مجدد، یا ذوب و بازیافت به طلای آب‌شده',
     descriptionEn: 'Secondary catalog re-listing, workshop refurbishment, or refining and scrap melt lifecycle'
   }

@@ -1131,7 +1131,7 @@ export const K15Dashboard: React.FC = () => {
                     value={nettingForm.partyId}
                     onChange={(e) => {
                       const id = e.target.value;
-                      const p = data?.partyBalances.find((item) => item.partyId === id);
+                      const p = data?.partyBalances?.find((item) => item.partyId === id);
                       setNettingForm((prev) => ({
                         ...prev,
                         partyId: id,
@@ -1140,7 +1140,7 @@ export const K15Dashboard: React.FC = () => {
                     }}
                     className="w-full bg-[#14141E] border border-[#2A2A3E] rounded-xl px-3 py-2 text-xs text-[#EDEDED] focus:border-[#C8A951] outline-none"
                   >
-                    {data?.partyBalances.map((p) => (
+                    {data?.partyBalances?.map((p) => (
                       <option key={p.partyId} value={p.partyId}>
                         {p.partyNameFa} ({p.zarrinSubledgerCode})
                       </option>
@@ -1423,7 +1423,7 @@ export const K15Dashboard: React.FC = () => {
                   onChange={(e) => setNewVoucherForm({ ...newVoucherForm, partyId: e.target.value })}
                   className="w-full bg-[#14141E] border border-[#2A2A3E] rounded-xl px-3 py-2 text-xs text-[#EDEDED] focus:border-[#C8A951] outline-none"
                 >
-                  {data?.partyBalances.map((p) => (
+                  {data?.partyBalances?.map((p) => (
                     <option key={p.partyId} value={p.partyId}>
                       {p.partyNameFa} ({p.zarrinSubledgerCode})
                     </option>
@@ -1586,7 +1586,7 @@ export const K15Dashboard: React.FC = () => {
                   onChange={(e) => setNettingForm({ ...nettingForm, partyId: e.target.value })}
                   className="w-full bg-[#14141E] border border-[#2A2A3E] rounded-xl px-3 py-2 text-xs text-[#EDEDED] focus:border-[#C8A951] outline-none"
                 >
-                  {data?.partyBalances.map((p) => (
+                  {data?.partyBalances?.map((p) => (
                     <option key={p.partyId} value={p.partyId}>
                       {p.partyNameFa} ({p.zarrinSubledgerCode})
                     </option>
