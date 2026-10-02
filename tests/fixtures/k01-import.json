@@ -1,0 +1,83 @@
+{
+  "persons": [
+    {
+      "id": "party-import-001",
+      "partyType": "consumer",
+      "firstName": "Test",
+      "lastName": "Import",
+      "nationalId": "test-national-001",
+      "mobile": "09000000001",
+      "status": "active",
+      "verificationStatus": "verified",
+      "createdAt": "2026-09-20T00:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
+      "version": 1
+    }
+  ],
+  "organizations": [
+    {
+      "id": "org-import-001",
+      "legalName": "Integration Organization",
+      "displayName": "Integration Org",
+      "organizationType": "other",
+      "phone": "02100000001",
+      "status": "active",
+      "verificationStatus": "verified",
+      "createdAt": "2026-09-20T00:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
+      "version": 1
+    }
+  ],
+  "memberships": [
+    {
+      "id": "mem-import-001",
+      "partyId": "party-import-001",
+      "organizationId": "org-import-001",
+      "roleKey": "staff",
+      "title": "Imported member",
+      "authorities": ["can_order"],
+      "isPrimary": true,
+      "status": "active",
+      "validFrom": "2026-01-01",
+      "partyName": "Test Import",
+      "organizationName": "Integration Org",
+      "createdAt": "2026-09-20T00:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-import-001",
+      "targetType": "party",
+      "targetId": "party-import-001",
+      "documentType": "other",
+      "fileName": "fixture.pdf",
+      "fileSize": 123,
+      "mimeType": "application/pdf",
+      "verificationStatus": "verified",
+      "uploadedBy": "test-runner",
+      "createdAt": "2026-09-20T00:00:00.000Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "audit-import-001",
+      "actorId": "test-runner",
+      "actorName": "Integration Test",
+      "action": "create",
+      "targetType": "party",
+      "targetId": "party-import-001",
+      "description": "Synthetic integration fixture",
+      "timestamp": "2026-09-20T00:00:00.000Z"
+    }
+  ],
+  "counts": {
+    "totalPersons": 1,
+    "totalOrganizations": 1,
+    "totalMemberships": 1,
+    "activePersons": 1,
+    "activeOrganizations": 1,
+    "verifiedPersons": 1,
+    "verifiedOrganizations": 1
+  }
+}

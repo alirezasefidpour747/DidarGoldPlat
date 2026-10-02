@@ -1,11 +1,9 @@
 /**
- * Didar Gold Platform - Layer 5: Database Engine
+ * Didar Gold Platform - Local JSON Storage Helper
  * 
  * Responsibilities:
- * - Direct interaction with physical storage medium (ACID Disk Volume / Postgres)
- * - Transaction isolation, write mutex locks, and atomic snapshotting
- * - Write-Ahead Logging (WAL) for durability
- * - Health telemetry and storage quota tracking
+ * This helper provides process-local locks and whole-file temp/rename writes.
+ * It is not a relational database, a durable WAL, or an ACID transaction engine.
  */
 
 import fs from 'fs';
@@ -19,17 +17,16 @@ export interface TransactionContext {
 }
 
 export interface DatabaseTelemetry {
-  engineType: 'independent_acid_json_volume' | 'postgres_wire_compatible';
-  status: 'connected' | 'healthy' | 'degraded';
-  vendorLockIn: false;
-  persistenceMode: 'disk_volume_acid' | 'relational_db';
+  engineType: 'local_json_file_store';
+  status: 'available' | 'degraded';
+  persistenceMode: 'partial_json_file_storage';
   dataDirectory: string;
   backupDirectory: string;
   totalCollections: number;
   totalRecordsCount: number;
   diskUsageBytes: number;
   diskUsageFormatted: string;
-  walStatus: 'synced' | 'flushing' | 'recovery';
+  walStatus: 'not_implemented';
   activeLocksCount: number;
   lastSnapshotTimestampFa: string;
   latencyMs: number;
@@ -62,7 +59,7 @@ export class DatabaseEngine {
   }
 
   /**
-   * Acquire an ACID write lock on a specific collection/domain table
+   * Acquire a process-local write lock on a collection file.
    */
   public async acquireLock(collection: string): Promise<() => void> {
     while (this.activeLocks.get(collection)) {
@@ -76,7 +73,7 @@ export class DatabaseEngine {
   }
 
   /**
-   * Reads raw collection from ACID disk storage
+   * Read a JSON collection file.
    */
   public readCollection<T>(collectionName: string, defaultValue: T): T {
     const filePath = path.join(this.dataDir, `${collectionName}.json`);
@@ -92,7 +89,7 @@ export class DatabaseEngine {
   }
 
   /**
-   * Writes collection to disk with atomic write and WAL entry
+   * Write one JSON file using a temp-file rename.
    */
   public async writeCollection<T>(collectionName: string, data: T): Promise<void> {
     const release = await this.acquireLock(collectionName);
@@ -105,7 +102,7 @@ export class DatabaseEngine {
       fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
       fs.renameSync(tempPath, finalPath);
 
-      // Append to Write-Ahead Log (WAL)
+      // Process-local operation history only; this is not a durable WAL.
       this.walLog.push({
         id: `wal-${Date.now()}`,
         timestamp: Date.now(),
@@ -122,7 +119,7 @@ export class DatabaseEngine {
   }
 
   /**
-   * Begin atomic transaction
+   * Begin process-local transaction metadata (no rollback/isolation guarantee).
    */
   public beginTransaction(): TransactionContext {
     return {
@@ -134,7 +131,7 @@ export class DatabaseEngine {
   }
 
   /**
-   * Commit atomic transaction
+   * Record a process-local commit marker.
    */
   public commitTransaction(tx: TransactionContext): void {
     this.walLog.push({
@@ -175,6 +172,9 @@ export class DatabaseEngine {
     const start = Date.now();
     let totalSize = 0;
     let collectionsCount = 0;
+    let totalRecordsCount = 0;
+    let status: 'available' | 'degraded' = 'available';
+    let lastSnapshotTimestampFa = 'ثبت نشده';
 
     try {
       if (fs.existsSync(this.dataDir)) {
@@ -182,28 +182,45 @@ export class DatabaseEngine {
         collectionsCount = files.length;
         for (const file of files) {
           totalSize += fs.statSync(path.join(this.dataDir, file)).size;
+          try {
+            const parsed = JSON.parse(fs.readFileSync(path.join(this.dataDir, file), 'utf-8'));
+            if (Array.isArray(parsed)) totalRecordsCount += parsed.length;
+            else if (parsed && typeof parsed === 'object') {
+              totalRecordsCount += Object.values(parsed as Record<string, unknown>).reduce<number>(
+                (count: number, value) => count + (Array.isArray(value) ? value.length : 0),
+                0
+              );
+            }
+          } catch {
+            status = 'degraded';
+          }
+        }
+        const snapshots = fs.existsSync(this.backupDir)
+          ? fs.readdirSync(this.backupDir).map((file) => fs.statSync(path.join(this.backupDir, file)).mtimeMs)
+          : [];
+        if (snapshots.length > 0) {
+          lastSnapshotTimestampFa = new Date(Math.max(...snapshots)).toLocaleString('fa-IR');
         }
       }
-    } catch (err) {
-      // fallback
+    } catch {
+      status = 'degraded';
     }
 
     const mbSize = (totalSize / (1024 * 1024)).toFixed(2);
 
     return {
-      engineType: 'independent_acid_json_volume',
-      status: 'healthy',
-      vendorLockIn: false,
-      persistenceMode: 'disk_volume_acid',
+      engineType: 'local_json_file_store',
+      status,
+      persistenceMode: 'partial_json_file_storage',
       dataDirectory: this.dataDir,
       backupDirectory: this.backupDir,
-      totalCollections: Math.max(collectionsCount, 24),
-      totalRecordsCount: 2840,
-      diskUsageBytes: totalSize || 4857200,
+      totalCollections: collectionsCount,
+      totalRecordsCount,
+      diskUsageBytes: totalSize,
       diskUsageFormatted: `${mbSize} مگابایت`,
-      walStatus: 'synced',
+      walStatus: 'not_implemented',
       activeLocksCount: this.activeLocks.size,
-      lastSnapshotTimestampFa: '۱۴۰۴/۱۲/۲۸ - لحظه‌ای',
+      lastSnapshotTimestampFa,
       latencyMs: Date.now() - start
     };
   }

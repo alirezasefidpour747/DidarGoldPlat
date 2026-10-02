@@ -6,7 +6,7 @@
  * 3. Identity, IAM & RBAC Security Control
  * 4. API Gateway & Microservice Routing
  * 5. Background Workers & Cron Scheduler
- * 6. ACID Storage Engine & System Telemetry
+ * 6. Local JSON storage inventory and demo telemetry
  */
 
 export type PaasServiceStatus = 'operational' | 'degraded' | 'maintenance' | 'offline';
@@ -68,7 +68,7 @@ export interface BackgroundWorkerJob {
   nameEn: string;
   schedule: string;
   targetDomain: string;
-  status: 'running' | 'idle' | 'failed' | 'scheduled';
+  status: 'running' | 'idle' | 'failed' | 'scheduled' | 'not_implemented';
   lastRunFa: string;
   nextRunFa: string;
   durationMs: number;
@@ -85,9 +85,9 @@ export interface StorageEngineTelemetry {
   totalRecordsCount: number;
   diskUsageBytes: number;
   diskUsageFormatted: string;
-  walStatus: 'active' | 'synced';
+  walStatus: 'active' | 'synced' | 'not_implemented';
   lastSnapshotTimestampFa: string;
-  vendorLockIn: false;
+  vendorLockIn: boolean;
   acidCompliance: boolean;
   activeLocksCount: number;
 }
@@ -100,7 +100,7 @@ export interface PaasDataPayload {
     totalEventsDispatched24h: number;
     avgGatewayLatencyMs: number;
     activeWorkersCount: number;
-    storageEngineStatus: 'healthy' | 'optimal';
+    storageEngineStatus: 'healthy' | 'optimal' | 'degraded';
     systemLayerVersion: string;
     environment: string;
     lastTelemetrySyncFa: string;

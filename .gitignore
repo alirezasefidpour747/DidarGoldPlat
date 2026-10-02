@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+.npmrc
+.secrets/
+secrets/
+*.pem
+*.key
+data/import-backups/

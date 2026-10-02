@@ -6,8 +6,8 @@
 
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { k01Router } from './server/routes/k01.js';
 import { k02Router } from './server/routes/k02.js';
 import { k03Router } from './server/routes/k03.js';
@@ -33,19 +33,59 @@ import { biRouter } from './server/routes/bi.js';
 import { rbacRouter } from './server/routes/rbac.js';
 import { masterDataRouter } from './server/routes/masterdata.js';
 import { architectureRouter } from './server/routes/architecture.js';
-import { checkDatabaseHealth } from './server/lib/database.js';
+import { checkRuntimeReadiness } from './server/lib/database.js';
+import { closeDatabasePool } from './server/database/client.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.BACKEND_PORT || process.env.PORT || 8000);
   const isProduction = process.env.NODE_ENV === 'production';
-  const configuredCorsOrigin = process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:3000';
+  const serveStatic = process.env.SERVE_STATIC === 'true';
+  const configuredCorsOrigins = process.env.CORS_ALLOWED_ORIGINS;
+  const defaultDevelopmentOrigins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://0.0.0.0:3000'
+  ];
+
+  if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
+    throw new Error('Configuration error: PORT/BACKEND_PORT must be an integer from 1 to 65535.');
+  }
+
+  if (isProduction) {
+    const missing = [
+      !process.env.DATABASE_URL?.trim() && 'DATABASE_URL',
+      !configuredCorsOrigins?.trim() && 'CORS_ALLOWED_ORIGINS',
+      !['true', 'false'].includes(process.env.SERVE_STATIC || '') && 'SERVE_STATIC'
+    ].filter(Boolean);
+    if (missing.length > 0) {
+      throw new Error(`Configuration error: missing required production settings: ${missing.join(', ')}`);
+    }
+  }
+
+  const allowedOrigins = (configuredCorsOrigins || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  if (!isProduction) allowedOrigins.push(...defaultDevelopmentOrigins);
+
+  for (const origin of allowedOrigins) {
+    if (origin === '*') {
+      throw new Error('Configuration error: wildcard CORS origins are not allowed.');
+    }
+    try {
+      const parsed = new URL(origin);
+      if (!['http:', 'https:'].includes(parsed.protocol) || parsed.origin !== origin) {
+        throw new Error('invalid origin');
+      }
+    } catch {
+      throw new Error('Configuration error: CORS_ALLOWED_ORIGINS must contain exact HTTP(S) origins without paths.');
+    }
+  }
+  const exactAllowedOrigins = new Set(allowedOrigins);
 
   // Strict CORS configuration
   app.use(
@@ -54,37 +94,13 @@ async function startServer() {
         // Permit server-to-server, curl, or same-origin (no Origin header)
         if (!origin) return callback(null, true);
 
-        if (isProduction) {
-          const allowedOrigins = configuredCorsOrigin
-            .split(',')
-            .map((item) => item.trim())
-            .filter(Boolean);
+        if (exactAllowedOrigins.has(origin)) return callback(null, true);
 
-          if (allowedOrigins.includes(origin) || origin.endsWith('.run.app')) {
-            return callback(null, true);
-          }
-          return callback(
-            new Error(`[CORS Error] Origin "${origin}" is not permitted by CORS_ALLOWED_ORIGIN policy.`)
-          );
-        } else {
-          // Development mode: Allow localhost:3000, 127.0.0.1:3000, or explicitly configured origins
-          const devAllowed = [
-            'http://localhost:3000',
-            'http://127.0.0.1:3000',
-            'http://0.0.0.0:3000',
-            ...configuredCorsOrigin.split(',').map((o) => o.trim())
-          ].filter(Boolean);
-
-          if (
-            devAllowed.includes(origin) ||
-            origin.includes('localhost') ||
-            origin.includes('127.0.0.1') ||
-            origin.endsWith('.run.app')
-          ) {
-            return callback(null, true);
-          }
-          return callback(null, true);
-        }
+        const error = new Error('Browser origin is not allowed by CORS policy.') as Error & {
+          status?: number;
+        };
+        error.status = 403;
+        return callback(error);
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -96,39 +112,27 @@ async function startServer() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Health check endpoint (Requirement 5 & 10)
-  app.get('/api/health', async (req, res) => {
-    const dbHealth = await checkDatabaseHealth().catch(() => ({
-      engine: 'independent_local_acid' as const,
-      status: 'healthy' as const,
-      vendorLockIn: false as const,
-      databaseUrlConfigured: false,
-      persistenceMode: 'disk_volume_acid' as const,
-      dataDirectory: './data',
-      backupDirectory: './data/backups',
-      lastBackupTimestamp: null,
-      totalEntitiesCount: 0,
-      message: 'موتور مستقل پایگاه داده فعال است.',
-      latencyMs: 1
-    }));
+  const sendLiveness = (_req: express.Request, res: express.Response) => {
+    res.json({ status: 'alive', service: 'didar-gold-backend-api' });
+  };
 
-    res.json({
-      status: 'ok',
-      service: 'didar-gold-backend-api',
-      version: '1.0.0',
-      port: PORT,
-      host: '0.0.0.0',
-      corsConfig: {
-        environment: isProduction ? 'production' : 'development',
-        allowedOrigin: configuredCorsOrigin
-      },
-      activeDomains: [
-        'K01', 'K02', 'K03', 'K04', 'K05', 'K06', 'K07', 'K08', 'K09', 'K10',
-        'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'K18', 'K19', 'K20'
-      ],
-      database: dbHealth,
-      timestamp: new Date().toISOString()
-    });
+  // Compatibility alias: /api/health intentionally has liveness semantics.
+  app.get('/api/health', sendLiveness);
+  app.get('/api/health/live', sendLiveness);
+
+  app.get('/api/health/ready', async (_req, res) => {
+    try {
+      const readiness = await checkRuntimeReadiness();
+      res.status(readiness.ready ? 200 : 503).json({
+        status: readiness.ready ? 'ready' : 'not_ready',
+        dependencies: readiness.dependencies
+      });
+    } catch {
+      res.status(503).json({
+        status: 'not_ready',
+        dependencies: { runtime: 'unavailable' }
+      });
+    }
   });
 
   // Kernel Domain API Routes (Requirement 2 & 5)
@@ -160,33 +164,58 @@ async function startServer() {
   app.use('/api/admin/architecture', architectureRouter);
 
   // Standalone fallback: if SERVE_STATIC is explicitly enabled, serve static assets
-  if (process.env.SERVE_STATIC === 'true') {
+  if (serveStatic) {
     const distPath = path.join(process.cwd(), 'dist');
+    if (!fs.existsSync(path.join(distPath, 'index.html'))) {
+      throw new Error('Configuration error: SERVE_STATIC=true but dist/index.html is missing.');
+    }
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
+  app.use((err: Error & { status?: number }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    const status = err.status || 500;
+    res.status(status).json({
+      status: 'error',
+      message: status === 403 ? 'Browser origin is not allowed.' : 'Internal server error.'
+    });
+  });
+
   const server = app.listen(PORT, '0.0.0.0');
 
   server.on('error', (err: any) => {
-    if (err.code === 'EADDRINUSE') {
-      const fallbackPort = PORT === 8000 ? 8001 : PORT + 1;
-      console.warn(`[Didar Gold Backend API] Port ${PORT} is occupied by host environment. Falling back to port ${fallbackPort}...`);
-      app.listen(fallbackPort, '0.0.0.0', () => {
-        console.log(`[Didar Gold Backend API] Running independently on http://0.0.0.0:${fallbackPort}`);
-        console.log(`[Didar Gold Backend API] CORS origin allowed: ${configuredCorsOrigin}`);
-      });
-    } else {
-      console.error('[Didar Gold Backend API] Server error:', err);
-    }
+    const reason = err.code === 'EADDRINUSE' ? 'configured port is already in use' : 'listener failure';
+    console.error(`[Didar Gold Backend API] Startup failed on 0.0.0.0:${PORT}: ${reason}.`);
+    process.exit(1);
   });
 
   server.on('listening', () => {
-    console.log(`[Didar Gold Backend API] Running independently on http://0.0.0.0:${PORT}`);
-    console.log(`[Didar Gold Backend API] CORS origin allowed: ${configuredCorsOrigin}`);
+    console.log(`[Didar Gold Backend API] Listening on http://0.0.0.0:${PORT}`);
+    console.log(`[Didar Gold Backend API] Browser CORS allowlist entries: ${exactAllowedOrigins.size}`);
+    console.warn('[Didar Gold Backend API] Production release remains frozen: authentication and RBAC enforcement are not implemented.');
   });
+
+  let shuttingDown = false;
+  const shutdown = (signal: string) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    console.log(`[Didar Gold Backend API] ${signal} received; closing HTTP and PostgreSQL pools.`);
+    const forceExit = setTimeout(() => process.exit(1), 10_000);
+    forceExit.unref();
+    server.close(async () => {
+      try {
+        await closeDatabasePool();
+        process.exit(0);
+      } catch {
+        console.error('[Didar Gold Backend API] PostgreSQL pool shutdown failed.');
+        process.exit(1);
+      }
+    });
+  };
+  process.once('SIGTERM', () => shutdown('SIGTERM'));
+  process.once('SIGINT', () => shutdown('SIGINT'));
 }
 
 startServer().catch((err) => {

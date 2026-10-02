@@ -438,18 +438,15 @@ export async function apiVerifyDocument(id: string, verificationStatus: Verifica
 }
 
 export interface DatabaseHealthData {
-  engine: 'independent_local_acid' | 'self_hosted_postgres';
-  status: 'connected' | 'healthy' | 'degraded';
-  vendorLockIn: false;
+  engine: 'postgresql';
+  status: 'ready' | 'unavailable' | 'not_configured';
+  ready: boolean;
+  required: true;
   databaseUrlConfigured: boolean;
-  persistenceMode: 'disk_volume_acid' | 'relational_db';
-  dataDirectory: string;
-  backupDirectory: string;
-  lastBackupTimestamp: string | null;
-  totalEntitiesCount: number;
+  connectivityVerified: boolean;
+  persistenceMode: 'postgresql';
   message: string;
   latencyMs: number;
-  configured?: boolean;
 }
 
 export async function apiGetDatabaseHealth(): Promise<DatabaseHealthData> {
@@ -2969,7 +2966,7 @@ export const api = {
     success: boolean;
     data: {
       timestamp: string;
-      overallHealthScore: number;
+      overallHealthScore: number | null;
       flowDirection: string;
       layers: Array<{
         layerNumber: 1 | 2 | 3 | 4 | 5;
@@ -2997,4 +2994,3 @@ export const api = {
   buildApiUrl: buildApiUrl,
   getBackendUrl: getBackendBaseUrl
 };
-

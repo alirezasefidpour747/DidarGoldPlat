@@ -1,28 +1,25 @@
 /**
- * Didar Gold Platform - Legacy Compatibility Adapter
- * Delegates to the independent database engine without any @supabase/supabase-js dependency.
+ * Legacy route-name compatibility adapter.
+ * Supabase and authentication connectivity are not implemented.
  */
 
-import { checkDatabaseHealth, createIndependentBackup } from './database.js';
-import { K01DataPayload } from '../../src/types/k01.js';
+import { checkDatabaseHealth } from './database.js';
 
 export async function checkSupabaseHealth() {
-  const dbHealth = await checkDatabaseHealth();
+  const storage = await checkDatabaseHealth();
   return {
-    configured: true,
-    url: dbHealth.dataDirectory,
-    hasSecretKey: true,
-    hasPublishableKey: true,
-    hasJwksUrl: false,
-    status: 'connected' as const,
-    message: dbHealth.message,
-    authActive: true,
-    latencyMs: dbHealth.latencyMs,
-    engine: dbHealth.engine,
-    vendorLockIn: false
+    configured: false,
+    status: 'not_implemented' as const,
+    authActive: false,
+    connectivityVerified: false,
+    message: 'Supabase connectivity and authentication are not implemented.',
+    postgresql: storage.status
   };
 }
 
-export async function syncSnapshotToSupabase(store: K01DataPayload) {
-  return createIndependentBackup(store);
+export async function syncSnapshotToSupabase() {
+  return {
+    success: false,
+    message: 'Supabase synchronization is not implemented; PostgreSQL is the K01 system of record.'
+  };
 }

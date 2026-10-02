@@ -23,11 +23,11 @@ import { k14Storage } from './storage-k14.js';
 
 class K16Storage {
   private summary: ZarrinSyncSummary = {
-    connectionStatus: 'connected',
-    connectionStatusFa: 'متصل به وب‌سرویس جامع زرین (K16B)',
-    apiBaseUrl: 'https://erp-api.zarrin-gold.ir/v2/integration',
-    lastPingLatencyMs: 142,
-    serviceAccount: 'didar-platform-svc@zarrin.internal',
+    connectionStatus: 'mock_active',
+    connectionStatusFa: 'حالت نمایشی؛ اتصال ERP پیاده‌سازی نشده است',
+    apiBaseUrl: 'not-configured',
+    lastPingLatencyMs: 0,
+    serviceAccount: 'not-configured',
     catalogSyncedCount: 8,
     catalogPendingCount: 1,
     outboxPendingCount: 1,
@@ -519,10 +519,10 @@ class K16Storage {
 
   public setOfflineSimulation(offline: boolean) {
     this.simulateOffline = offline;
-    this.summary.connectionStatus = offline ? 'disconnected' : 'connected';
+    this.summary.connectionStatus = offline ? 'disconnected' : 'mock_active';
     this.summary.connectionStatusFa = offline
       ? 'قطعی اتصال شبیه‌سازی‌شده به زرین'
-      : 'متصل به وب‌سرویس جامع زرین (K16B)';
+      : 'حالت نمایشی؛ اتصال ERP پیاده‌سازی نشده است';
   }
 
   public isOfflineSimulation(): boolean {

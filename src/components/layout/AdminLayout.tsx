@@ -529,7 +529,7 @@ export const AdminLayout: React.FC = () => {
                   <span className="text-[10px] bg-[#E5484D]/30 text-[#FFA0A0] px-2 py-0.5 rounded font-mono">Port {backendPort}</span>
                 </div>
                 <div className="text-xs text-[#FF9E9E]/90 mt-1">
-                  ارتباط فرانتاند (پورت ۳۰۰۰) با سرور بکاند روی پورت {backendPort} برقرار نیست. برای فعال‌سازی، لطفاً در ترمینال دستور <code className="bg-black/50 px-1.5 py-0.5 rounded font-mono text-[#E5C365]">npm run dev:backend</code> را اجرا کنید.
+                  ارتباط فرانتاند (پورت ۳۰۰۰) با سرور بکاند روی پورت {backendPort} برقرار نیست. برای فعال‌سازی، لطفاً در ترمینال دستور <code className="bg-black/50 px-1.5 py-0.5 rounded font-mono text-[#E5C365]">bun run dev:backend</code> را اجرا کنید.
                 </div>
               </div>
             </div>

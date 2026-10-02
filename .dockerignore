@@ -1,0 +1,14 @@
+.git
+.github
+.env*
+!.env.example
+.secrets
+secrets
+node_modules
+dist
+coverage
+data
+docs
+*.log
+*.pem
+*.key

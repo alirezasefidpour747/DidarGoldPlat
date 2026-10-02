@@ -1,25 +1,27 @@
 # راهنمای جامع استقرار مستقل و CI/CD سکوی دیدار طلا (Didar Gold Platform)
 ## معماری کاملاً مستقل (Zero Cloud Vendor Lock-in & Self-Hosted)
 
-این سامانه اکنون به صورت **۱۰۰٪ مستقل** بازنویسی شده و تمامی وابستگی‌های مستقیم و کلاینت ابری به سرویس‌های خارجی نظیر Supabase حذف شده است. دیتابیس و مدیریت احراز هویت کاملاً در کنترل و زیرساخت اختصاصی شما قرار دارد.
+> **وضعیت Package 2:** انتشار production همچنان متوقف است. K01 اکنون از PostgreSQL واقعی استفاده می‌کند؛ K02 تا K20 مهاجرت نکرده‌اند و احراز هویت و اعمال RBAC هنوز پیاده‌سازی نشده‌اند. readiness در production عمداً `503` است، اما وضعیت وابستگی PostgreSQL بر پایه اجرای واقعی `SELECT 1` گزارش می‌شود.
 
 ---
 
-### ۱. گزینه‌های پایگاه‌داده اختصاصی (Database Strategy)
+### ۱. وضعیت فعلی ذخیره‌سازی (Database Strategy)
 
-این سامانه به دو شکل کاملاً مستقل بر روی سرور شما کار می‌کند:
+وضعیت فعلی به‌صورت زیر است:
 
-1. **حالت دیسک تراکنشی با دوام بالا (ACID Disk Volume - پیش‌فرض بدون کانفیگ اضافی):**
-   - تمامی داده‌ها، لاگ‌ها و تراکنش‌های K01 تا K17 در پوشه `/app/data` (فایل `didar-kernel-store.json`) به صورت اتمیک و ایدن‌پوتنت ذخیره می‌شوند.
-   - پوشه `/app/data` به صورت Docker Volume روی هارد دیسک سرور پایدار (Persistent) می‌ماند و حتی با خاموش/روشن شدن کانتینر هیچ داده‌ای حذف نخواهد شد.
-   - دارای قابلیت بکاپ‌گیری دوره‌ای و دستی خودکار در `/app/data/backups`.
+1. **ذخیره‌سازی قدیمی JSON/حافظه (موقت و ناقص):**
+   - مسیر فعال K01 دیگر JSON را نمی‌خواند یا نمی‌نویسد.
+   - K02 و K03 هنوز به بخش‌هایی از فایل قدیمی وابسته‌اند و K04 تا K20 مهاجرت نکرده‌اند.
+   - این طراحی تضمین ACID سراسری، WAL پایدار یا ایمنی چند replica ندارد.
+   - endpoint قدیمی backup/sync مربوط به K01 با پاسخ `501` غیرفعال شده است.
 
-2. **حالت PostgreSQL اختصاصی (شخصی‌سازی دیتابیس رابطه‌ای):**
-   - در فایل `docker-compose.yml` یک سرویس دیتابیس قدرتمند `postgres:16-alpine` اختصاصی قرار داده شده است.
-   - در صورت تعیین متغیر `DATABASE_URL` در فایل `.env` سرور، سامانه مستقیماً به PostgreSQL اختصاصی متصل می‌گردد:
-     ```bash
-     DATABASE_URL=postgresql://didar_user:didar_secret_pass_2026@localhost:5432/didar_gold
-     ```
+2. **PostgreSQL (فعال فقط برای K01):**
+   - `docker-compose.yml` سرویس `postgres:16-alpine` را تعریف می‌کند.
+   - connection pool، migration نسخه‌دار، transaction API و repository/service اختصاصی K01 فعال‌اند.
+   - قالب امن متغیر:
+   ```bash
+     DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<database>
+   ```
 
 ---
 
@@ -34,22 +36,50 @@ cd /var/www/didar-gold
 
 # ۲. ایجاد فایل متغیرهای محیطی
 cp .env.example .env
+# مقادیر الزامی CORS_ALLOWED_ORIGINS، DATABASE_URL و POSTGRES_* را
+# با Secret Manager یا فایل محلیِ ignore‌شده تکمیل کنید.
 
-# ۳. اجرای کانتینرها (هسته دیدار + دیتابیس مستقل)
-docker compose up -d --build
+# ۳. ساخت image و راه‌اندازی PostgreSQL
+docker compose build
+docker compose up -d didar-db
 
-# ۴. بررسی سلامت سامانه
-curl http://localhost:3000/api/health
+# ۴. اجرای migration به‌صورت صریح (در startup خودکار اجرا نمی‌شود)
+docker compose run --rm didar-kernel bun run db:migrate
+docker compose run --rm didar-kernel bun run db:status
+
+# ۵. K01 با schema خالی آغاز می‌شود. فایل قدیمی didar-kernel-store.json
+# طبق تصمیم مالک فقط داده نمایشی است و نباید export یا import شود.
+# فرمان db:import:k01 در استقرار clean-schema اجرا نمی‌شود.
+
+# ۶. راه‌اندازی برنامه
+docker compose up -d didar-kernel
+
+# ۷. بررسی سلامت سامانه
+curl http://localhost:3000/api/health/live
+# پاسخ کلی production تا تکمیل authentication/RBAC عمداً 503 است؛
+# فیلد dependencies.postgresql باید پس از query واقعی مقدار ready داشته باشد.
+curl -i http://localhost:3000/api/health/ready
 ```
+
+#### بازگشت و بازیابی K01
+
+- volume قدیمی را حذف نکنید؛ K02، K03 و RBAC هنوز به فایل‌های آن وابسته‌اند. فایل K01 داخل آن فقط demo است و منبع migration نیست.
+- پیش از هر rollback از پایگاه داده با ابزار استاندارد PostgreSQL مانند `pg_dump` پشتیبان بگیرید.
+- برای rollback، image قبلی و migration سازگار آن را در یک پایگاه بازیابی‌شده/اختصاصی اجرا کنید؛ migration فعلی down خودکار ندارد.
+- بازیابی را ابتدا در پایگاه جداگانه با `pg_restore` آزمایش و شمار رکوردها را با منبع مقایسه کنید. هیچ فرمان reset یا حذف volume در این راهنما مجاز نیست.
 
 ---
 
 ### ۳. راه‌اندازی CI/CD خودکار از طریق GitHub Actions
 
 یک ورک‌فلو آماده در مسیر `.github/workflows/deploy.yml` قرار داده شده است. با هر بار `git push` به شاخه `main`، گیت‌هاب اکشنز مراحل زیر را طی می‌کند:
-1. بررسی تست‌ها و Typecheck با `npm run lint`
-2. کامپایل بیلد کامل فرانت‌اند و بک‌اند با `npm run build`
-3. اتصال امن از طریق SSH به سرور شما و اجرای `docker compose up -d --build`
+1. نصب قفل‌شده وابستگی‌ها با `bun install --frozen-lockfile`
+2. اسکن مقادیر حساس با `bun run scan:secrets`
+3. Typecheck با `bun run lint`
+4. کامپایل فرانت‌اند و بک‌اند با `bun run build`
+5. اجرای integration test واقعی K01 روی PostgreSQL جداگانه
+
+job استقرار SSH فعلاً به‌صورت صریح غیرفعال است و تا رفع freeze انتشار نباید فعال شود.
 
 #### تنظیم Secretهای موردنیاز در گیت‌هاب:
 به تنظیمات مخزن گیت‌هاب خود بروید:
@@ -98,9 +128,10 @@ sudo systemctl reload nginx
 
 ---
 
-### ۵. وضعیت و سلامت دیتابیس در پنل مدیریت
+### ۵. وضعیت سلامت
 
-در هدر بالای پنل دیدار طلا:
-- دکمه سبز رنگ **«پایگاه داده مستقل»** تعبیه شده است.
-- با کلیک روی آن، اطلاعات پایداری دیسک، زمان پاسخ‌دهی (Latency)، تعداد پرونده‌های ثبت شده و وضعیت آخرین نسخه پشتیبان نمایش داده می‌شود.
-- در هر لحظه می‌توانید با کلیک روی **«ایجاد نسخه پشتیبان سرور»** یک اسنپ‌شات کامل از داده‌های پلتفرم روی دیسک اختصاصی سرور ذخیره نمایید.
+- `/api/health/live` فقط زنده‌بودن فرآیند را گزارش می‌کند.
+- `/api/health/ready` وابستگی‌های لازم را صریح گزارش می‌کند و در صورت نبود وابستگی لازم پاسخ ناموفق می‌دهد.
+- `dependencies.postgresql=ready` فقط پس از موفقیت query واقعی PostgreSQL برگردانده می‌شود.
+- `/api/health` صرفاً alias سازگاری برای liveness است.
+- پنل وضعیت، PostgreSQL، Supabase، احراز هویت یا پایداری کامل K01 تا K20 را متصل/سالم اعلام نمی‌کند.

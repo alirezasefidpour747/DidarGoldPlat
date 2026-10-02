@@ -12,16 +12,16 @@ class PaasStorageEngine {
   constructor() {
     this.data = {
       summary: {
-        systemHealthScore: 99.8,
-        activeServicesCount: 6,
+        systemHealthScore: 0,
+        activeServicesCount: 1,
         totalServicesCount: 6,
         totalEventsDispatched24h: 14820,
         avgGatewayLatencyMs: 12.4,
-        activeWorkersCount: 5,
-        storageEngineStatus: 'optimal',
+        activeWorkersCount: 0,
+        storageEngineStatus: 'degraded',
         systemLayerVersion: 'PaaS v2.4-enterprise',
-        environment: 'Production-Hybrid (Self-Hosted ACID + Postgres Interface)',
-        lastTelemetrySyncFa: '۱۴۰۴/۱۲/۲۸ - لحظه‌ای'
+        environment: 'DEMO_DATA - production dependencies are not verified',
+        lastTelemetrySyncFa: 'داده نمایشی؛ تله‌متری زنده نیست'
       },
       services: [
         {
@@ -29,7 +29,7 @@ class PaasStorageEngine {
           nameFa: 'سامانه مدیریت داده‌های پایه (MDM)',
           nameEn: 'Master Data Management Service',
           category: 'core_platform',
-          status: 'operational',
+          status: 'degraded',
           version: '1.4.2',
           uptimePercent: 100,
           latencyMs: 4.2,
@@ -42,11 +42,11 @@ class PaasStorageEngine {
           nameFa: 'گذرگاه رویدادهای سازمانی (EventMesh Bus)',
           nameEn: 'Enterprise EventMesh Bus',
           category: 'core_platform',
-          status: 'operational',
+          status: 'degraded',
           version: '2.1.0',
           uptimePercent: 99.99,
           latencyMs: 8.5,
-          descriptionFa: 'توزیع رویدادهای ناهمگام بین دامنه‌های K01 تا K20 با تضمین تحویل حداقل یک‌بار (At-Least-Once)',
+          descriptionFa: 'شبیه‌ساز درون‌پردازه‌ای رویداد؛ تحویل پایدار حداقل یک‌بار پیاده‌سازی نشده است.',
           activeEndpointsCount: 14,
           lastHeartbeatFa: 'هم‌اکنون (فعال)'
         },
@@ -55,11 +55,11 @@ class PaasStorageEngine {
           nameFa: 'موتور امنیت، هویت و تفکیک وظایف (IAM & RBAC)',
           nameEn: 'IAM & RBAC Security Engine',
           category: 'security',
-          status: 'operational',
+          status: 'degraded',
           version: '1.8.0',
           uptimePercent: 100,
           latencyMs: 6.1,
-          descriptionFa: 'احراز هویت توکن‌های امن، ممیزی SoD، مدیریت کاتالوگ نقش‌ها و دسترسی‌های تجاری',
+          descriptionFa: 'کاتالوگ نمایشی IAM/RBAC؛ احراز هویت و اعمال RBAC پیاده‌سازی نشده است.',
           activeEndpointsCount: 12,
           lastHeartbeatFa: 'هم‌اکنون (فعال)'
         },
@@ -68,11 +68,11 @@ class PaasStorageEngine {
           nameFa: 'درگاه یکپارچه خدمات وب و مسیریابی (API Gateway)',
           nameEn: 'Unified API Gateway & Mesh',
           category: 'integration',
-          status: 'operational',
+          status: 'degraded',
           version: '3.0.1',
           uptimePercent: 99.98,
           latencyMs: 12.4,
-          descriptionFa: 'پایش و هدایت درخواست‌ها به هسته‌های K01 تا K20 با نرخ‌گذاری Rate-Limiting و کش حافظه‌ای',
+          descriptionFa: 'مسیریابی Express؛ Rate Limiting و API Gateway مستقل پیاده‌سازی نشده است.',
           activeEndpointsCount: 68,
           lastHeartbeatFa: 'هم‌اکنون (فعال)'
         },
@@ -81,7 +81,7 @@ class PaasStorageEngine {
           nameFa: 'زمان‌بند و پردازشگر کارهای پس‌زمینه (Workers & Crons)',
           nameEn: 'Background Workers & Cron Scheduler',
           category: 'scheduler',
-          status: 'operational',
+          status: 'degraded',
           version: '1.3.4',
           uptimePercent: 99.95,
           latencyMs: 15.0,
@@ -91,14 +91,14 @@ class PaasStorageEngine {
         },
         {
           id: 'svc-storage',
-          nameFa: 'موتور مستقل ذخیره‌سازی داده (ACID Storage Engine)',
-          nameEn: 'Self-Hosted ACID Storage Engine',
+          nameFa: 'PostgreSQL برای K01؛ ذخیره‌سازی قدیمی برای سایر دامنه‌ها',
+          nameEn: 'K01 PostgreSQL with Legacy Stores for K02-K20',
           category: 'storage',
-          status: 'operational',
+          status: 'degraded',
           version: '2.0.0',
           uptimePercent: 100,
           latencyMs: 2.8,
-          descriptionFa: 'ذخیره‌سازی دیسکی اتمیک با قفل‌های همروندی، بدون وابستگی و بدون قفل‌شدگی با کلود خارجی',
+          descriptionFa: 'K01 روی PostgreSQL و تراکنش واقعی است؛ K02 تا K20 هنوز روی فایل یا حافظه‌اند و ACID سراسری وجود ندارد.',
           activeEndpointsCount: 10,
           lastHeartbeatFa: 'هم‌اکنون (فعال)'
         }
@@ -256,7 +256,7 @@ class PaasStorageEngine {
             avgLatencyMs: 8.5,
             requestsLastHour: 1420,
             successRatePercent: 99.98,
-            authRequired: true
+            authRequired: false
           },
           {
             id: 'rt-02',
@@ -268,7 +268,7 @@ class PaasStorageEngine {
             avgLatencyMs: 7.2,
             requestsLastHour: 2100,
             successRatePercent: 100,
-            authRequired: true
+            authRequired: false
           },
           {
             id: 'rt-03',
@@ -292,7 +292,7 @@ class PaasStorageEngine {
             avgLatencyMs: 11.2,
             requestsLastHour: 1850,
             successRatePercent: 99.95,
-            authRequired: true
+            authRequired: false
           },
           {
             id: 'rt-05',
@@ -304,7 +304,7 @@ class PaasStorageEngine {
             avgLatencyMs: 18.4,
             requestsLastHour: 980,
             successRatePercent: 99.9,
-            authRequired: true
+            authRequired: false
           },
           {
             id: 'rt-06',
@@ -316,7 +316,7 @@ class PaasStorageEngine {
             avgLatencyMs: 9.1,
             requestsLastHour: 640,
             successRatePercent: 100,
-            authRequired: true
+            authRequired: false
           },
           {
             id: 'rt-07',
@@ -328,7 +328,7 @@ class PaasStorageEngine {
             avgLatencyMs: 10.4,
             requestsLastHour: 520,
             successRatePercent: 100,
-            authRequired: true
+            authRequired: false
           }
         ]
       },
@@ -339,7 +339,7 @@ class PaasStorageEngine {
           nameEn: 'Live Gold Rate Poller',
           schedule: 'هر ۶۰ ثانیه ( */1 * * * * )',
           targetDomain: 'K13',
-          status: 'running',
+          status: 'not_implemented',
           lastRunFa: 'لحظاتی قبل',
           nextRunFa: '۵۰ ثانیه بعد',
           durationMs: 240,
@@ -352,7 +352,7 @@ class PaasStorageEngine {
           nameEn: 'Zarrin ERP Sync Worker',
           schedule: 'هر ۱۵ دقیقه ( */15 * * * * )',
           targetDomain: 'K16B',
-          status: 'running',
+          status: 'not_implemented',
           lastRunFa: '۱۴۰۴/۱۲/۲۸ - ۱۱:۱۵',
           nextRunFa: '۱۴۰۴/۱۲/۲۸ - ۱۱:۳۰',
           durationMs: 820,
@@ -365,7 +365,7 @@ class PaasStorageEngine {
           nameEn: 'Credit Exposure Monitor',
           schedule: 'پیوسته رویدادمحور (Event-Driven)',
           targetDomain: 'K14',
-          status: 'running',
+          status: 'not_implemented',
           lastRunFa: '۱۴۰۴/۱۲/۲۸ - ۱۱:۲۵',
           nextRunFa: 'در انتظار رویداد جدید',
           durationMs: 110,
@@ -387,7 +387,7 @@ class PaasStorageEngine {
         },
         {
           id: 'wrk-05',
-          nameFa: 'تهیه نسخه پشتیبان اتمیک دیسک (ACID Snapshotter)',
+          nameFa: 'نمونه نمایشی پشتیبان فایل محلی',
           nameEn: 'Atomic Backup Snapshotter',
           schedule: 'هر ۶ ساعت ( 0 */6 * * * )',
           targetDomain: 'PaaS Core',
@@ -400,18 +400,18 @@ class PaasStorageEngine {
         }
       ],
       storage: {
-        engineType: 'Independent ACID JSON Disk Volume Engine',
-        persistenceMode: 'disk_volume_acid (Postgres Wire Protocol Compatible)',
+        engineType: 'K01 PostgreSQL + legacy K02-K20 stores',
+        persistenceMode: 'k01_postgresql_partial_platform_migration',
         dataDirectory: './data',
         backupDirectory: './data/backups',
         totalCollections: 24,
         totalRecordsCount: 2840,
         diskUsageBytes: 4857200,
         diskUsageFormatted: '۴.۶ مگابایت',
-        walStatus: 'synced',
-        lastSnapshotTimestampFa: '۱۴۰۴/۱۲/۲۸ - ۰۶:۰۰',
+        walStatus: 'not_implemented',
+        lastSnapshotTimestampFa: 'تأیید نشده',
         vendorLockIn: false,
-        acidCompliance: true,
+        acidCompliance: false,
         activeLocksCount: 0
       }
     };

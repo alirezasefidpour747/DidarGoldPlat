@@ -1,6 +1,6 @@
 /**
- * Didar Gold Platform - Server Storage Engine
- * High-reliability transactional persistence engine with disk backing & Supabase synchronization
+ * Legacy K01-shaped JSON store still used indirectly by unmigrated K02/K03 code.
+ * Active K01 HTTP persistence is PostgreSQL-backed and does not call this module.
  */
 
 import fs from 'fs';

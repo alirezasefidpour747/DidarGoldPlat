@@ -1,36 +1,21 @@
 /**
  * Didar Gold Platform - Multi-Service Development Runner
  * Concurrently executes:
- * 1. Backend API Service on http://0.0.0.0:8000 (with auto-fallback to 8001 if 8000 is occupied)
+ * 1. Backend API Service on the explicitly configured backend port
  * 2. Frontend UI Service (Vite) on http://0.0.0.0:3000
  * 
  * Manages child process lifecycle, stream coloring, and graceful shutdown.
  */
 
 import { spawn, ChildProcess } from 'child_process';
-import net from 'net';
 
 const FRONTEND_PORT = process.env.FRONTEND_PORT || '3000';
 const children: ChildProcess[] = [];
 
-async function isPortAvailable(port: number): Promise<boolean> {
-  return new Promise((resolve) => {
-    const tester = net.createServer()
-      .once('error', () => resolve(false))
-      .once('listening', () => {
-        tester.close(() => resolve(true));
-      })
-      .listen(port, '0.0.0.0');
-  });
-}
-
 async function main() {
-  let backendPort = process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : 8000;
-  
-  const port8000Ok = await isPortAvailable(backendPort);
-  if (!port8000Ok && backendPort === 8000) {
-    console.warn(`[Runner] Port 8000 is reserved/in-use by host environment. Selecting port 8001 for Backend API.`);
-    backendPort = 8001;
+  const backendPort = Number(process.env.BACKEND_PORT || process.env.PORT || 8000);
+  if (!Number.isInteger(backendPort) || backendPort < 1 || backendPort > 65535) {
+    throw new Error('Configuration error: PORT/BACKEND_PORT must be an integer from 1 to 65535.');
   }
 
   const backendPortStr = String(backendPort);
@@ -49,10 +34,10 @@ async function main() {
       PORT: backendPortStr,
       BACKEND_PORT: backendPortStr,
       NODE_ENV: process.env.NODE_ENV || 'development',
-      CORS_ALLOWED_ORIGIN: process.env.CORS_ALLOWED_ORIGIN || `http://localhost:${FRONTEND_PORT}`,
+      CORS_ALLOWED_ORIGINS: process.env.CORS_ALLOWED_ORIGINS || `http://localhost:${FRONTEND_PORT}`,
     };
 
-    const proc = spawn('npx', ['tsx', 'server.ts'], {
+    const proc = spawn('bunx', ['tsx', 'server.ts'], {
       env: backendEnv,
       shell: true,
       stdio: ['inherit', 'pipe', 'pipe']
@@ -86,7 +71,7 @@ async function main() {
       VITE_API_BASE_URL: backendUrl,
     };
 
-    const proc = spawn('npx', ['vite', '--port', FRONTEND_PORT, '--host', '0.0.0.0'], {
+    const proc = spawn('bunx', ['vite', '--port', FRONTEND_PORT, '--host', '0.0.0.0'], {
       env: frontendEnv,
       shell: true,
       stdio: ['inherit', 'pipe', 'pipe']

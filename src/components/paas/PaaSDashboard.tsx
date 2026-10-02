@@ -6,7 +6,7 @@
  * 3. IAM & RBAC Security Control
  * 4. Unified API Gateway & Microservice Routing
  * 5. Background Workers & Cron Scheduler
- * 6. ACID Storage Engine & Telemetry
+ * 6. Local JSON storage inventory and demo telemetry
  */
 
 import React, { useState, useEffect } from 'react';
@@ -127,7 +127,7 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
       <div className="flex flex-col items-center justify-center min-h-[450px] p-8 text-center">
         <RefreshCw className="w-10 h-10 text-[#C8A951] animate-spin mb-4" />
         <p className="text-[#E0E0E8] font-medium">در حال بارگذاری مرکز خدمات لایه پلتفرم (PaaS Engine)...</p>
-        <p className="text-xs text-[#8E8E9C] mt-1">بررسی سرویس‌های زیرساخت، EventMesh، درگاه API و وضعیت ACID Storage</p>
+        <p className="text-xs text-[#8E8E9C] mt-1">بارگذاری موجودی معماری و داده‌های نمایشی؛ این نما readiness نیست</p>
       </div>
     );
   }
@@ -147,9 +147,9 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
                 <Server className="w-3.5 h-3.5" />
                 PAAS LAYER · پلتفرم زیرساخت
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-[#3DD68C]/15 text-[#3DD68C] border border-[#3DD68C]/30 text-xs font-medium flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                وضعیت: ۱۰۰٪ عملیاتی (Healthy)
+              <span className="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center gap-1">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                داده نمایشی — آمادگی تولید تأیید نشده
               </span>
               <span className="text-xs text-[#8A8A9E] font-mono">
                 {data.summary.systemLayerVersion}
@@ -160,7 +160,7 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
               مرکز مدیریت خدمات و گذرگاه لایه پلتفرم (Didar PaaS & EventMesh)
             </h2>
             <p className="text-xs lg:text-sm text-[#A5A5B8] max-w-3xl leading-relaxed">
-              لایه بنیادی پلتفرم خدمات اشتراکی برای تمامی ۲۰ هسته کسب‌وکار (K01 تا K20): مدیریت داده‌های پایه (MDM)، گذرگاه رویدادهای ناهمگام سازمانی، درگاه هدایت وب‌سرویس‌ها، زمان‌بند فرآیندهای دوره‌ای و موتور ذخیره‌سازی مستقل ACID.
+              موجودی نمایشی اجزای پلتفرم. احراز هویت، RBAC اجرایی، EventMesh پایدار، worker واقعی و پایگاه داده تولید هنوز پیاده‌سازی نشده‌اند.
             </p>
           </div>
 
@@ -222,7 +222,7 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
           { id: 'eventbus', label: 'گذرگاه رویدادها (EventMesh)', icon: Radio },
           { id: 'gateway', label: 'درگاه و مسیرهای API Gateway', icon: Network },
           { id: 'workers', label: 'پردازش‌های پس‌زمینه (Workers)', icon: Clock },
-          { id: 'storage', label: 'موتور دیسک و تله‌متری ACID', icon: HardDrive }
+          { id: 'storage', label: 'ذخیره‌سازی محلی و محدودیت‌ها', icon: HardDrive }
         ].map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -304,7 +304,7 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C8A951]/20 text-[#E5C365]">پایه اشتراکی</span>
                 </div>
                 <p className="text-[#9898A8] text-[11px] leading-relaxed">
-                  مدیریت داده‌های پایه (MDM)، موتور RBAC/IAM، تفکیک وظایف ۴چشم، گذرگاه EventMesh و دیسک ACID. بدون قفل به ارائه‌دهنده خارجی.
+                  نمونه‌های نمایشی MDM، RBAC و EventMesh؛ اعمال امنیت و تحویل پایدار هنوز پیاده‌سازی نشده است.
                 </p>
               </div>
 
@@ -343,9 +343,9 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
                   <span className="px-2.5 py-0.5 rounded-full bg-[#C8A951]/20 text-[#E5C365] text-xs font-bold font-mono">
                     CLEAN 5-TIER ENTERPRISE ARCHITECTURE
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#3DD68C]/20 text-[#3DD68C] text-xs font-medium flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" />
-                    ۱۰۰٪ استاندارد و عملیاتی
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    موجودی اطلاعاتی؛ نه گواهی سلامت
                   </span>
                 </div>
                 <h3 className="text-lg font-bold text-[#EDEDF4] flex items-center gap-2">
@@ -353,7 +353,7 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
                   دیده‌بان جریان داده‌ها در معماری ۵ لایه‌ای سامانه طلا دیدار
                 </h3>
                 <p className="text-xs text-[#9E9EB2] mt-1 leading-relaxed max-w-3xl">
-                  جداسازی کامل دغدغه‌ها (SoC) از لایه رابط کاربری، کنترلرها، سرویس‌های دامنه، مخازن داده و موتور پایگاه داده ACID بدون وابستگی به ارائه‌دهنده خارجی.
+                  نمایش ساختار کد از رابط کاربری تا ذخیره‌سازی محلی؛ سلامت و آمادگی سرویس‌ها در endpoint readiness جداگانه بررسی می‌شود.
                 </p>
               </div>
 
@@ -420,12 +420,12 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
                   {
                     num: '۵',
                     tag: 'Database',
-                    nameFa: 'پایگاه داده مستقل',
+                    nameFa: 'PostgreSQL برای K01؛ ذخیره‌سازی قدیمی برای K02–K20',
                     dir: 'server/database & data/',
                     color: 'text-[#3DD68C]',
                     border: 'border-[#3DD68C]/40',
                     bg: 'bg-[#3DD68C]/10',
-                    badge: 'ACID Engine + WAL'
+                    badge: 'K01 PostgreSQL · Legacy Stores Elsewhere'
                   }
                 ].map((tier, idx) => (
                   <div
@@ -469,7 +469,7 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
             </div>
 
             <div className="grid grid-cols-1 gap-3.5">
-              {(architectureData?.layers || [
+              {(architectureData?.layers || (false ? [
                 {
                   layerNumber: 1,
                   name: 'Frontend Layer (UI / UX)',
@@ -540,24 +540,24 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
                 {
                   layerNumber: 5,
                   name: 'Database Layer',
-                  nameFa: 'لایه پایگاه داده مستقل (ACID Disk + Postgres Wire)',
+                  nameFa: 'PostgreSQL برای K01 و ذخیره‌سازی قدیمی برای K02–K20',
                   category: 'Database',
-                  status: 'healthy',
+                  status: 'degraded',
                   latencyMs: 2,
                   componentsCount: 24,
-                  descriptionFa: 'موتور ذخیره‌سازی مستقل، بدون قفل‌شدگی در ارائه‌دهنده خارجی، با قابلیت WAL و تراکنش‌های اتمیک',
-                  technologies: ['Independent ACID Engine', 'JSON Disk Volume', 'PostgreSQL Wire Compatible', 'Write-Ahead Log (WAL)'],
+                  descriptionFa: 'فقط K01 روی PostgreSQL و تراکنش واقعی است؛ سایر دامنه‌ها هنوز مهاجرت نشده‌اند.',
+                  technologies: ['PostgreSQL for K01', 'Legacy JSON/Memory for K02-K20'],
                   metrics: {
-                    engine: 'independent_acid_json_volume',
+                    engine: 'mixed_k01_postgresql_legacy_domains',
                     totalCollections: 24,
                     totalRecords: 2840,
                     diskUsage: '۴.۶ مگابایت',
-                    walStatus: 'synced',
+                    walStatus: 'K01 only',
                     activeLocks: 0,
                     vendorLockIn: false
                   }
                 }
-              ]).map((layer: any) => (
+              ] : [])).map((layer: any) => (
                 <div
                   key={layer.layerNumber}
                   className="bg-[#171722] border border-[#282838] rounded-xl p-4 lg:p-5 shadow-md hover:border-[#38384E] transition-all"
@@ -878,29 +878,29 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
         </div>
       )}
 
-      {/* Tab 5: Storage Engine & ACID Telemetry */}
+      {/* Tab 5: Honest local storage inventory */}
       {activeTab === 'storage' && (
         <div className="space-y-6">
           <div className="bg-[#181822] border border-[#2B2B3E] rounded-xl p-6 shadow-lg">
             <h3 className="text-base font-bold text-[#E5C365] flex items-center gap-2 mb-2">
               <HardDrive className="w-5 h-5 text-[#C8A951]" />
-              موتور ذخیره‌سازی مستقل و خودمیزبان (100% Self-Hosted ACID Storage Engine)
+              وضعیت ذخیره‌سازی محلی (Local JSON Storage)
             </h3>
             <p className="text-xs text-[#9E9EB0] max-w-3xl leading-relaxed">
-              معماری پایگاه داده دیدار به صورت کاملاً مستقل و بی‌نیاز از هرگونه خدمات ابری خارجی یا فروشندگان شخص‌ثالث (No Vendor Lock-In) پیاده‌سازی شده است. پایداری تراکنش‌های طلایی و ریالی به صورت اتمیک بر روی دیسک با انطباق کامل ACID تضمین می‌گردد.
+              K01 از PostgreSQL واقعی و تراکنش پایگاه داده استفاده می‌کند. K02 تا K20 هنوز مهاجرت نشده‌اند؛ بنابراین WAL و ACID فقط برای K01 قابل اتکا است و تضمین سراسری وجود ندارد.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
               <div className="bg-[#121218] p-4 rounded-xl border border-[#28283A]">
                 <span className="text-[11px] text-[#7E7E90] block">نوع موتور ذخیره</span>
-                <span className="text-xs font-bold text-[#EDEDF2] mt-1 block">ACID Volume Storage</span>
-                <span className="text-[10px] text-[#3DD68C] mt-0.5 block">سازگار با پروتکل Postgres</span>
+                <span className="text-xs font-bold text-[#EDEDF2] mt-1 block">K01 PostgreSQL + Legacy Stores</span>
+                <span className="text-[10px] text-amber-300 mt-0.5 block">K02 تا K20 مهاجرت نشده‌اند</span>
               </div>
 
               <div className="bg-[#121218] p-4 rounded-xl border border-[#28283A]">
                 <span className="text-[11px] text-[#7E7E90] block">تعداد کل رکوردها</span>
                 <span className="text-lg font-bold text-[#00D1FF] font-mono mt-0.5 block">{data.storage.totalRecordsCount.toLocaleString('fa-IR')}</span>
-                <span className="text-[10px] text-[#7E7E90] mt-0.5 block">در ۲۴ مجموعه داده K01-K20</span>
+                <span className="text-[10px] text-[#7E7E90] mt-0.5 block">ترکیبی/نمایشی؛ معیار PostgreSQL K01 نیست</span>
               </div>
 
               <div className="bg-[#121218] p-4 rounded-xl border border-[#28283A]">
@@ -910,22 +910,22 @@ export const PaaSDashboard: React.FC<PaaSDashboardProps> = ({
               </div>
 
               <div className="bg-[#121218] p-4 rounded-xl border border-[#28283A]">
-                <span className="text-[11px] text-[#7E7E90] block">وضعیت لاگ تراکنش (WAL)</span>
-                <span className="text-xs font-bold text-[#3DD68C] mt-1 block flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  همگام‌شده (Synced)
+                <span className="text-[11px] text-[#7E7E90] block">وضعیت WAL پایدار</span>
+                <span className="text-xs font-bold text-amber-300 mt-1 block flex items-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  فقط K01
                 </span>
-                <span className="text-[10px] text-[#7E7E90] mt-0.5 block">بدون قفل معلق ({data.storage.activeLocksCount})</span>
+                <span className="text-[10px] text-[#7E7E90] mt-0.5 block">برای K02 تا K20 تضمین نشده</span>
               </div>
             </div>
 
             <div className="mt-6 pt-5 border-t border-[#262638] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#8E8E9E]">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#3DD68C]" />
-                <span>گارانتی عدم وابستگی: وابستگی به ارائه‌دهنده خارجی = صفر (Vendor Lock-in: False)</span>
+                <ShieldCheck className="w-4 h-4 text-amber-300" />
+                <span>این نما گواهی آمادگی تولید، امنیت یا سلامت سرویس‌های خارجی نیست.</span>
               </div>
               <div className="font-mono text-[11px]">
-                آخرین اسنپ‌شات اتمیک: {data.storage.lastSnapshotTimestampFa}
+                آخرین اسنپ‌شات محلی ثبت‌شده: {data.storage.lastSnapshotTimestampFa}
               </div>
             </div>
           </div>

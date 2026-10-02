@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { api, DatabaseHealthData } from '../../lib/api.js';
-import { Database, CheckCircle2, AlertCircle, RefreshCw, HardDrive, ShieldCheck, X, Server, DownloadCloud, Lock } from 'lucide-react';
+import { Database, CheckCircle2, AlertCircle, RefreshCw, ShieldCheck, X, Server } from 'lucide-react';
 
 interface SupabaseStatusModalProps {
   isOpen: boolean;
@@ -15,7 +15,6 @@ interface SupabaseStatusModalProps {
 export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen, onClose }) => {
   const [health, setHealth] = useState<DatabaseHealthData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
 
   const fetchHealth = async () => {
@@ -25,19 +24,8 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
       const data = await api.getDatabaseHealth();
       setHealth(data);
     } catch {
-      setHealth({
-        engine: 'independent_local_acid',
-        status: 'healthy',
-        vendorLockIn: false,
-        databaseUrlConfigured: false,
-        persistenceMode: 'disk_volume_acid',
-        dataDirectory: './data',
-        backupDirectory: './data/backups',
-        lastBackupTimestamp: null,
-        totalEntitiesCount: 0,
-        message: 'موتور پایگاه‌داده مستقل در دسترس است.',
-        latencyMs: 1
-      });
+      setHealth(null);
+      setSyncResult('وضعیت ذخیره‌سازی قابل تأیید نیست؛ سرویس سلامت پاسخ نداد.');
     } finally {
       setLoading(false);
     }
@@ -48,21 +36,6 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
       fetchHealth();
     }
   }, [isOpen]);
-
-  const handleCreateBackup = async () => {
-    setSyncing(true);
-    setSyncResult(null);
-    try {
-      const res = await api.createDatabaseBackup();
-      setSyncResult(res.message);
-      await fetchHealth();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'خطای پشتیبان‌گیری';
-      setSyncResult(`خطا: ${msg}`);
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   if (!isOpen) return null;
 
@@ -76,8 +49,8 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
               <Database className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#EDEDED]">پایگاه داده مستقل و خودمیزبان (Self-Hosted)</h3>
-              <p className="text-[11px] text-[#868694]">معماری ۱۰۰٪ مستقل بدون وابستگی به ارائه‌دهندگان ابری (بدون نیاز به Supabase)</p>
+              <h3 className="text-sm font-bold text-[#EDEDED]">وضعیت ذخیره‌سازی و پایگاه داده</h3>
+              <p className="text-[11px] text-[#868694]">گزارش صریح قابلیت‌های پیاده‌سازی‌شده و پیاده‌سازی‌نشده</p>
             </div>
           </div>
           <button
@@ -98,11 +71,11 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
           ) : health ? (
             <>
               {/* Status Banner */}
-              <div className="p-3.5 rounded-xl border flex items-start gap-3 text-xs bg-[#3DD68C]/10 border-[#3DD68C]/30 text-[#4EE59D]">
-                <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <div className={`p-3.5 rounded-xl border flex items-start gap-3 text-xs ${health.ready ? 'bg-[#3DD68C]/10 border-[#3DD68C]/30 text-[#4EE59D]' : 'bg-amber-500/10 border-amber-500/30 text-amber-300'}`}>
+                {health.ready ? <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" /> : <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />}
                 <div>
                   <div className="font-bold flex items-center gap-1.5">
-                    <span>موتور پایگاه‌داده و ذخیره‌سازی کاملاً مستقل فعال است</span>
+                    <span>{health.ready ? 'اتصال PostgreSQL با کوئری واقعی تأیید شد' : 'اتصال PostgreSQL در دسترس نیست'}</span>
                     <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#3DD68C]/20 text-[#3DD68C] font-mono">
                       {health.latencyMs}ms
                     </span>
@@ -116,39 +89,26 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
                 <div className="flex items-center justify-between">
                   <span className="text-[#868694]">موتور ذخیره‌سازی فعال:</span>
                   <span className="font-bold text-[#C8A951]">
-                    {health.engine === 'self_hosted_postgres' ? 'PostgreSQL اختصاصی سرور' : 'موتور تراکنشی ACID دیسک سرور'}
+                    PostgreSQL · K01 system of record
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-[#868694]">وابستگی ابری (Vendor Lock-in):</span>
-                  <span className="flex items-center gap-1 text-[#3DD68C] font-semibold">
+                  <span className="text-[#868694]">اتصال PostgreSQL تأییدشده:</span>
+                  <span className={`flex items-center gap-1 font-semibold ${health.connectivityVerified ? 'text-[#3DD68C]' : 'text-amber-300'}`}>
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>صفر (۱۰۰٪ مستقل و قابل استقرار روی سرور شخصی)</span>
+                    <span>{health.connectivityVerified ? 'بله — SELECT 1 موفق' : 'خیر'}</span>
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-[#868694]">پوشه ذخیره‌سازی داده‌ها:</span>
-                  <span className="font-mono text-[11px] text-[#EDEDED] dir-ltr select-all">
-                    /data (Persistent Volume)
-                  </span>
+                  <span className="text-[#868694]">دامنه مهاجرت‌شده:</span>
+                  <span className="font-mono text-[11px] text-[#EDEDED]">K01</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-[#868694]">تعداد کل نهادهای ثبت‌شده K01:</span>
-                  <span className="font-bold text-[#EDEDED]">
-                    {health.totalEntitiesCount} پرونده
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-[#868694]">آخرین نسخه پشتیبان محلی:</span>
-                  <span className="text-[11px] text-[#9E9EA8] dir-ltr">
-                    {health.lastBackupTimestamp
-                      ? new Date(health.lastBackupTimestamp).toLocaleString('fa-IR')
-                      : 'آماده ایجاد نخستین نسخه'}
-                  </span>
+                  <span className="text-[#868694]">دامنه‌های مهاجرت‌نشده:</span>
+                  <span className="text-[11px] text-amber-300">K02 تا K20</span>
                 </div>
               </div>
 
@@ -156,10 +116,10 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
               <div className="p-3 rounded-xl bg-[#191924] border border-[#2B2B3E] text-[11px] text-[#A6A6B8] space-y-1.5">
                 <div className="flex items-center gap-1.5 text-[#C8A951] font-semibold">
                   <Server className="w-3.5 h-3.5" />
-                  <span>آماده برای CI/CD و استقرار با داکر (Docker & GitHub Actions)</span>
+                  <span>Package 2 · PostgreSQL foundation</span>
                 </div>
                 <p className="leading-relaxed">
-                  این سامانه هم‌اکنون دارای فایل‌های <code>Dockerfile</code> و <code>docker-compose.yml</code> استاندارد است و بدون هیچ نیازی به پکیج‌های خارجی Supabase، به طور کامل با دیتابیس لوکال یا PostgreSQL اختصاصی سرور شما بالا می‌آید.
+                  K01 اکنون از PostgreSQL استفاده می‌کند. احراز هویت و اعمال RBAC هنوز پیاده‌سازی نشده‌اند و انتشار تولید مسدود است.
                 </p>
               </div>
 
@@ -171,7 +131,7 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
               )}
 
               {/* Actions */}
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center justify-start pt-2">
                 <button
                   onClick={fetchHealth}
                   disabled={loading}
@@ -181,17 +141,14 @@ export const SupabaseStatusModal: React.FC<SupabaseStatusModalProps> = ({ isOpen
                   <span>بررسی مجدد اتصال</span>
                 </button>
 
-                <button
-                  onClick={handleCreateBackup}
-                  disabled={syncing}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C8A951] hover:bg-[#D4B65E] text-[#141416] text-xs font-bold transition-all shadow-md cursor-pointer disabled:opacity-50"
-                >
-                  <DownloadCloud className={`w-3.5 h-3.5 ${syncing ? 'animate-bounce' : ''}`} />
-                  <span>{syncing ? 'در حال تهیه پشتیبان...' : 'ایجاد نسخه پشتیبان سرور'}</span>
-                </button>
               </div>
             </>
-          ) : null}
+          ) : (
+            <div className="p-3.5 rounded-xl border bg-red-500/10 border-red-500/30 text-red-300 text-xs flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{syncResult || 'وضعیت ذخیره‌سازی قابل تأیید نیست.'}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
