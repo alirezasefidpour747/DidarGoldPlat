@@ -18,6 +18,7 @@ RUN npm install
 COPY tsconfig.json vite.config.ts index.html metadata.json ./
 COPY src/ ./src/
 COPY server/ ./server/
+COPY scripts/ ./scripts/
 COPY server.ts ./
 
 # Build client SPA and bundle server to dist/server.cjs
@@ -30,12 +31,15 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV SERVE_STATIC=true
 
-# Copy built distribution artifacts
+# Copy built distribution artifacts, database migrations, and utilities
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/server/db/migrations ./server/db/migrations
+COPY --from=builder /app/scripts ./scripts
 
-# Install only production dependencies (express, dotenv, etc.)
+# Install production dependencies
 RUN npm install --omit=dev --ignore-scripts
 
 # Create persistent data directory for transactional store & backups

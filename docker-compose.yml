@@ -8,16 +8,20 @@ services:
     container_name: didar_gold_kernel
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - DATABASE_URL=${DATABASE_URL:-postgresql://didar_user:didar_gold_secret_db_pass_2026@didar-db:5432/didar_gold_db}
-      - JWT_SECRET=${JWT_SECRET:-didar_gold_jwt_master_sec_token_99847120_k01_k17_prod_key}
+      - SERVE_STATIC=true
+      - DB_ENGINE=postgres
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-didar_user}:${POSTGRES_PASSWORD:-didar_secure_pass_2026}@didar-db:5432/${POSTGRES_DB:-didar_gold_db}
+      - CORS_ALLOWED_ORIGIN=${CORS_ALLOWED_ORIGIN:-http://localhost:3000}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     volumes:
       - didar_data:/app/data
     depends_on:
-      - didar-db
+      didar-db:
+        condition: service_healthy
     networks:
       - didar_network
 
@@ -26,13 +30,18 @@ services:
     container_name: didar_postgres_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: didar_user
-      POSTGRES_PASSWORD: didar_gold_secret_db_pass_2026
-      POSTGRES_DB: didar_gold_db
+      POSTGRES_USER: ${POSTGRES_USER:-didar_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-didar_secure_pass_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-didar_gold_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-didar_user} -d ${POSTGRES_DB:-didar_gold_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - didar_network
 

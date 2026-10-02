@@ -51,12 +51,9 @@ export class PlatformRbacService {
   /**
    * Evaluates if user has specific permission code in domain
    */
-  public hasPermission(userId: string, permissionCode: string): boolean {
-    const user = this.repo.getUserById(userId);
-    if (!user) return false;
-
+  public async hasPermission(userId: string, permissionCode: string): Promise<boolean> {
     // Check assignments
-    const assignments = this.repo.getAssignments();
+    const assignments = await this.repo.getAssignments();
     const userAssignments = assignments.filter((a: any) => a.partyId === userId && a.status === 'active');
     
     // Super admin role check
@@ -66,9 +63,9 @@ export class PlatformRbacService {
     if (isSuperAdmin) return true;
 
     // Check effective access
-    const roles = this.repo.getRoles();
-    const activeRoles = roles.filter((r: any) => userAssignments.some((a: any) => a.roleKey === r.key));
-    return activeRoles.some((r: any) => r.permissions?.includes(permissionCode) || r.permissions?.includes('*'));
+    const roles = await this.repo.getRoles();
+    const activeRoles = roles.filter((r: any) => userAssignments.some((a: any) => a.roleKey === r.roleKey));
+    return activeRoles.some((r: any) => r.defaultPermissions?.includes(permissionCode) || r.defaultPermissions?.includes('*'));
   }
 
   /**

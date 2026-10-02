@@ -3,11 +3,13 @@
  * Gold & Charcoal styling with language switcher and operational indicators
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n, SupportedLocale } from '../../lib/i18n.js';
-import { ShieldCheck, RefreshCw, Download, Globe, UserCheck, Layers, Database } from 'lucide-react';
+import { ShieldCheck, RefreshCw, Download, Globe, UserCheck, Layers, Database, LogOut } from 'lucide-react';
 import { SupabaseStatusModal } from '../k01/SupabaseStatusModal.js';
 import { WorkspaceSwitcher } from './WorkspaceSwitcher.js';
+import { api, onAuthStateChange } from '../../lib/api.js';
+import { AuthSessionData } from '../../types/auth.js';
 
 interface HeaderProps {
   onRefresh?: () => void;
@@ -26,6 +28,19 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { t, locale, setLocale } = useI18n();
   const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<AuthSessionData | null>(null);
+
+  useEffect(() => {
+    api.getCurrentSession().then(setCurrentUser).catch(() => {});
+    const unsub = onAuthStateChange((sess) => {
+      setCurrentUser(sess);
+    });
+    return () => unsub();
+  }, []);
+
+  const handleLogout = async () => {
+    await api.logout();
+  };
 
   const handleExport = (format: 'json' | 'csv') => {
     window.open(`/api/admin/kernel/k01/export?format=${format}`, '_blank');
@@ -159,14 +174,28 @@ export const Header: React.FC<HeaderProps> = ({
             <span>{t.refresh}</span>
           </button>
 
-          {/* Current Operator Badge */}
+          {/* Authenticated Operator Badge */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#202028] to-[#1C1C22] border border-[#333342] text-xs">
             <div className="w-2 h-2 rounded-full bg-[#3DD68C] animate-pulse"></div>
             <div className="flex flex-col text-right">
-              <span className="text-[#E0E0E6] font-medium leading-none">علیرضا سفیدپور</span>
-              <span className="text-[10px] text-[#C8A951] leading-tight">مدیر ارشد عملیات هسته</span>
+              <span className="text-[#E0E0E6] font-medium leading-none">
+                {currentUser?.personName || 'کاربر احراز هویت شده'}
+              </span>
+              <span className="text-[10px] text-[#C8A951] leading-tight">
+                {currentUser?.organizationName || 'پلتفرم دیدار'}
+              </span>
             </div>
           </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-950/20 hover:bg-red-950/40 border border-red-900/40 text-xs text-red-400 hover:text-red-300 transition-colors cursor-pointer"
+            title="خروج از حساب کاربری"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">خروج</span>
+          </button>
         </div>
       </div>
 

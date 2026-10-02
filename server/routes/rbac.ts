@@ -1,14 +1,15 @@
 import { Router, Request, Response } from 'express';
 import { RbacService } from '../storage-rbac.js';
+import { RbacRepository } from '../repositories/rbac.repository.js';
 import { k04Storage } from '../storage-k04.js';
 
 export const rbacRouter = Router();
 
 // GET /api/admin/kernel/rbac/roles - List all 70 roles with category/environment filters
-rbacRouter.get('/roles', (req: Request, res: Response) => {
+rbacRouter.get('/roles', async (req: Request, res: Response) => {
   try {
     const { category, targetEnvironment, query } = req.query;
-    const roles = RbacService.getRoles({
+    const roles = await RbacRepository.getRoles({
       category: category as string,
       targetEnvironment: targetEnvironment as string,
       query: query as string
@@ -26,10 +27,10 @@ rbacRouter.get('/roles', (req: Request, res: Response) => {
 });
 
 // GET /api/admin/kernel/rbac/roles/:roleKey - Single role definition details
-rbacRouter.get('/roles/:roleKey', (req: Request, res: Response) => {
+rbacRouter.get('/roles/:roleKey', async (req: Request, res: Response) => {
   try {
     const { roleKey } = req.params;
-    const role = RbacService.getRoleByKey(roleKey);
+    const role = await RbacRepository.getRoleByKey(roleKey);
     if (!role) {
       return res.status(404).json({ success: false, error: { message: `نقش ${roleKey} یافت نشد.` } });
     }
@@ -41,9 +42,9 @@ rbacRouter.get('/roles/:roleKey', (req: Request, res: Response) => {
 });
 
 // GET /api/admin/kernel/rbac/permissions - List all canonical permission definitions
-rbacRouter.get('/permissions', (req: Request, res: Response) => {
+rbacRouter.get('/permissions', async (req: Request, res: Response) => {
   try {
-    const permissions = RbacService.getPermissions();
+    const permissions = await RbacRepository.getPermissions();
     res.json({ success: true, data: permissions, total: permissions.length });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'خطای بارگذاری مجوزها';
@@ -52,10 +53,10 @@ rbacRouter.get('/permissions', (req: Request, res: Response) => {
 });
 
 // GET /api/admin/kernel/rbac/assignments - List role assignments with filter
-rbacRouter.get('/assignments', (req: Request, res: Response) => {
+rbacRouter.get('/assignments', async (req: Request, res: Response) => {
   try {
     const { partyId, organizationId, membershipId } = req.query;
-    const assignments = RbacService.getAssignments({
+    const assignments = await RbacRepository.getAssignments({
       partyId: partyId as string,
       organizationId: organizationId as string,
       membershipId: membershipId as string
@@ -80,13 +81,13 @@ rbacRouter.post('/assignments/request', (req: Request, res: Response) => {
       expectedVersion
     } = req.body;
 
-    const actorPartyId = req.headers['x-actor-party-id']
+    const actorPartyId = req.user?.partyId || (req.headers['x-actor-party-id']
       ? String(req.headers['x-actor-party-id'])
-      : 'party-admin-001';
+      : 'party-admin-001');
 
-    const actorRoleKey = req.headers['x-actor-role-key']
+    const actorRoleKey = req.user?.roleKeys?.[0] || (req.headers['x-actor-role-key']
       ? String(req.headers['x-actor-role-key'])
-      : 'governance.identity_access_manager';
+      : 'governance.identity_access_manager');
 
     if (!membershipId || !roleKey || !reason) {
       return res.status(400).json({
@@ -145,9 +146,9 @@ rbacRouter.post('/assignments/:id/revoke', (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
-    const actorPartyId = req.headers['x-actor-party-id']
+    const actorPartyId = req.user?.partyId || (req.headers['x-actor-party-id']
       ? String(req.headers['x-actor-party-id'])
-      : 'party-admin-001';
+      : 'party-admin-001');
 
     if (!reason) {
       return res.status(400).json({
@@ -193,9 +194,9 @@ rbacRouter.post('/effective-access', (req: Request, res: Response) => {
 // GET /api/me/workspaces - Discover allowed personal and organizational workspaces
 rbacRouter.get('/me/workspaces', (req: Request, res: Response) => {
   try {
-    const partyId = req.headers['x-actor-party-id']
+    const partyId = req.user?.partyId || (req.headers['x-actor-party-id']
       ? String(req.headers['x-actor-party-id'])
-      : 'party-admin-001';
+      : 'party-admin-001');
 
     const workspaces = RbacService.getUserAvailableWorkspaces(partyId);
     res.json({

@@ -1,28 +1,34 @@
 /**
- * Didar Gold Platform - Legacy Compatibility Adapter
- * Delegates to the independent database engine without any @supabase/supabase-js dependency.
+ * Didar Gold Platform - Legacy Cloud Migration Adapter
+ * Transparently reports PostgreSQL native status; does not report fake keys or false connections.
  */
 
-import { checkDatabaseHealth, createIndependentBackup } from './database.js';
-import { K01DataPayload } from '../../src/types/k01.js';
+import { checkDatabaseHealth } from './database.js';
 
 export async function checkSupabaseHealth() {
   const dbHealth = await checkDatabaseHealth();
+  const hasSupabaseUrl = Boolean(process.env.SUPABASE_URL);
+  const hasSupabaseKey = Boolean(process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY);
+
   return {
-    configured: true,
-    url: dbHealth.dataDirectory,
-    hasSecretKey: true,
-    hasPublishableKey: true,
+    configured: hasSupabaseUrl && hasSupabaseKey,
+    hasSecretKey: hasSupabaseKey,
+    hasPublishableKey: Boolean(process.env.SUPABASE_ANON_KEY),
     hasJwksUrl: false,
-    status: 'connected' as const,
-    message: dbHealth.message,
-    authActive: true,
+    status: hasSupabaseUrl ? 'connected' : ('migrated_to_self_hosted_postgresql' as const),
+    message: hasSupabaseUrl
+      ? 'اتصال خارجی سوپابیس پیکربندی شده است.'
+      : 'پلتفرم به طور کامل به پایگاه داده اختصاصی PostgreSQL مهاجرت کرده و وابستگی به Supabase خاتمه یافته است.',
+    authActive: false,
     latencyMs: dbHealth.latencyMs,
     engine: dbHealth.engine,
-    vendorLockIn: false
+    vendorLockIn: false,
   };
 }
 
-export async function syncSnapshotToSupabase(store: K01DataPayload) {
-  return createIndependentBackup(store);
+export async function syncSnapshotToSupabase() {
+  return {
+    success: true,
+    message: 'داده‌ها به طور مستقیم در PostgreSQL اختصاصی ذخیره می‌شوند.',
+  };
 }

@@ -113,14 +113,30 @@ async function main() {
     return proc;
   }
 
+  async function waitForBackend(port: number, timeoutMs = 15000): Promise<void> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      try {
+        const res = await fetch(`http://127.0.0.1:${port}/api/health`);
+        if (res.ok) {
+          console.log(`\x1b[32m[Runner] Backend API confirmed healthy on port ${port}. Launching Frontend UI...\x1b[0m`);
+          return;
+        }
+      } catch (e) {
+        // Backend warming up, wait and retry
+      }
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    console.warn(`[Runner] Backend warmup probe reached timeout (${timeoutMs}ms). Launching Frontend UI now.`);
+  }
+
   const backendProc = startBackend();
   children.push(backendProc);
 
-  // Allow backend service to spin up and bind before launching Vite frontend
-  setTimeout(() => {
-    const frontendProc = startFrontend();
-    children.push(frontendProc);
-  }, 600);
+  await waitForBackend(backendPort);
+
+  const frontendProc = startFrontend();
+  children.push(frontendProc);
 }
 
 function cleanup() {

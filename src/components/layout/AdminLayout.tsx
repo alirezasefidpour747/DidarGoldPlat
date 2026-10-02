@@ -55,6 +55,7 @@ import { K04Dashboard } from '../k04/K04Dashboard.js';
 
 // K05 Components
 import { K05Dashboard } from '../k05/K05Dashboard.js';
+import { P01ProductHub } from '../p01/P01ProductHub.js';
 
 // K06 Components
 import { K06Dashboard } from '../k06/K06Dashboard.js';
@@ -601,8 +602,8 @@ export const AdminLayout: React.FC = () => {
           /* Domain K06 View: Unique Item IDs, Passports & Provenance */
           <K06Dashboard />
         ) : selectedDomain === 'K05' ? (
-          /* Domain K05 View: Products, Catalog & Supply Offers */
-          <K05Dashboard />
+          /* Domain K05 View: B2B P01 Product Core & Gold Taxonomy */
+          <P01ProductHub />
         ) : selectedDomain === 'K04' ? (
           /* Domain K04 View: Approvals, Exceptions & Immutable Audit */
           <K04Dashboard />

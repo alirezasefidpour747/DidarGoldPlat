@@ -7,6 +7,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { k01Router } from './server/routes/k01.js';
 import { k02Router } from './server/routes/k02.js';
@@ -31,9 +32,14 @@ import { k20Router } from './server/routes/k20.js';
 import { paasRouter } from './server/routes/paas.js';
 import { biRouter } from './server/routes/bi.js';
 import { rbacRouter } from './server/routes/rbac.js';
+import { authRouter } from './server/routes/auth.js';
+import { authenticate, requireOrganizationScope } from './server/middleware/auth.middleware.js';
 import { masterDataRouter } from './server/routes/masterdata.js';
 import { architectureRouter } from './server/routes/architecture.js';
+import { p01ProductRouter } from './server/routes/p01-product.js';
 import { checkDatabaseHealth } from './server/lib/database.js';
+import { getDatabase } from './server/db/index.js';
+import { runMigrations } from './server/db/migrate.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -43,9 +49,33 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.BACKEND_PORT || process.env.PORT || 8000);
+  const PORT = Number(process.env.BACKEND_PORT || (process.env.PORT && process.env.PORT !== '8000' && process.env.PORT !== '3000' && process.env.PORT !== '8080' ? process.env.PORT : 8001));
   const isProduction = process.env.NODE_ENV === 'production';
   const configuredCorsOrigin = process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:3000';
+
+  let dbStatus: 'initializing' | 'connected' | 'error' = 'initializing';
+  let dbInitError: string | null = null;
+
+  // Initialize database in background so HTTP server is listening immediately
+  (async () => {
+    try {
+      await getDatabase();
+      await runMigrations();
+      const { importRbacData } = await import('./server/db/import.js');
+      await importRbacData().catch((e) => console.warn('[RBAC Import]', e.message));
+      const { seedP01Data } = await import('./server/db/p01-seed.js');
+      await seedP01Data().catch((e) => console.warn('[P01 Seed]', e.message));
+      console.log('[PostgreSQL] Database connected, migrations verified, RBAC & P01 seed initialized.');
+      dbStatus = 'connected';
+    } catch (err: any) {
+      dbStatus = 'error';
+      dbInitError = err?.message || String(err);
+      console.error('[PostgreSQL] Database initialization error:', err);
+      if (isProduction) {
+        process.exit(1);
+      }
+    }
+  })();
 
   // Strict CORS configuration
   app.use(
@@ -98,22 +128,40 @@ async function startServer() {
 
   // Health check endpoint (Requirement 5 & 10)
   app.get('/api/health', async (req, res) => {
-    const dbHealth = await checkDatabaseHealth().catch(() => ({
-      engine: 'independent_local_acid' as const,
-      status: 'healthy' as const,
-      vendorLockIn: false as const,
-      databaseUrlConfigured: false,
-      persistenceMode: 'disk_volume_acid' as const,
-      dataDirectory: './data',
-      backupDirectory: './data/backups',
-      lastBackupTimestamp: null,
-      totalEntitiesCount: 0,
-      message: 'موتور مستقل پایگاه داده فعال است.',
-      latencyMs: 1
-    }));
+    let dbHealth: any;
+    if (dbStatus === 'connected') {
+      dbHealth = await checkDatabaseHealth().catch(() => ({
+        engine: 'independent_local_acid' as const,
+        status: 'healthy' as const,
+        vendorLockIn: false as const,
+        databaseUrlConfigured: false,
+        persistenceMode: 'disk_volume_acid' as const,
+        dataDirectory: './data',
+        backupDirectory: './data/backups',
+        lastBackupTimestamp: null,
+        totalEntitiesCount: 0,
+        message: 'موتور مستقل پایگاه داده فعال است.',
+        latencyMs: 1
+      }));
+    } else if (dbStatus === 'initializing') {
+      dbHealth = {
+        engine: 'postgresql_local',
+        status: 'initializing',
+        message: 'پایگاه‌داده و مایگریشن‌ها در حال راه‌اندازی هستند...',
+        latencyMs: 0
+      };
+    } else {
+      dbHealth = {
+        engine: 'postgresql_local',
+        status: 'error',
+        error: dbInitError,
+        message: 'خطا در اتصال به پایگاه‌داده',
+        latencyMs: 0
+      };
+    }
 
     res.json({
-      status: 'ok',
+      status: dbStatus === 'error' ? 'degraded' : 'ok',
       service: 'didar-gold-backend-api',
       version: '1.0.0',
       port: PORT,
@@ -131,41 +179,48 @@ async function startServer() {
     });
   });
 
-  // Kernel Domain API Routes (Requirement 2 & 5)
-  app.use('/api/admin/kernel/k01', k01Router);
-  app.use('/api/admin/kernel/k02', k02Router);
-  app.use('/api/admin/kernel/k03', k03Router);
-  app.use('/api/admin/kernel/k04', k04Router);
-  app.use('/api/admin/kernel/k05', k05Router);
-  app.use('/api/admin/kernel/k06', k06Router);
-  app.use('/api/admin/kernel/k07', k07Router);
-  app.use('/api/admin/kernel/k08', k08Router);
-  app.use('/api/admin/kernel/k09', k09Router);
-  app.use('/api/admin/kernel/k10', k10Router);
-  app.use('/api/admin/kernel/k11', k11Router);
-  app.use('/api/admin/kernel/k12', k12Router);
-  app.use('/api/admin/kernel/k13', k13Router);
-  app.use('/api/admin/kernel/k14', k14Router);
-  app.use('/api/admin/kernel/k15', k15Router);
-  app.use('/api/admin/kernel/k16', k16Router);
-  app.use('/api/admin/kernel/k17', k17Router);
-  app.use('/api/admin/kernel/k18', k18Router);
-  app.use('/api/admin/kernel/k19', k19Router);
-  app.use('/api/admin/kernel/k20', k20Router);
-  app.use('/api/admin/paas', paasRouter);
-  app.use('/api/admin/bi', biRouter);
-  app.use('/api/admin/kernel/rbac', rbacRouter);
-  app.use('/api', rbacRouter); // Supports /api/me/workspaces
-  app.use('/api/admin/masterdata', masterDataRouter);
-  app.use('/api/admin/architecture', architectureRouter);
+  // Authentication & Session Routes (Public endpoints)
+  app.use('/api/auth', authRouter);
 
-  // Standalone fallback: if SERVE_STATIC is explicitly enabled, serve static assets
-  if (process.env.SERVE_STATIC === 'true') {
+  // Kernel Domain API Routes (Protected with authentication & organization resource scope)
+  app.use('/api/admin/kernel/k01', authenticate, requireOrganizationScope, k01Router);
+  app.use('/api/admin/kernel/k02', authenticate, requireOrganizationScope, k02Router);
+  app.use('/api/admin/kernel/k03', authenticate, requireOrganizationScope, k03Router);
+  app.use('/api/admin/kernel/k04', authenticate, requireOrganizationScope, k04Router);
+  app.use('/api/admin/kernel/k05', authenticate, requireOrganizationScope, k05Router);
+  app.use('/api/admin/kernel/k06', authenticate, requireOrganizationScope, k06Router);
+  app.use('/api/admin/kernel/k07', authenticate, requireOrganizationScope, k07Router);
+  app.use('/api/admin/kernel/k08', authenticate, requireOrganizationScope, k08Router);
+  app.use('/api/admin/kernel/k09', authenticate, requireOrganizationScope, k09Router);
+  app.use('/api/admin/kernel/k10', authenticate, requireOrganizationScope, k10Router);
+  app.use('/api/admin/kernel/k11', authenticate, requireOrganizationScope, k11Router);
+  app.use('/api/admin/kernel/k12', authenticate, requireOrganizationScope, k12Router);
+  app.use('/api/admin/kernel/k13', authenticate, requireOrganizationScope, k13Router);
+  app.use('/api/admin/kernel/k14', authenticate, requireOrganizationScope, k14Router);
+  app.use('/api/admin/kernel/k15', authenticate, requireOrganizationScope, k15Router);
+  app.use('/api/admin/kernel/k16', authenticate, requireOrganizationScope, k16Router);
+  app.use('/api/admin/kernel/k17', authenticate, requireOrganizationScope, k17Router);
+  app.use('/api/admin/kernel/k18', authenticate, requireOrganizationScope, k18Router);
+  app.use('/api/admin/kernel/k19', authenticate, requireOrganizationScope, k19Router);
+  app.use('/api/admin/kernel/k20', authenticate, requireOrganizationScope, k20Router);
+  app.use('/api/admin/paas', authenticate, requireOrganizationScope, paasRouter);
+  app.use('/api/admin/bi', authenticate, requireOrganizationScope, biRouter);
+  app.use('/api/admin/kernel/rbac', authenticate, requireOrganizationScope, rbacRouter);
+  app.use('/api/admin/masterdata', authenticate, requireOrganizationScope, masterDataRouter);
+  app.use('/api/admin/architecture', authenticate, requireOrganizationScope, architectureRouter);
+  app.use('/api', p01ProductRouter); // P01 Product Core & Taxonomy routes
+  app.use('/api', authenticate, rbacRouter); // Supports /api/me/workspaces with authentication
+
+  // Standalone production: if SERVE_STATIC is enabled or in production, serve compiled frontend SPA
+  if (process.env.SERVE_STATIC === 'true' || isProduction) {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+    if (fs.existsSync(distPath)) {
+      app.use(express.static(distPath));
+      app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api')) return next();
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
+    }
   }
 
   const server = app.listen(PORT, '0.0.0.0');

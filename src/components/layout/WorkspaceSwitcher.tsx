@@ -19,7 +19,7 @@ interface WorkspaceSwitcherProps {
 }
 
 export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
-  currentPartyId = 'party-admin-001',
+  currentPartyId,
   onWorkspaceChange
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,33 +50,41 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
 
   const loadWorkspaces = async () => {
     try {
-      const data = await api.getUserWorkspaces(currentPartyId);
+      const session = await api.getCurrentSession();
+      const partyId = session?.partyId || currentPartyId || 'party-admin-001';
+      
+      if (session) {
+        setSelectedWorkspace({
+          type: 'organization',
+          id: session.organizationId,
+          name: session.organizationName,
+        });
+      }
+
+      const data = await api.getUserWorkspaces(partyId);
       if (data) {
         setWorkspaces(data);
-        if (data.organizations?.length > 0) {
-          const firstOrg = data.organizations[0];
-          const initial = {
-            type: 'organization' as const,
-            id: firstOrg.organizationId,
-            name: firstOrg.displayName
-          };
-          setSelectedWorkspace(initial);
-          if (onWorkspaceChange) onWorkspaceChange(initial);
-        }
       }
     } catch (err) {
       console.error('Failed to load workspaces:', err);
     }
   };
 
-  const handleSelect = (workspace: {
+  const handleSelect = async (workspace: {
     type: 'personal' | 'organization';
     id: string;
     name: string;
   }) => {
-    setSelectedWorkspace(workspace);
-    setIsOpen(false);
-    if (onWorkspaceChange) onWorkspaceChange(workspace);
+    try {
+      if (workspace.type === 'organization') {
+        await api.switchWorkspace(workspace.id);
+      }
+      setSelectedWorkspace(workspace);
+      setIsOpen(false);
+      if (onWorkspaceChange) onWorkspaceChange(workspace);
+    } catch (err) {
+      console.error('Failed to switch workspace:', err);
+    }
   };
 
   return (

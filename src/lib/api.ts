@@ -155,6 +155,8 @@ import {
 import { PaasDataPayload, EventBusMessage } from '../types/paas.js';
 import { BiDataPayload } from '../types/bi.js';
 
+import { AuthSessionData, LoginResponse, SetupAdminRequest } from '../types/auth.js';
+
 /**
  * Didar Gold Platform - Client API Layer
  * Connects Frontend (Port 3000) to Independent Backend Service (Port 8000).
@@ -166,24 +168,62 @@ import { BiDataPayload } from '../types/bi.js';
 // Reads backend URL from environment variable VITE_API_BASE_URL without hardcoding
 export const VITE_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/+$/, '');
 
+const SESSION_TOKEN_KEY = 'didar_session_token';
+type AuthListener = (session: AuthSessionData | null) => void;
+const authListeners: Set<AuthListener> = new Set();
+
+export function getSessionToken(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(SESSION_TOKEN_KEY);
+  }
+  return null;
+}
+
+export function setSessionToken(token: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(SESSION_TOKEN_KEY, token);
+  }
+}
+
+export function clearSessionToken(): void {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(SESSION_TOKEN_KEY);
+    notifyAuthChange(null);
+  }
+}
+
+export function onAuthStateChange(listener: AuthListener): () => void {
+  authListeners.add(listener);
+  return () => authListeners.delete(listener);
+}
+
+export function notifyAuthChange(session: AuthSessionData | null): void {
+  for (const listener of authListeners) {
+    try {
+      listener(session);
+    } catch (e) {
+      console.error('Error in auth listener:', e);
+    }
+  }
+}
+
 export function getBackendBaseUrl(): string {
   if (typeof window !== 'undefined') {
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    // In cloud preview container (e.g. *.run.app) or HTTPS sessions, the client browser
-    // cannot connect directly to container-internal loopback ports (localhost / 127.0.0.1).
-    // In these cases, we must use relative path ('') so that the request goes to port 3000
-    // and Vite reverse-proxies it to the backend.
+    // If VITE_API_BASE_URL is not explicitly configured or points to loopback/localhost/default,
+    // always use relative path ('') so requests flow through the frontend server's proxy (port 3000).
+    // This avoids CORS preflights, loopback port clashes, mixed-content errors, and remote access failures.
     const isLoopbackTarget =
       !VITE_API_BASE_URL ||
       VITE_API_BASE_URL.includes('localhost') ||
       VITE_API_BASE_URL.includes('127.0.0.1') ||
       VITE_API_BASE_URL.includes('0.0.0.0');
 
-    if (!isLocalhost || (window.location.protocol === 'https:' && VITE_API_BASE_URL.startsWith('http://'))) {
-      if (isLoopbackTarget) {
-        return '';
-      }
+    if (isLoopbackTarget) {
+      return '';
+    }
+
+    if (window.location.protocol === 'https:' && VITE_API_BASE_URL.startsWith('http://')) {
+      return '';
     }
   }
   return VITE_API_BASE_URL;
@@ -198,27 +238,46 @@ export function buildApiUrl(endpoint: string): string {
   return base ? `${base}${cleanPath}` : cleanPath;
 }
 
-export async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+export async function apiFetch(input: RequestInfo | URL, init?: RequestInit, retries: number = 0): Promise<Response> {
   const urlStr = typeof input === 'string' ? input : input instanceof URL ? input.toString() : (input as Request).url;
   const targetUrl = buildApiUrl(urlStr);
+
+  const token = getSessionToken();
+  const authHeaders: Record<string, string> = {};
+  if (token) {
+    authHeaders['Authorization'] = `Bearer ${token}`;
+  }
 
   const modifiedInit: RequestInit = {
     ...init,
     headers: {
       'Accept': 'application/json',
+      ...authHeaders,
       ...(init?.headers || {})
     }
   };
 
   try {
     const response = await window.fetch(targetUrl, modifiedInit);
+    if (response.status === 401 && !urlStr.includes('/api/auth/login') && !urlStr.includes('/api/auth/setup-admin') && !urlStr.includes('/api/auth/status')) {
+      clearSessionToken();
+    }
     return response;
   } catch (err: any) {
+    // If request failed and retries remain (useful during server warmup), retry with backoff
+    if (retries > 0) {
+      await new Promise((r) => setTimeout(r, 400));
+      return apiFetch(input, init, retries - 1);
+    }
+
     // If direct local connection failed, fallback to relative URL through Vite reverse proxy
     if (targetUrl.startsWith('http://localhost') || targetUrl.startsWith('http://127.0.0.1')) {
       try {
         const cleanPath = urlStr.startsWith('http') ? new URL(urlStr).pathname + new URL(urlStr).search : (urlStr.startsWith('/') ? urlStr : `/${urlStr}`);
         const fallbackResponse = await window.fetch(cleanPath, modifiedInit);
+        if (fallbackResponse.status === 401 && !urlStr.includes('/api/auth/login') && !urlStr.includes('/api/auth/setup-admin') && !urlStr.includes('/api/auth/status')) {
+          clearSessionToken();
+        }
         return fallbackResponse;
       } catch (fallbackErr) {
         // Fallback error will be caught below
@@ -227,7 +286,7 @@ export async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 
     const isOffline = err?.name === 'TypeError' || err?.message?.includes('fetch') || err?.message?.includes('Failed');
     if (isOffline) {
-      console.error(`[API Network Disconnection] Cannot reach Backend at ${targetUrl}:`, err);
+      console.warn(`[API Network Disconnection] Cannot reach Backend at ${targetUrl}:`, err);
       throw new Error(`خطای عدم دسترسی به سرور بکاند (${targetUrl}): لطفاً اطمینان حاصل کنید که سرویس بکاند فعال و در حال اجرا است.`);
     }
     throw err;
@@ -238,7 +297,7 @@ export async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 export async function checkBackendHealthStatus(): Promise<{ ok: boolean; url: string; data?: any; error?: string }> {
   const url = buildApiUrl('/api/health');
   try {
-    const res = await apiFetch(url, { headers: { 'Accept': 'application/json' } });
+    const res = await apiFetch(url, { headers: { 'Accept': 'application/json' } }, 2);
     if (res.ok) {
       const data = await res.json();
       return { ok: true, url, data };
@@ -2991,10 +3050,262 @@ export const api = {
     return json;
   },
 
+  // Authentication & Session Management
+  login: async (identifier: string, password?: string, otp?: string, organizationId?: string): Promise<LoginResponse['data']> => {
+    const res = await apiFetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password, otp, organizationId })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || json.message || 'خطای ورود به سامانه');
+    setSessionToken(json.data.token);
+    notifyAuthChange(json.data.session);
+    return json.data;
+  },
+
+  setupAdmin: async (data: SetupAdminRequest): Promise<LoginResponse['data']> => {
+    const res = await apiFetch('/api/auth/setup-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || json.message || 'خطای راه‌اندازی اولیه مدیر ارشد');
+    setSessionToken(json.data.token);
+    notifyAuthChange(json.data.session);
+    return json.data;
+  },
+
+  getAuthStatus: async (): Promise<{ isProvisioned: boolean; serverTime?: string }> => {
+    const res = await apiFetch('/api/auth/status');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطای بررسی وضعیت مدیر');
+    return json.data;
+  },
+
+  getCurrentSession: async (): Promise<AuthSessionData | null> => {
+    const token = getSessionToken();
+    if (!token) return null;
+    try {
+      const res = await apiFetch('/api/auth/session');
+      if (!res.ok) {
+        clearSessionToken();
+        return null;
+      }
+      const json = await res.json();
+      return json.data;
+    } catch {
+      return null;
+    }
+  },
+
+  switchWorkspace: async (organizationId: string): Promise<any> => {
+    const res = await apiFetch('/api/auth/switch-organization', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ organizationId })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطای تغییر زمینه کاری');
+    notifyAuthChange(json.data);
+    return json.data;
+  },
+
+  logout: async (): Promise<void> => {
+    try {
+      await apiFetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      clearSessionToken();
+    }
+  },
+
+  requestOtp: async (mobile: string): Promise<{ success: boolean; message: string; debugCode?: string }> => {
+    const res = await apiFetch('/api/auth/otp/request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobile })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطای ارسال کد یکبارمصرف');
+    return json.data;
+  },
+
   // Backend Connectivity & Health Check
   checkHealth: checkBackendHealthStatus,
   apiFetch: apiFetch,
   buildApiUrl: buildApiUrl,
-  getBackendUrl: getBackendBaseUrl
+  getBackendUrl: getBackendBaseUrl,
+
+  // ==========================================
+  // P01: PRODUCT CORE & TAXONOMY API METHODS
+  // ==========================================
+  getTaxonomyTree: async () => {
+    const res = await apiFetch('/api/taxonomy/tree');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در دریافت درخت طبقه‌بندی');
+    return json.data;
+  },
+
+  getTaxonomySubcategories: async () => {
+    const res = await apiFetch('/api/taxonomy/subcategories');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در دریافت زیرشاخه‌ها');
+    return json.data;
+  },
+
+  getRetailerCatalog: async (params?: { subcategoryId?: string; search?: string }) => {
+    const query = new URLSearchParams();
+    if (params?.subcategoryId) query.set('subcategoryId', params.subcategoryId);
+    if (params?.search) query.set('search', params.search);
+    const qs = query.toString();
+    const res = await apiFetch(`/api/retailer/catalog${qs ? `?${qs}` : ''}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در بارگذاری کاتالوگ');
+    return json.data;
+  },
+
+  getRetailerProductDetail: async (id: string) => {
+    const res = await apiFetch(`/api/retailer/catalog/${id}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'محصول یافت نشد');
+    return json.data;
+  },
+
+  getSupplierProducts: async () => {
+    const res = await apiFetch('/api/supplier/products');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در دریافت محصولات تامین‌کننده');
+    return json.data;
+  },
+
+  createSupplierProduct: async (data: any) => {
+    const res = await apiFetch('/api/supplier/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در ثبت محصول');
+    return json.data;
+  },
+
+  updateSupplierProduct: async (id: string, data: any) => {
+    const res = await apiFetch(`/api/supplier/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در ویرایش محصول');
+    return json.data;
+  },
+
+  submitProductForReview: async (id: string) => {
+    const res = await apiFetch(`/api/supplier/products/${id}/submit`, {
+      method: 'POST',
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در ارسال محصول برای بررسی');
+    return json.data;
+  },
+
+  getSupplierOffers: async (productId: string) => {
+    const res = await apiFetch(`/api/supplier/products/${productId}/offers`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در دریافت آفرها');
+    return json.data;
+  },
+
+  createSupplierOffer: async (productId: string, data: any) => {
+    const res = await apiFetch(`/api/supplier/products/${productId}/offers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در ثبت آفر');
+    return json.data;
+  },
+
+  updateSupplierOffer: async (offerId: string, data: any) => {
+    const res = await apiFetch(`/api/supplier/offers/${offerId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در ویرایش آفر');
+    return json.data;
+  },
+
+  getProductOpsQueue: async (statusFilter?: string) => {
+    const res = await apiFetch(`/api/product-ops/queue?status=${statusFilter || 'SUBMITTED'}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در دریافت صف بررسی');
+    return json.data;
+  },
+
+  getProductOpsDetail: async (id: string) => {
+    const res = await apiFetch(`/api/product-ops/products/${id}`);
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در دریافت جزییات محصول');
+    return json.data;
+  },
+
+  approveProduct: async (id: string) => {
+    const res = await apiFetch(`/api/product-ops/products/${id}/approve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در تایید محصول');
+    return json.data;
+  },
+
+  rejectProduct: async (id: string, reason: string) => {
+    const res = await apiFetch(`/api/product-ops/products/${id}/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در رد محصول');
+    return json.data;
+  },
+
+  requestProductChanges: async (id: string, reason: string) => {
+    const res = await apiFetch(`/api/product-ops/products/${id}/request-changes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در درخواست اصلاحات');
+    return json.data;
+  },
+
+  publishProduct: async (id: string) => {
+    const res = await apiFetch(`/api/product-ops/products/${id}/publish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در انتشار محصول');
+    return json.data;
+  },
+
+  unpublishProduct: async (id: string) => {
+    const res = await apiFetch(`/api/product-ops/products/${id}/unpublish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error?.message || 'خطا در خروج از انتشار');
+    return json.data;
+  },
 };
 

@@ -232,6 +232,11 @@ export interface PartyDocument {
   createdAt: string;
 }
 
+// Aliases for domain layer compatibility
+export type PersonParty = Party;
+export type OrganizationParty = Organization;
+export type DocumentItem = PartyDocument;
+
 export interface AuditEvent {
   id: string;
   actorId: string;
